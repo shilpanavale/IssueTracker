@@ -13,7 +13,7 @@ class CommonTextField{
             height: 50,
             padding: const EdgeInsets.all(5.0),
             decoration: BoxDecoration(
-              color: ColorsForApp.grayColor,
+              color: ColorsForApp.whiteColor,
               borderRadius: BorderRadius.circular(10.0),
             ),
             child: TextFormField(
@@ -31,8 +31,8 @@ class CommonTextField{
                 fillColor: Colors.black,
                 //border: OutlineInputBorder(),
                 labelText: labelText,
-                labelStyle:  const TextStyle(
-                    fontSize: 16.0, color: Colors.black54),
+                labelStyle:   TextStyle(
+                    fontSize: 15.0, color: ColorsForApp.grayLabelColor),
 
                 border: InputBorder.none,
 

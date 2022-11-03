@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:untitled/App%20Theme/app_theme.dart';
 import 'package:untitled/CustomeWidget/common_button.dart';
@@ -31,8 +32,8 @@ class _MyHomePageState extends State<RegisterComplaint> {
   dynamic selectSubIssueType;
   dynamic selectedLocation;
   dynamic selectedAccom;
-  dynamic selectedHouse;
-  List<HouseModel> houseList=[];
+  dynamic selectHouseNo;
+  List<HouseNumberModel> houseList=[];
   List<LocationModelClass> locationList=[];
 
   List<dynamic> issueTypeList=[
@@ -72,6 +73,7 @@ class _MyHomePageState extends State<RegisterComplaint> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    getLocationList();
 
   }
   @override
@@ -120,17 +122,16 @@ class _MyHomePageState extends State<RegisterComplaint> {
                           padding: const EdgeInsets.only(top: 3, bottom: 3, right: 30, left: 30),
                           child: Container(
                             height: 40,
-                            padding: const EdgeInsets.all(5.0),
+                            padding: const EdgeInsets.all(8.0),
                             decoration: BoxDecoration(
-                              color: ColorsForApp.grayColor,
+                              color: ColorsForApp.whiteColor,
                               borderRadius: BorderRadius.circular(10.0),
                             ),
                             child: DropdownButtonHideUnderline(
                               child: DropdownButton(
-                                hint:  Text(APIConstant.location,
+                                hint:  const Text(" Select Location",
                                     style: TextStyle(
-                                        fontWeight: FontWeight.w400,
-                                        fontSize: 15.0, color: Colors.black38)
+                                        fontSize: 16.0, color: Colors.black54)
                                 ),
                                 value: selectedLocation,
                                 icon: const Padding(
@@ -143,10 +144,10 @@ class _MyHomePageState extends State<RegisterComplaint> {
                                 isExpanded: true,
                                 isDense: true,
                                 onChanged: (newValue) {
-                                  /*setState(() {
+                                  setState(() {
                                     selectedLocation=newValue;
                                     getAccommodationList(selectedLocation);
-                                  });*/
+                                  });
                                 },
                                 items: locationList.map((value) {
                                   return DropdownMenuItem<String>(
@@ -159,23 +160,23 @@ class _MyHomePageState extends State<RegisterComplaint> {
                           ),
                         ),
                         const SizedBox(height: 10,),
-                       // CommonTextField.commonTextField(null, "Type of accommodation", colonyTxt, TextInputType.text),
+                        // CommonTextField.commonTextField(null, "Type of accommodation", colonyTxt, TextInputType.text),
                         Padding(
                           padding: const EdgeInsets.only(top: 3, bottom: 3, right: 30, left: 30),
                           child: Container(
                             height: 40,
                             padding: const EdgeInsets.all(5.0),
                             decoration: BoxDecoration(
-                              color: ColorsForApp.grayColor,
+                              color: ColorsForApp.whiteColor,
                               borderRadius: BorderRadius.circular(10.0),
                             ),
                             child: DropdownButtonHideUnderline(
                               child: DropdownButton(
-                                hint:  Text(APIConstant.accommodationType,
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.w400,
-                                        fontSize: 15.0, color: Colors.black38)
+                                hint:  const Text(" Select Accommodation Type",
+                                    style:  TextStyle(
+                                        fontSize: 15.0, color: Colors.black54)
                                 ),
+
                                 value: selectedAccom,
                                 icon: const Padding(
                                   padding: EdgeInsets.only(right: 16.0),
@@ -187,14 +188,21 @@ class _MyHomePageState extends State<RegisterComplaint> {
                                 isExpanded: true,
                                 isDense: true,
                                 onChanged: (newValue) {
-                                 /* setState(() {
-                                    selectedAccom=newValue;
-                                  });*/
+                                  if(selectedLocation!=null){
+                                    setState(() {
+                                      selectedAccom=newValue;
+                                      getHouseList(selectedAccom);
+
+                                    });
+                                  }else{
+                                    Fluttertoast.showToast(msg: "Please first select location");
+                                  }
+
                                 },
                                 items: accommodationList.map((value) {
                                   return DropdownMenuItem<String>(
-                                    value: value["id"],
-                                    child: Text(value["value"]),
+                                    value: value.houseType,
+                                    child: Text(value.houseType!),
                                   );
                                 }).toList(),
                               ),
@@ -202,24 +210,21 @@ class _MyHomePageState extends State<RegisterComplaint> {
                           ),
                         ),
                         const SizedBox(height: 10,),
-                      //  CommonTextField.commonTextField(null, "House No", houseNameTxt, TextInputType.text),
                         Padding(
                           padding: const EdgeInsets.only(top: 3, bottom: 3, right: 30, left: 30),
                           child: Container(
                             height: 40,
-                            padding: const EdgeInsets.all(5.0),
+                            padding: const EdgeInsets.all(8.0),
                             decoration: BoxDecoration(
-                              color: ColorsForApp.grayColor,
+                              color: ColorsForApp.whiteColor,
                               borderRadius: BorderRadius.circular(10.0),
                             ),
                             child: DropdownButtonHideUnderline(
                               child: DropdownButton(
-                                hint:  Text(APIConstant.house,
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.w400,
-                                        fontSize: 15.0, color: Colors.black38)
-                                ),
-                                value: selectedHouse,
+                                hint: const Text(" Select House number",style: TextStyle(
+                                    fontSize: 15.0, color: Colors.black54)),
+                                value: selectHouseNo,
+                                isExpanded: true,
                                 icon: const Padding(
                                   padding: EdgeInsets.only(right: 16.0),
                                   child: Icon(
@@ -227,30 +232,30 @@ class _MyHomePageState extends State<RegisterComplaint> {
                                     size: 20,color: Colors.grey,
                                   ),
                                 ),
-                                isExpanded: true,
                                 isDense: true,
                                 onChanged: (newValue) {
+
                                   setState(() {
-                                    selectedHouse=newValue;
+                                    selectHouseNo=newValue;
                                   });
                                 },
                                 items: houseList.map((value) {
                                   return DropdownMenuItem<String>(
                                     value: value.houseNo,
-                                    child: Text(value.houseLocation!),
+                                    child: Text(value.houseNo!),
                                   );
                                 }).toList(),
                               ),
                             ),
                           ),
                         ),
-                        const SizedBox(height: 10,),
+                        const SizedBox(height: 20,),
                         //CommonTextField.commonTextField(null, "Complaint Type", complaintTypeTxt, TextInputType.text),
                         Padding(
                           padding: const EdgeInsets.only(top: 3, bottom: 3, right: 30, left: 30),
                           child: Container(
                             height: 40,
-                            padding: const EdgeInsets.all(5.0),
+                            padding: const EdgeInsets.all(8.0),
                             decoration: BoxDecoration(
                               color: ColorsForApp.whiteColor,
                               borderRadius: BorderRadius.circular(10.0),
@@ -404,6 +409,13 @@ class _MyHomePageState extends State<RegisterComplaint> {
                         ),
                         const SizedBox(height: 40,),
                         CommonButtonForAllApp(onPressed: (){
+                          if(selectedLocation==null||selectedLocation==""){
+                            Fluttertoast.showToast(msg: "Please select location");
+                          }else if(selectedAccom==null||selectedAccom==""){
+                            Fluttertoast.showToast(msg: "Please accommodation");
+                          }else if(selectHouseNo==null||selectHouseNo==""){
+                            Fluttertoast.showToast(msg: "Please house");
+                          }
                           Navigator.push(context, MaterialPageRoute(builder: (context)=>const MyComplaintListPage()));
                         }, title: "Submit"),
                         const SizedBox(height: 20,),
@@ -423,31 +435,16 @@ class _MyHomePageState extends State<RegisterComplaint> {
     );
   }
 
-  getHouseList() async {
-
-    var response= await http.get(Uri.parse(APIConstant.houseList));
-    var decodeRes=json.decode(response.body) as List;
-    if (response.statusCode == 200) {
-      houseList = decodeRes.map((tagJson) => HouseModel.fromJson(tagJson)).toList();
-      setState(() {
-      });
-
-    } else {
-      throw Exception('Failed to load house list');
-    }
-
-  }
-
   getLocationList() async {
 
     var response= await http.get(Uri.parse(APIConstant.locationList));
     var decodeRes=json.decode(response.body) as List;
     if (response.statusCode == 200) {
       print("decodeRes-->$decodeRes");
-       locationList = decodeRes.map((tagJson) => LocationModelClass.fromJson(tagJson)).toList();
-     setState(() {
+      locationList = decodeRes.map((tagJson) => LocationModelClass.fromJson(tagJson)).toList();
+      setState(() {
 
-     });
+      });
     } else {
       throw Exception('Failed to load house list');
     }
@@ -455,13 +452,35 @@ class _MyHomePageState extends State<RegisterComplaint> {
   }
   getAccommodationList(String selectedLocation) async {
 
-    var response= await http.get(Uri.parse("${APIConstant.accommodation}/$selectedLocation"));
+    var url=Uri.parse("${APIConstant.accommodation}/$selectedLocation");
+    var response= await http.get(url);
+    print("Accomadation-->$url");
+    if (response.statusCode == 200) {
+      var decodeRes=json.decode(response.body) as List;
+      print("accommodationList-->$decodeRes");
+      accommodationList = decodeRes.map((tagJson) => AccommodationModel.fromJson(tagJson)).toList();
+      setState(() {
+
+      });
+    } else {
+      throw Exception('Failed to load house list');
+    }
+
+  }
+  getHouseList(String selectedAccom ) async {
+
+    var url=Uri.parse("${APIConstant.houseNo}/$selectedAccom/$selectedLocation");
+    print("House URL-->$url");
+    var response= await http.get(url);
 
     if (response.statusCode == 200) {
-      accommodationList=json.decode(response.body) as List;
-      print("accommodationList-->$accommodationList");
-    //  locationList = decodeRes.map((tagJson) => LocationModelClass.fromJson(tagJson)).toList();
+      var decodeRes=json.decode(response.body) as List;
 
+      houseList = decodeRes.map((tagJson) => HouseNumberModel.fromJson(tagJson)).toList();
+      print("House No-->$houseList");
+      setState(() {
+
+      });
     } else {
       throw Exception('Failed to load house list');
     }
