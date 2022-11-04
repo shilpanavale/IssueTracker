@@ -10,7 +10,9 @@ import 'package:untitled/App%20Theme/app_theme.dart';
 import 'package:untitled/CustomeWidget/common_button.dart';
 import 'package:untitled/CustomeWidget/custome_widget.dart';
 import 'package:untitled/View/User%20Model/Model/HouseModelPage.dart';
+import 'package:untitled/View/User%20Model/Model/IssueTypeModelPage.dart';
 import 'package:untitled/View/User%20Model/Model/LocationModelPage.dart';
+import 'package:untitled/View/User%20Model/Model/SubIssueTypeModelPage.dart';
 import 'package:untitled/View/User%20Model/my_complaints.dart';
 import 'api_constant.dart';
 import 'package:http/http.dart' as http;
@@ -35,8 +37,10 @@ class _MyHomePageState extends State<RegisterComplaint> {
   dynamic selectHouseNo;
   List<HouseNumberModel> houseList=[];
   List<LocationModelClass> locationList=[];
+  List<IssueTypeModel> issueTypeList=[];
+  List<SubIssueTypeModel> subIssueTypeList=[];
 
-  List<dynamic> issueTypeList=[
+  /*List<dynamic> issueTypeList=[
     {
       "id":"1",
       "value":"blockage related issuses",
@@ -52,7 +56,8 @@ class _MyHomePageState extends State<RegisterComplaint> {
       "id":"4",
       "value":"additional intra(addn/altn) work",
     },
-  ];List<dynamic> subIssueTypeList=[
+  ];
+  List<dynamic> subIssueTypeList=[
     {
       "id":"1",
       "value":"sewage",
@@ -65,7 +70,7 @@ class _MyHomePageState extends State<RegisterComplaint> {
       "id":"3",
       "value":"Carpentry",
     },
-  ];
+  ];*/
  List<dynamic> accommodationList=[];
 
   File? image;
@@ -74,7 +79,7 @@ class _MyHomePageState extends State<RegisterComplaint> {
     // TODO: implement initState
     super.initState();
     getLocationList();
-
+    getIssueType();
   }
   @override
   Widget build(BuildContext context) {
@@ -237,6 +242,7 @@ class _MyHomePageState extends State<RegisterComplaint> {
 
                                   setState(() {
                                     selectHouseNo=newValue;
+
                                   });
                                 },
                                 items: houseList.map((value) {
@@ -280,12 +286,14 @@ class _MyHomePageState extends State<RegisterComplaint> {
                                 onChanged: (newValue) {
                                   setState(() {
                                     selectIssueType=newValue;
+                                    print('selectIssueType-->$selectIssueType');
+                                    getSubIssueType(selectIssueType);
                                   });
                                 },
                                 items: issueTypeList.map((value) {
                                   return DropdownMenuItem<String>(
-                                    value: value["id"],
-                                    child: Text(value["value"]),
+                                    value: value.issueId,
+                                    child: Text(value.issue.toString()),
                                   );
                                 }).toList(),
                               ),
@@ -326,8 +334,8 @@ class _MyHomePageState extends State<RegisterComplaint> {
                                 },
                                 items: subIssueTypeList.map((value) {
                                   return DropdownMenuItem<String>(
-                                    value: value["id"],
-                                    child: Text(value["value"]),
+                                    value: value.subIssue,
+                                    child: Text(value.subIssue.toString()),
                                   );
                                 }).toList(),
                               ),
@@ -408,13 +416,18 @@ class _MyHomePageState extends State<RegisterComplaint> {
                           ),
                         ),
                         const SizedBox(height: 40,),
-                        CommonButtonForAllApp(onPressed: (){
-                          if(selectedLocation==null||selectedLocation==""){
+                        CommonButtonForAllApp(
+                            onPressed: (){
+                          if(selectedLocation.toString().isEmpty || selectedLocation==null||selectedLocation==""){
                             Fluttertoast.showToast(msg: "Please select location");
-                          }else if(selectedAccom==null||selectedAccom==""){
-                            Fluttertoast.showToast(msg: "Please accommodation");
-                          }else if(selectHouseNo==null||selectHouseNo==""){
-                            Fluttertoast.showToast(msg: "Please house");
+                          }else if(selectedAccom.toString().isEmpty || selectedAccom==null||selectedAccom==""){
+                            Fluttertoast.showToast(msg: "Please select accommodation");
+                          }else if(selectHouseNo.toString().isEmpty || selectHouseNo==null||selectHouseNo==""){
+                            Fluttertoast.showToast(msg: "Please select house");
+                          }else if(selectIssueType.toString().isEmpty || selectIssueType==null||selectIssueType==""){
+                            Fluttertoast.showToast(msg: "Please select Issue Type");
+                          }else if(selectSubIssueType.toString().isEmpty || selectSubIssueType==null||selectSubIssueType==""){
+                            Fluttertoast.showToast(msg: "Please select Sub Issue Type");
                           }
                           Navigator.push(context, MaterialPageRoute(builder: (context)=>const MyComplaintListPage()));
                         }, title: "Submit"),
@@ -467,6 +480,7 @@ class _MyHomePageState extends State<RegisterComplaint> {
     }
 
   }
+
   getHouseList(String selectedAccom ) async {
 
     var url=Uri.parse("${APIConstant.houseNo}/$selectedAccom/$selectedLocation");
@@ -486,6 +500,47 @@ class _MyHomePageState extends State<RegisterComplaint> {
     }
 
   }
+
+  getIssueType() async {
+
+    var url=Uri.parse("${APIConstant.APIURL}/issue-category");
+    print("Issue-category URL-->$url");
+    var response= await http.get(url);
+    print("Issue-category URL-->${response.body}");
+    if (response.statusCode == 200) {
+      var decodeRes=json.decode(response.body) as List;
+
+      issueTypeList = decodeRes.map((tagJson) => IssueTypeModel.fromJson(tagJson)).toList();
+      print("IssueTypeModel -->$issueTypeList");
+      setState(() {
+
+      });
+    } else {
+      throw Exception('Failed to load house list');
+    }
+
+  }
+
+  getSubIssueType(String selecteIssueId) async {
+
+    var url=Uri.parse("${APIConstant.APIURL}/issue-category/$selectIssueType");
+    print("House URL-->$url");
+    var response= await http.get(url);
+    print("sub Issue-category URL-->${response.body}");
+    if (response.statusCode == 200) {
+      var decodeRes=json.decode(response.body) as List;
+
+      subIssueTypeList = decodeRes.map((tagJson) => SubIssueTypeModel.fromJson(tagJson)).toList();
+      print("House No-->$subIssueTypeList");
+      setState(() {
+
+      });
+    } else {
+      throw Exception('Failed to load house list');
+    }
+
+  }
+
 
   Future pickImage() async {
     try {
