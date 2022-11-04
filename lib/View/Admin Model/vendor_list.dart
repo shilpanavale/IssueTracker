@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pie_chart/pie_chart.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:untitled/App%20Theme/app_theme.dart';
@@ -24,6 +25,7 @@ class VendorListPage extends StatefulWidget {
 
 class _MyHomePageState extends State<VendorListPage> {
 
+  var vendorID;
   List<VendorModelClass> vendorList=[];
 
   List issueArray=[
@@ -154,10 +156,18 @@ class _MyHomePageState extends State<VendorListPage> {
             backgroundColor: ColorsForApp.appButtonColor,
            radius: 18,
             child: Icon(Icons.person,color: Colors.white,),
-          ),trailing: CircleAvatar(
-            backgroundColor: ColorsForApp.appButtonColor,
-            radius: 15,
-            child: Icon(Icons.delete,color: Colors.white,size: 17,),
+          ),trailing: GestureDetector(
+          onTap: (){
+            print('vendor ID--->${vendor.vendorId}');
+            vendorID = vendor.vendorId;
+            deleteVendor();
+
+          },
+            child: CircleAvatar(
+              backgroundColor: ColorsForApp.appButtonColor,
+              radius: 15,
+              child: Icon(Icons.delete,color: Colors.white,size: 17,),
+            ),
           ),
          // title:Text("Issue Type : "+issue['issueTpe'],textAlign:TextAlign.start,style: StyleForApp.textStyle16dpBold,),
           title:Text(vendor.vendorName!,textAlign:TextAlign.start,style: StyleForApp.textStyle16dpBold,),
@@ -210,6 +220,19 @@ class _MyHomePageState extends State<VendorListPage> {
     } else {
       throw Exception('Failed to load house list');
     }
+
+  }
+
+
+  deleteVendor() async{
+    print('vendorID-->>${vendorID}');
+    var url=Uri.parse("${APIConstant.APIURL}/vendor/${vendorID}");
+    print("vendor URL-->$url");
+    var response= await http.delete(url);
+
+    print('delete response--->${response.body}');
+    Fluttertoast.showToast(msg: "Vendor Deleted successfully");
+    Navigator.push(context, MaterialPageRoute(builder: (context)=>const VendorListPage()));
 
   }
 
