@@ -28,27 +28,7 @@ class _MyHomePageState extends State<VendorListPage> {
   var vendorID;
   List<VendorModelClass> vendorList=[];
 
-  List issueArray=[
-    {
-      "issueTpe":"house color",
-      "issueName":"Rahul more",
-      "issueDetails":"8767567890",
-      "issueStatus":"rahul@gmail.com"
-    },
-    {
-      "issueTpe":"house color",
-      "issueName":"Rahul more",
-      "issueDetails":"8767567890",
-      "issueStatus":"rahul@gmail.com"
-    },
-    {
-      "issueTpe":"house color",
-      "issueName":"Rahul more",
-      "issueDetails":"8767567890",
-      "issueStatus":"rahul@gmail.com"
-    }
 
-  ];
   Future<List<VendorModelClass>>? _vendorApi;
   @override
   void initState() {
@@ -155,18 +135,16 @@ class _MyHomePageState extends State<VendorListPage> {
           leading: CircleAvatar(
             backgroundColor: ColorsForApp.appButtonColor,
            radius: 18,
-            child: Icon(Icons.person,color: Colors.white,),
+            child: const Icon(Icons.person,color: Colors.white,),
           ),trailing: GestureDetector(
           onTap: (){
-            print('vendor ID--->${vendor.vendorId}');
             vendorID = vendor.vendorId;
             deleteVendor();
-
-          },
+            },
             child: CircleAvatar(
               backgroundColor: ColorsForApp.appButtonColor,
               radius: 15,
-              child: Icon(Icons.delete,color: Colors.white,size: 17,),
+              child: const Icon(Icons.delete,color: Colors.white,size: 17,),
             ),
           ),
          // title:Text("Issue Type : "+issue['issueTpe'],textAlign:TextAlign.start,style: StyleForApp.textStyle16dpBold,),
@@ -225,15 +203,20 @@ class _MyHomePageState extends State<VendorListPage> {
 
 
   deleteVendor() async{
-    print('vendorID-->>${vendorID}');
     var url=Uri.parse("${APIConstant.APIURL}/vendor/${vendorID}");
     print("vendor URL-->$url");
     var response= await http.delete(url);
 
     print('delete response--->${response.body}');
-    Fluttertoast.showToast(msg: "Vendor Deleted successfully");
-    Navigator.push(context, MaterialPageRoute(builder: (context)=>const VendorListPage()));
-
+    var decodeRes=json.decode(response.body);
+    var msg=decodeRes["message"];
+    if(msg.toString().contains("SQLSTATE[23000]")) {
+      Fluttertoast.showToast(msg: "This vendor assigned with issue ");
+    }else {
+      Fluttertoast.showToast(msg: "Vendor Deleted successfully");
+      Navigator.push(context,
+          MaterialPageRoute(builder: (context) => const VendorListPage()));
+    }
   }
 
 }

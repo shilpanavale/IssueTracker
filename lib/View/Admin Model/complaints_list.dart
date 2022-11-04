@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:pie_chart/pie_chart.dart';
 import 'package:share_plus/share_plus.dart';
@@ -6,7 +7,10 @@ import 'package:untitled/App%20Theme/asset_files.dart';
 import 'package:untitled/App%20Theme/text_fileds.dart';
 import 'package:untitled/CustomeWidget/common_button.dart';
 import 'package:untitled/CustomeWidget/custome_widget.dart';
+import 'package:untitled/View/Admin%20Model/Model/IssueModel.dart';
 import 'package:untitled/View/Admin%20Model/admin_dashboard.dart';
+import '../User Model/api_constant.dart';
+import 'package:http/http.dart' as http;
 
 class ComplaintListPage extends StatefulWidget {
   const ComplaintListPage({Key? key}) : super(key: key);
@@ -17,43 +21,25 @@ class ComplaintListPage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<ComplaintListPage> {
-  Map<String, double> dataMap = {
-    "Resolved": 80,
-    "Pending": 20,
-  };
+
   final colorList = <Color>[
     Colors.greenAccent,
   ];
-  List issueArray=[
-    {
-      "issueId":"#1234",
-      "issueName":"Issue Name",
-      "issueDetails":"Issue Details",
-      "issueStatus":"Issue Status",
-      "issueDate":"24 Oct 2022 11:00am",
-    },
-    {
-      "issueId":"#1235",
-      "issueName":"Issue Name",
-      "issueDetails":"Issue Details",
-      "issueStatus":"Issue Status",
-      "issueDate":"25 Oct 2022 9:00am",
-    },
-    {
-      "issueId":"#1236",
-      "issueName":"Issue Name",
-      "issueDetails":"Issue Details",
-      "issueStatus":"Issue Status",
-      "issueDate":"26 Oct 2022 10:00am",
-    },
-    {
-      "issueId":"#1237",
-      "issueName":"Issue Name",
-      "issueDetails":"Issue Details",
-      "issueStatus":"Issue Status",
-      "issueDate":"27 Oct 2022 9:00am",
-    }
-  ];
+  DateTime currentDate=DateTime.now();
+  DateTime fromDate=DateTime.now();
+  DateTime toDate=DateTime.now();
+  String displayFromDate="";
+  String displayToDate="";
+  Future<List<IssueModelClass>>? registerComplaints;
+  @override
+  void initState() {
+    // TODO: implement initState
+    displayFromDate=UT.displayDateConverter(fromDate);
+    displayToDate=UT.displayDateConverter(toDate);
+    super.initState();
+    registerComplaints=getRegisterComplaints();
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -83,50 +69,54 @@ class _MyHomePageState extends State<ComplaintListPage> {
               children: <Widget>[
                 Text("List of Complaints",style: StyleForApp.subHeadline,),
                 const SizedBox(height: 10,),
-                Container(
-                  width: double.infinity,
-                  height: 40,
-                  decoration: BoxDecoration(
-                      color: ColorsForApp.grayColor,
-                      borderRadius: BorderRadius.circular(10.0)
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      SizedBox(
-                        width: 200,
-                        child: Row(
-                          children: [
-                            const SizedBox(width: 8,),
-                            Container(
-                              height: 25,width: 25,
-                              decoration:  const BoxDecoration(
-                                color: Colors.transparent,
-                                image:  DecorationImage(
-                                  fit: BoxFit.contain,
-                                  image: AssetImage(
-                                    AssetFiles.calendar,
+                InkWell(
+                  onTap: (){
+                    pickDateDialog(context);
+                    },
+                  child: Container(
+                    width: double.infinity,
+                    height: 40,
+                    decoration: BoxDecoration(
+                        color: ColorsForApp.grayColor,
+                        borderRadius: BorderRadius.circular(10.0)
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        SizedBox(
+                          width: 200,
+                          child: Row(
+                            children: [
+                              const SizedBox(width: 8,),
+                              Container(
+                                height: 25,width: 25,
+                                decoration:  const BoxDecoration(
+                                  color: Colors.transparent,
+                                  image:  DecorationImage(
+                                    fit: BoxFit.contain,
+                                    image: AssetImage(
+                                      AssetFiles.calendar,
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                            const SizedBox(width: 5,),
-                            Text("Select Date Range",style: StyleForApp.extraSmaller12dp,),
-                          ],
+                              const SizedBox(width: 5,),
+                              Text("Select Date Range",style: StyleForApp.extraSmaller12dp,),
+                            ],
+                          ),
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text("Today",style: TextStyle(
-                          // fontFamily: fontName,
-                          fontWeight: FontWeight.w700,
-                          fontSize: 12,
-                          letterSpacing: 0.27,
-                          color: ColorsForApp.blackColor,
-                        ),),
-                      )
-
-                    ],
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text("Today",style: TextStyle(
+                            // fontFamily: fontName,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 12,
+                            letterSpacing: 0.27,
+                            color: ColorsForApp.blackColor,
+                          ),),
+                        )
+                      ],
+                    ),
                   ),
                 ),
                 const SizedBox(height: 10,),
@@ -149,17 +139,47 @@ class _MyHomePageState extends State<ComplaintListPage> {
       ),
     );
   }
+
   Widget issueListView(BuildContext context){
+    return FutureBuilder<List<IssueModelClass>>(
+      future: registerComplaints,
+      builder: (context,snapshot){
+        // Checking if future is resolved
+        if (snapshot.connectionState == ConnectionState.done) {
+          // If we got an error
+          if (snapshot.hasError) {
+            return Center(
+              child: Text(
+                '${snapshot.error} occurred',
+                style: const TextStyle(fontSize: 18),
+              ),
+            );
+
+            // if we got our data
+          } else if (snapshot.hasData) {
+            // Extracting data from snapshot object
+            List<IssueModelClass>? vendor = snapshot.data;
+            return  _buildListView(vendor!);
+          }
+        }
+        return const Center(child: CircularProgressIndicator(),);
+
+      },
+    );
+  }
+  Widget _buildListView(List<IssueModelClass> vendors) {
     return ListView.builder(
       shrinkWrap: true,
-        itemCount: issueArray.length,
-        physics: const ScrollPhysics(),
-        controller: ScrollController(),
-        itemBuilder: (context,index){
-      return issueListItem(issueArray[index]);
-    });
+      physics: const ScrollPhysics(),
+      controller: ScrollController(),
+      itemBuilder: (ctx, idx) {
+        return issueListItem(vendors[idx]);
+      },
+      itemCount: vendors.length,
+    );
   }
-  Widget issueListItem(var issue){
+
+  Widget issueListItem(IssueModelClass issueModelClass){
     return  Padding(
       padding: const EdgeInsets.only(top: 8.0),
       child: Container(
@@ -173,15 +193,15 @@ class _MyHomePageState extends State<ComplaintListPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(issue['issueId'],textAlign:TextAlign.start,style: StyleForApp.textStyle20dpBold,),
+              Text(issueModelClass.id.toString(),textAlign:TextAlign.start,style: StyleForApp.textStyle20dpBold,),
               const SizedBox(height: 15,),
-              Text(issue['issueName'],textAlign:TextAlign.start,style: StyleForApp.textStyle16dpBold,),
+             // Text(issueModelClass.,textAlign:TextAlign.start,style: StyleForApp.textStyle16dpBold,),
               const SizedBox(height: 5,),
-              Text(issue['issueDetails'],textAlign:TextAlign.start,style: StyleForApp.textStyle16dpBold,),
+             // Text(issue['issueDetails'],textAlign:TextAlign.start,style: StyleForApp.textStyle16dpBold,),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(issue['issueStatus'],textAlign:TextAlign.start,style: StyleForApp.textStyle16dpBold,),
+                  Text("Status ",textAlign:TextAlign.start,style: StyleForApp.textStyle16dpBold,),
                   Container(
                     height: 40,
                     width: 150,
@@ -191,7 +211,7 @@ class _MyHomePageState extends State<ComplaintListPage> {
                     ),
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: Text("Assign",textAlign:TextAlign.center,style: TextStyle(
+                      child: Text(issueModelClass.status.toString(),textAlign:TextAlign.center,style: TextStyle(
                         // fontFamily: fontName,
                         fontWeight: FontWeight.w500,
                         fontSize: 20,
@@ -202,7 +222,7 @@ class _MyHomePageState extends State<ComplaintListPage> {
                   ),
                 ],
               ),
-              Text(issue['issueDate'],textAlign:TextAlign.start,style: StyleForApp.textStyle15dp,),
+              Text(issueModelClass.createdOn.toString(),textAlign:TextAlign.start,style: StyleForApp.textStyle15dp,),
 
 
 
@@ -269,5 +289,216 @@ class _MyHomePageState extends State<ComplaintListPage> {
         )
       ],
     );
+  }
+
+  Future<List<IssueModelClass>> getRegisterComplaints() async {
+    //List<VendorModelClass> vendors=[];
+    var url=Uri.parse("${APIConstant.APIURL}/register-complaint/");
+    print("url-->$url");
+    var response= await http.get(url);
+    print(response.body);
+    if (response.statusCode == 200) {
+      var decodeRes=json.decode(response.body) as List;
+      List<IssueModelClass> vendors = decodeRes.map((tagJson) => IssueModelClass.fromJson(tagJson)).toList();
+
+      return vendors;
+    } else {
+      throw Exception('Failed to load house list');
+    }
+  }
+
+  assignComplaint(int userComplaintId,int vendorId,String imageUrl) async {
+
+    var url=Uri.parse("${APIConstant.APIURL}/assign-complaint");
+     Map<String,dynamic> obj={
+       "user_complaint_id":userComplaintId,
+       "vendor_id":vendorId,
+       "image_url":imageUrl
+     };
+    var response= await http.post(url, body: jsonEncode(obj));
+    print("RES-->${response.body}");
+    var decodeRes=json.decode(response.body);
+    //print()
+
+  }
+
+  pickDateDialog(BuildContext context) {
+    return showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return StatefulBuilder(
+              builder: (context, StateSetter setState1) {
+                return AlertDialog(
+                  content: SizedBox(
+                      height: MediaQuery
+                          .of(context)
+                          .size
+                          .height * 0.2,
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                const Text("Select From Date"),
+                                Container(
+                                  height: 45, width: 100,
+                                  decoration: const BoxDecoration(
+                                    border: Border(
+                                      top: BorderSide(
+                                          width: 1.0, color: Color(0xECEAEAF6)),
+                                      left: BorderSide(
+                                          width: 1.0, color: Color(0xECEAEAF6)),
+                                      right: BorderSide(
+                                          width: 1.0, color: Color(0xECEAEAF6)),
+                                      bottom: BorderSide(
+                                          width: 1.0, color: Color(0xECEAEAF6)),
+                                    ),
+                                    borderRadius: BorderRadius.all(
+                                        Radius.circular(5)),
+                                    //color: Color(0xECEAEAF6),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment
+                                          .spaceBetween,
+                                      children: <Widget>[
+
+                                        InkWell(
+                                          child: Text(
+                                              displayFromDate.toString(),
+                                              textAlign: TextAlign.center,
+                                              style: StyleForApp.textStyle14dp
+                                          ),
+                                          onTap: () {
+                                            fromDatePicker(context,setState1);
+                                          },
+                                        ),
+
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 15,),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                const Text("Select To Date"),
+                                Container(
+                                  height: 45, width: 100,
+                                  decoration: const BoxDecoration(
+                                      border: Border(
+                                        top: BorderSide(width: 1.0,
+                                            color: Color(0xECEAEAF6)),
+                                        left: BorderSide(width: 1.0,
+                                            color: Color(0xECEAEAF6)),
+                                        right: BorderSide(width: 1.0,
+                                            color: Color(0xECEAEAF6)),
+                                        bottom: BorderSide(width: 1.0,
+                                            color: Color(0xECEAEAF6)),
+                                      ),
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(5))
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment
+                                          .spaceBetween,
+                                      children: <Widget>[
+                                        InkWell(
+                                          child: Text(
+                                              displayToDate.toString(),
+                                              textAlign: TextAlign.center,
+                                              style: StyleForApp.textStyle14dp
+                                          ),
+                                          onTap: () {
+                                            toDatePicker(context, setState1);
+                                          },
+                                        ),
+
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            )
+                          ])
+                  ),
+                  actions: <Widget>[
+                    ButtonBar(
+                      buttonMinWidth: 100,
+                      alignment: MainAxisAlignment.spaceEvenly,
+                      children: <Widget>[
+                        ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                primary: ColorsForApp.grayColor,
+                                textStyle: TextStyle(
+                                    color: ColorsForApp.blackColor
+                                )
+                            ),
+                            onPressed: (){
+                              Navigator.of(context).pop();
+                            },
+                            child:  Text("Cancel",style: TextStyle(
+                                color: ColorsForApp.blackColor
+                            ))),
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            primary: ColorsForApp.appButtonColor,
+                                textStyle: TextStyle(
+                                    //fontSize: 30,
+                                    color: ColorsForApp.whiteColor,
+                                    //fontWeight: FontWeight.bold
+                                )
+                          ),
+                          onPressed: () {
+                            Navigator.of(context).pop(context);
+                          // DialogBuilder(context).showLoadingIndicator('');
+                          },
+                          child: const Text("OK"),
+                        ),
+                      ],
+                    ),
+                  ],
+                );
+              }
+
+          );
+        });
+  }
+  Future<void> fromDatePicker(BuildContext context,
+      StateSetter setState2) async {
+    final DateTime picked = (await showDatePicker(
+      context: context,
+      initialDate: currentDate,
+      firstDate: DateTime.now().subtract(Duration(days: 0)),
+      lastDate: DateTime(2100),
+    ))!;
+    if (picked != null && picked != currentDate) {
+      setState2(() {
+        fromDate = picked;
+        displayFromDate=UT.displayDateConverter(fromDate);
+      });
+    }
+  }
+  Future<void> toDatePicker(BuildContext context,
+      StateSetter setState2) async {
+    final DateTime picked = (await showDatePicker(
+      context: context,
+      initialDate: currentDate,
+      firstDate: DateTime.now().subtract(Duration(days: 0)),
+      lastDate: DateTime(2100),
+    ))!;
+    if (picked != null && picked != currentDate) {
+      setState2(() {
+        toDate = picked;
+        displayToDate=UT.displayDateConverter(toDate);
+      });
+    }
   }
 }
