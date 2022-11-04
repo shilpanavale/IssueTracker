@@ -135,8 +135,8 @@ class _MyHomePageState extends State<RegisterComplaint> {
                             child: DropdownButtonHideUnderline(
                               child: DropdownButton(
                                 hint:  const Text(" Select Location",
-                                    style: TextStyle(
-                                        fontSize: 16.0, color: Colors.black54)
+                                    style: TextStyle(fontWeight: FontWeight.w400,
+                                        fontSize: 15.0, color: Colors.black38)
                                 ),
                                 value: selectedLocation,
                                 icon: const Padding(
@@ -178,8 +178,8 @@ class _MyHomePageState extends State<RegisterComplaint> {
                             child: DropdownButtonHideUnderline(
                               child: DropdownButton(
                                 hint:  const Text(" Select Accommodation Type",
-                                    style:  TextStyle(
-                                        fontSize: 15.0, color: Colors.black54)
+                                    style:  TextStyle(fontWeight: FontWeight.w400,
+                                        fontSize: 15.0, color: Colors.black38)
                                 ),
 
                                 value: selectedAccom,
@@ -227,7 +227,8 @@ class _MyHomePageState extends State<RegisterComplaint> {
                             child: DropdownButtonHideUnderline(
                               child: DropdownButton(
                                 hint: const Text(" Select House number",style: TextStyle(
-                                    fontSize: 15.0, color: Colors.black54)),
+                                    fontSize: 15.0, fontWeight: FontWeight.w400,
+                                    color: Colors.black38)),
                                 value: selectHouseNo,
                                 isExpanded: true,
                                 icon: const Padding(
@@ -268,10 +269,10 @@ class _MyHomePageState extends State<RegisterComplaint> {
                             ),
                             child: DropdownButtonHideUnderline(
                               child: DropdownButton(
-                                hint:  Text(" Select Issue Type",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.w400,
-                                      fontSize: 15.0, color: ColorsForApp.grayLabelColor)
+                                hint:  const Text(" Select Issue Type",
+                                    style:  TextStyle(
+                                        fontWeight: FontWeight.w400,
+                                        fontSize: 15.0, color: Colors.black38)
                                 ),
                                 value: selectIssueType,
                                 icon: const Padding(
@@ -312,10 +313,10 @@ class _MyHomePageState extends State<RegisterComplaint> {
                             ),
                             child: DropdownButtonHideUnderline(
                               child: DropdownButton(
-                                hint:  Text(" Select Sub Issue Type",
-                                    style: TextStyle(
+                                hint:  const Text(" Select Sub Issue Type",
+                                    style:  TextStyle(
                                         fontWeight: FontWeight.w400,
-                                        fontSize: 15.0, color: ColorsForApp.grayLabelColor)
+                                        fontSize: 15.0, color: Colors.black38)
                                 ),
                                 value: selectSubIssueType,
                                 icon: const Padding(
@@ -358,8 +359,8 @@ class _MyHomePageState extends State<RegisterComplaint> {
                               textInputAction: TextInputAction.done,
                               autofocus: false,
                               keyboardType: TextInputType.text,
-                              decoration: InputDecoration(
-                                contentPadding: const EdgeInsets.all(8.0),
+                              decoration: const InputDecoration(
+                                contentPadding: EdgeInsets.all(8.0),
                                 // prefixIcon: Icon(icon, color: SavangadiAppTheme.grey,),
                                 counterText: "",
                                 // iconColor: ColorsForApp.lightGrayColor,
@@ -369,7 +370,7 @@ class _MyHomePageState extends State<RegisterComplaint> {
                                 labelText: "Description",
                                 labelStyle:  TextStyle(
                                     fontWeight: FontWeight.w400,
-                                    fontSize: 15.0, color: ColorsForApp.grayLabelColor),
+                                    fontSize: 15.0, color: Colors.black38),
 
                                 border: InputBorder.none,
 
@@ -404,9 +405,9 @@ class _MyHomePageState extends State<RegisterComplaint> {
                                   color: ColorsForApp.whiteColor,
                                   // border: Border.all()
                                 ),
-                                child: const Padding(
+                                child:  const Padding(
                                   padding: EdgeInsets.all(10.0),
-                                  child: Text("Upload Image",textAlign:TextAlign.start,style: TextStyle(fontSize: 15,color: Colors.black38),),
+                                  child: Text("Upload Image",textAlign:TextAlign.start,style: TextStyle(fontSize: 15,fontWeight: FontWeight.w400,color: Colors.black38),),
                                 ),
                               ),
                               IconButton(onPressed: (){
