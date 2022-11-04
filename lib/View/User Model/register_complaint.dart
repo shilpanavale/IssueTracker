@@ -428,8 +428,9 @@ class _MyHomePageState extends State<RegisterComplaint> {
                             Fluttertoast.showToast(msg: "Please select Issue Type");
                           }else if(selectSubIssueType.toString().isEmpty || selectSubIssueType==null||selectSubIssueType==""){
                             Fluttertoast.showToast(msg: "Please select Sub Issue Type");
+                          } else{
+                            Navigator.push(context, MaterialPageRoute(builder: (context)=>const MyComplaintListPage()));
                           }
-                          Navigator.push(context, MaterialPageRoute(builder: (context)=>const MyComplaintListPage()));
                         }, title: "Submit"),
                         const SizedBox(height: 20,),
                       ],
