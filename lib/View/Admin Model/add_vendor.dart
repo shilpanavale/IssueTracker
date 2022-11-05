@@ -185,6 +185,8 @@ class _MyHomePageState extends State<AddVendor> {
      "vendor_email": emailIDTxt.text,
      "vendor_contact": contactTxt.text
    };
+
+   print('add vendor-->$obj');
     var url=Uri.parse("${APIConstant.APIURL}/vendor");
     var response= await http.post(url, body: jsonEncode(obj));
     print("RES-->${response.body}");

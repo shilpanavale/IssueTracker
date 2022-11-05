@@ -243,12 +243,12 @@ class _MyHomePageState extends State<RegisterComplaint> {
 
                                   setState(() {
                                     selectHouseNo=newValue;
-
+                                    print('selectHouseNo-->$selectHouseNo');
                                   });
                                 },
                                 items: houseList.map((value) {
                                   return DropdownMenuItem<String>(
-                                    value: value.houseNo,
+                                    value: value.houseId,
                                     child: Text(value.houseNo!),
                                   );
                                 }).toList(),
@@ -330,12 +330,14 @@ class _MyHomePageState extends State<RegisterComplaint> {
                                 isDense: true,
                                 onChanged: (newValue) {
                                   setState(() {
+
                                     selectSubIssueType=newValue;
+                                    print('selectSubIssueType--->$selectSubIssueType');
                                   });
                                 },
                                 items: subIssueTypeList.map((value) {
                                   return DropdownMenuItem<String>(
-                                    value: value.subIssue,
+                                    value: value.subIssueId,
                                     child: Text(value.subIssue.toString()),
                                   );
                                 }).toList(),
@@ -430,7 +432,8 @@ class _MyHomePageState extends State<RegisterComplaint> {
                           }else if(selectSubIssueType.toString().isEmpty || selectSubIssueType==null||selectSubIssueType==""){
                             Fluttertoast.showToast(msg: "Please select Sub Issue Type");
                           } else{
-                            Navigator.push(context, MaterialPageRoute(builder: (context)=>const MyComplaintListPage()));
+                            postComplaint();
+                         //   Navigator.push(context, MaterialPageRoute(builder: (context)=>const MyComplaintListPage()));
                           }
                         }, title: "Submit"),
                         const SizedBox(height: 20,),
@@ -480,8 +483,8 @@ class _MyHomePageState extends State<RegisterComplaint> {
     } else {
       throw Exception('Failed to load house list');
     }
-
   }
+
 
   getHouseList(String selectedAccom ) async {
 
@@ -491,7 +494,7 @@ class _MyHomePageState extends State<RegisterComplaint> {
 
     if (response.statusCode == 200) {
       var decodeRes=json.decode(response.body) as List;
-
+      print("House No-->$decodeRes");
       houseList = decodeRes.map((tagJson) => HouseNumberModel.fromJson(tagJson)).toList();
       print("House No-->$houseList");
       setState(() {
@@ -543,6 +546,35 @@ class _MyHomePageState extends State<RegisterComplaint> {
 
   }
 
+
+  postComplaint() async{
+
+    Map<String,dynamic> obj={
+      "cat_issue_id": selectIssueType,
+      "sub_issue_id": selectSubIssueType,
+      "house_no": selectHouseNo,
+      "image_url": addPhotosTxt.text
+    };
+
+    print('obj of post complaint--->$obj');
+    var url=Uri.parse("${APIConstant.APIURL}/register-complaint");
+    var response= await http.post(url, body: jsonEncode(obj));
+    print("url of register complaint-->${url}");
+    print("RES of register complaint-->${response.body}");
+    var decodeRes=json.decode(response.body);
+    print("decodeRes of register complaint-->${decodeRes}");
+   /* var msg=decodeRes["message"];
+    if(msg=="Vendor Created") {
+      Fluttertoast.showToast(msg: "Vendor Created successfully");
+      vendorNameTxt.clear();
+      emailIDTxt.clear();
+      contactTxt.clear();
+    }else{
+      Fluttertoast.showToast(msg: "Vendor Created successfully");
+    }*/
+
+
+  }
 
   Future pickImage() async {
     try {

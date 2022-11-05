@@ -35,16 +35,20 @@ class AccommodationModel {
   }
 }
 class HouseNumberModel {
+
+  String? houseId;
   String? houseNo;
 
-  HouseNumberModel({this.houseNo});
+  HouseNumberModel({this.houseNo,this.houseId});
 
   HouseNumberModel.fromJson(Map<String, dynamic> json) {
+    houseId = json['house_id'];
     houseNo = json['house_no'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['house_id'] = this.houseId;
     data['house_no'] = this.houseNo;
     return data;
   }
