@@ -9,6 +9,8 @@ import 'package:untitled/View/Admin%20Model/admin_drawer.dart';
 import 'package:untitled/View/Admin%20Model/complaints_list.dart';
 import 'package:untitled/View/User%20Model/api_constant.dart';
 
+import '../../CustomeWidget/custome_dialog.dart';
+
 class AdminDashboardPage extends StatefulWidget {
   const AdminDashboardPage({Key? key}) : super(key: key);
 
@@ -40,45 +42,51 @@ class _MyHomePageState extends State<AdminDashboardPage> {
   @override
   Widget build(BuildContext context) {
 
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0.0,
-        leading: Builder(
-          builder: (context) => IconButton(
-            icon: Container(
-              height: 25,width: 25,
-              decoration:  const BoxDecoration(
-                color: Colors.transparent,
+    return WillPopScope(
+      onWillPop:  ()async {
+        exitAppDialog();
+        return true;
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0.0,
+          leading: Builder(
+            builder: (context) => IconButton(
+              icon: Container(
+                height: 25,width: 25,
+                decoration:  const BoxDecoration(
+                  color: Colors.transparent,
+                ),
+                child: Image.asset(
+                  AssetFiles.menu,
+                ),
               ),
-              child: Image.asset(
-                AssetFiles.menu,
-              ),
+              onPressed: () => Scaffold.of(context).openDrawer(),
             ),
-            onPressed: () => Scaffold.of(context).openDrawer(),
+          ),
+
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Text("Admin Dashboard",style: StyleForApp.appBarTextStyle,),
+            ],
           ),
         ),
-
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            Text("Admin Dashboard",style: StyleForApp.appBarTextStyle,),
-          ],
-        ),
-      ),
-      drawer: const AdminDrawerPage(),
-      body: SizedBox(
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height,
-        child: SingleChildScrollView(
-          controller: ScrollController(),
-          child: Column(
-           // mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: <Widget>[
-              selectDateRange(context),
-              const SizedBox(height: 10,),
-              statusWiseComplaintUI(context)
-            ],
+        drawer: const AdminDrawerPage(),
+        body: SizedBox(
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height,
+          child: SingleChildScrollView(
+            controller: ScrollController(),
+            child: Column(
+             // mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: <Widget>[
+                selectDateRange(context),
+                const SizedBox(height: 10,),
+                statusWiseComplaintUI(context)
+              ],
+            ),
           ),
         ),
       ),
@@ -257,6 +265,7 @@ class _MyHomePageState extends State<AdminDashboardPage> {
             padding: const EdgeInsets.all(15.0),
             child: Text("Status wise Complaints",textAlign:TextAlign.start,style: StyleForApp.subHeadline,),
           ),
+          importantIssueUI(context),
           openIssueUI(context),
           const SizedBox(height: 10,),
           noUpdateUI(context),
@@ -330,7 +339,7 @@ class _MyHomePageState extends State<AdminDashboardPage> {
         child: Container(
           height: 60,
           decoration: BoxDecoration(
-              color: ColorsForApp.appButtonColor,
+              color: HexColor("#C6BFB7"),
               borderRadius: BorderRadius.circular(10.0)
           ),
           child: Padding(
@@ -343,14 +352,14 @@ class _MyHomePageState extends State<AdminDashboardPage> {
                   fontWeight: FontWeight.w700,
                   fontSize: 20,
                   letterSpacing: 0.27,
-                  color: ColorsForApp.whiteColor,
+                  color: ColorsForApp.blackColor,
                 ),),
                 Text("10",style:  TextStyle(
                   // fontFamily: fontName,
                   fontWeight: FontWeight.w700,
-                  fontSize: 28,
+                  fontSize: 20,
                   letterSpacing: 0.27,
-                  color: ColorsForApp.whiteColor,
+                  color: ColorsForApp.blackColor,
                 ),),
               ],
             ),
@@ -369,7 +378,7 @@ class _MyHomePageState extends State<AdminDashboardPage> {
         child: Container(
           height: 60,
           decoration: BoxDecoration(
-              color: ColorsForApp.appButtonColor,
+              color: HexColor("#C6BFB7"),
               borderRadius: BorderRadius.circular(10.0)
           ),
           child: Padding(
@@ -378,6 +387,45 @@ class _MyHomePageState extends State<AdminDashboardPage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text("Open Issues",style: TextStyle(
+                  // fontFamily: fontName,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 20,
+                  letterSpacing: 0.27,
+                  color: ColorsForApp.blackColor,
+                ),),
+                Text("8",style:  TextStyle(
+                  // fontFamily: fontName,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 20,
+                  letterSpacing: 0.27,
+                  color: ColorsForApp.blackColor,
+                ),),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+  Widget importantIssueUI(BuildContext context){
+    return  InkWell(
+      onTap: (){
+        Navigator.push(context, MaterialPageRoute(builder: (context)=>const ComplaintListPage()));
+        },
+      child: Padding(
+        padding: const EdgeInsets.all(15.0),
+        child: Container(
+          height: 60,
+          decoration: BoxDecoration(
+              color: ColorsForApp.appButtonColor,
+              borderRadius: BorderRadius.circular(10.0)
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text("Important Issues",style: TextStyle(
                   // fontFamily: fontName,
                   fontWeight: FontWeight.w700,
                   fontSize: 20,
@@ -418,7 +466,7 @@ class _MyHomePageState extends State<AdminDashboardPage> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: <Widget>[
-                                const Text("Select From Date"),
+                                const Text("From"),
                                 Container(
                                   height: 45, width: 100,
                                   decoration: const BoxDecoration(
@@ -464,7 +512,7 @@ class _MyHomePageState extends State<AdminDashboardPage> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: <Widget>[
-                                const Text("Select To Date"),
+                                const Text("To"),
                                 Container(
                                   height: 45, width: 100,
                                   decoration: const BoxDecoration(
@@ -553,8 +601,25 @@ class _MyHomePageState extends State<AdminDashboardPage> {
     final DateTime picked = (await showDatePicker(
       context: context,
       initialDate: currentDate,
-      firstDate: DateTime.now().subtract(Duration(days: 0)),
-      lastDate: DateTime(2100),
+      firstDate: DateTime(2010),
+      lastDate:DateTime(2025),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme:  ColorScheme.light(
+              primary: ColorsForApp.appButtonColor, // <-- SEE HERE
+              onPrimary: Colors.white, // <-- SEE HERE
+              onSurface: Colors.blueAccent, // <-- SEE HERE
+            ),
+            textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(
+                primary: Colors.red, // button text color
+              ),
+            ),
+          ),
+          child: child!,
+        );
+      },
     ))!;
     if (picked != null && picked != currentDate) {
       setState2(() {
@@ -568,8 +633,25 @@ class _MyHomePageState extends State<AdminDashboardPage> {
     final DateTime picked = (await showDatePicker(
       context: context,
       initialDate: currentDate,
-      firstDate: DateTime.now().subtract(Duration(days: 0)),
-      lastDate: DateTime(2100),
+      firstDate: DateTime(2010),
+      lastDate:DateTime(2025),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme:  ColorScheme.light(
+              primary: ColorsForApp.appButtonColor, // <-- SEE HERE
+              onPrimary: Colors.white, // <-- SEE HERE
+              onSurface: Colors.blueAccent, // <-- SEE HERE
+            ),
+            textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(
+                primary: Colors.red, // button text color
+              ),
+            ),
+          ),
+          child: child!,
+        );
+      },
     ))!;
     if (picked != null && picked != currentDate) {
       setState2(() {
@@ -577,5 +659,13 @@ class _MyHomePageState extends State<AdminDashboardPage> {
         displayToDate=UT.displayDateConverter(toDate);
       });
     }
+  }
+
+  Future<bool?> exitAppDialog() {
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) => CustomDialog(
+      ),
+    );
   }
 }

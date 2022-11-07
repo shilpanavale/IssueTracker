@@ -71,7 +71,7 @@ class _MyHomePageState extends State<RegisterComplaint> {
       "value":"Carpentry",
     },
   ];*/
- List<dynamic> accommodationList=[];
+  List<dynamic> accommodationList=[];
 
   File? image;
   @override
@@ -81,370 +81,377 @@ class _MyHomePageState extends State<RegisterComplaint> {
     getLocationList();
     getIssueType();
   }
+  Future<bool> willPopScopeBack() async{
+    Navigator.push(context, MaterialPageRoute(builder: (context)=>const MyComplaintListPage()));
+    return true;
+  }
   @override
   Widget build(BuildContext context) {
 
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0.0,
-        leading: BackLeadingButton(onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (context)=>const MyComplaintListPage()));
-        },),
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            Text("User Dashboard",style: StyleForApp.appBarTextStyle,),
-          ],
+    return WillPopScope(
+      onWillPop:willPopScopeBack,
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0.0,
+          leading: BackLeadingButton(onPressed: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context)=>const MyComplaintListPage()));
+          },),
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Text("User Dashboard",style: StyleForApp.appBarTextStyle,),
+            ],
+          ),
         ),
-      ),
-      body: SizedBox(
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height,
-        child: SingleChildScrollView(
-          controller: ScrollController(),
-          child: Padding(
-            padding: const EdgeInsets.all(15.0),
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text("Register Complaint",style: StyleForApp.subHeadline,),
-                  const SizedBox(height: 30,),
-                  Container(
-                    width: double.infinity,
-                   // height: 40,
-                    decoration: BoxDecoration(
-                        color: HexColor("#4A50C9").withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(10.0)
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const SizedBox(height: 10,),
-                        //CommonTextField.commonTextField(null, "Location", stationTxt, TextInputType.text),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 3, bottom: 3, right: 30, left: 30),
-                          child: Container(
-                            height: 40,
-                            padding: const EdgeInsets.all(8.0),
-                            decoration: BoxDecoration(
-                              color: ColorsForApp.whiteColor,
-                              borderRadius: BorderRadius.circular(10.0),
-                            ),
-                            child: DropdownButtonHideUnderline(
-                              child: DropdownButton(
-                                hint:  const Text(" Select Location",
-                                    style: TextStyle(fontWeight: FontWeight.w400,
-                                        fontSize: 15.0, color: Colors.black38)
-                                ),
-                                value: selectedLocation,
-                                icon: const Padding(
-                                  padding: EdgeInsets.only(right: 16.0),
-                                  child: Icon(
-                                    Icons.arrow_drop_down_circle,
-                                    size: 20,color: Colors.grey,
-                                  ),
-                                ),
-                                isExpanded: true,
-                                isDense: true,
-                                onChanged: (newValue) {
-                                  setState(() {
-                                    selectedLocation=newValue;
-                                    getAccommodationList(selectedLocation);
-                                  });
-                                },
-                                items: locationList.map((value) {
-                                  return DropdownMenuItem<String>(
-                                    value: value.houseLocation,
-                                    child: Text(value.houseLocation!),
-                                  );
-                                }).toList(),
+        body: SizedBox(
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height,
+          child: SingleChildScrollView(
+            controller: ScrollController(),
+            child: Padding(
+              padding: const EdgeInsets.all(15.0),
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text("Register Complaint",style: StyleForApp.subHeadline,),
+                    const SizedBox(height: 30,),
+                    Container(
+                      width: double.infinity,
+                      // height: 40,
+                      decoration: BoxDecoration(
+                          color: HexColor("#4A50C9").withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(10.0)
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const SizedBox(height: 10,),
+                          //CommonTextField.commonTextField(null, "Location", stationTxt, TextInputType.text),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 3, bottom: 3, right: 30, left: 30),
+                            child: Container(
+                              height: 40,
+                              padding: const EdgeInsets.all(8.0),
+                              decoration: BoxDecoration(
+                                color: ColorsForApp.whiteColor,
+                                borderRadius: BorderRadius.circular(10.0),
                               ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 10,),
-                        // CommonTextField.commonTextField(null, "Type of accommodation", colonyTxt, TextInputType.text),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 3, bottom: 3, right: 30, left: 30),
-                          child: Container(
-                            height: 40,
-                            padding: const EdgeInsets.all(5.0),
-                            decoration: BoxDecoration(
-                              color: ColorsForApp.whiteColor,
-                              borderRadius: BorderRadius.circular(10.0),
-                            ),
-                            child: DropdownButtonHideUnderline(
-                              child: DropdownButton(
-                                hint:  const Text(" Select Accommodation Type",
-                                    style:  TextStyle(fontWeight: FontWeight.w400,
-                                        fontSize: 15.0, color: Colors.black38)
-                                ),
-
-                                value: selectedAccom,
-                                icon: const Padding(
-                                  padding: EdgeInsets.only(right: 16.0),
-                                  child: Icon(
-                                    Icons.arrow_drop_down_circle,
-                                    size: 20,color: Colors.grey,
+                              child: DropdownButtonHideUnderline(
+                                child: DropdownButton(
+                                  hint:  const Text(" Select Location",
+                                      style: TextStyle(fontWeight: FontWeight.w400,
+                                          fontSize: 15.0, color: Colors.black38)
                                   ),
-                                ),
-                                isExpanded: true,
-                                isDense: true,
-                                onChanged: (newValue) {
-                                  if(selectedLocation!=null){
+                                  value: selectedLocation,
+                                  icon: const Padding(
+                                    padding: EdgeInsets.only(right: 16.0),
+                                    child: Icon(
+                                      Icons.arrow_drop_down_circle,
+                                      size: 20,color: Colors.grey,
+                                    ),
+                                  ),
+                                  isExpanded: true,
+                                  isDense: true,
+                                  onChanged: (newValue) {
                                     setState(() {
-                                      selectedAccom=newValue;
-                                      getHouseList(selectedAccom);
-
+                                      selectedLocation=newValue;
+                                      getAccommodationList(selectedLocation);
                                     });
-                                  }else{
-                                    Fluttertoast.showToast(msg: "Please first select location");
-                                  }
-
-                                },
-                                items: accommodationList.map((value) {
-                                  return DropdownMenuItem<String>(
-                                    value: value.houseType,
-                                    child: Text(value.houseType!),
-                                  );
-                                }).toList(),
+                                  },
+                                  items: locationList.map((value) {
+                                    return DropdownMenuItem<String>(
+                                      value: value.houseLocation,
+                                      child: Text(value.houseLocation!),
+                                    );
+                                  }).toList(),
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                        const SizedBox(height: 10,),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 3, bottom: 3, right: 30, left: 30),
-                          child: Container(
-                            height: 40,
-                            padding: const EdgeInsets.all(8.0),
-                            decoration: BoxDecoration(
-                              color: ColorsForApp.whiteColor,
-                              borderRadius: BorderRadius.circular(10.0),
-                            ),
-                            child: DropdownButtonHideUnderline(
-                              child: DropdownButton(
-                                hint: const Text(" Select House number",style: TextStyle(
-                                    fontSize: 15.0, fontWeight: FontWeight.w400,
-                                    color: Colors.black38)),
-                                value: selectHouseNo,
-                                isExpanded: true,
-                                icon: const Padding(
-                                  padding: EdgeInsets.only(right: 16.0),
-                                  child: Icon(
-                                    Icons.arrow_drop_down_circle,
-                                    size: 20,color: Colors.grey,
+                          const SizedBox(height: 10,),
+                          // CommonTextField.commonTextField(null, "Type of accommodation", colonyTxt, TextInputType.text),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 3, bottom: 3, right: 30, left: 30),
+                            child: Container(
+                              height: 40,
+                              padding: const EdgeInsets.all(5.0),
+                              decoration: BoxDecoration(
+                                color: ColorsForApp.whiteColor,
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                              child: DropdownButtonHideUnderline(
+                                child: DropdownButton(
+                                  hint:  const Text(" Select Accommodation Type",
+                                      style:  TextStyle(fontWeight: FontWeight.w400,
+                                          fontSize: 15.0, color: Colors.black38)
                                   ),
-                                ),
-                                isDense: true,
-                                onChanged: (newValue) {
 
-                                  setState(() {
-                                    selectHouseNo=newValue;
-                                    print('selectHouseNo-->$selectHouseNo');
-                                  });
-                                },
-                                items: houseList.map((value) {
-                                  return DropdownMenuItem<String>(
-                                    value: value.houseId,
-                                    child: Text(value.houseNo!),
-                                  );
-                                }).toList(),
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 20,),
-                        //CommonTextField.commonTextField(null, "Complaint Type", complaintTypeTxt, TextInputType.text),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 3, bottom: 3, right: 30, left: 30),
-                          child: Container(
-                            height: 40,
-                            padding: const EdgeInsets.all(8.0),
-                            decoration: BoxDecoration(
-                              color: ColorsForApp.whiteColor,
-                              borderRadius: BorderRadius.circular(10.0),
-                            ),
-                            child: DropdownButtonHideUnderline(
-                              child: DropdownButton(
-                                hint:  const Text(" Select Issue Type",
-                                    style:  TextStyle(
-                                        fontWeight: FontWeight.w400,
-                                        fontSize: 15.0, color: Colors.black38)
-                                ),
-                                value: selectIssueType,
-                                icon: const Padding(
-                                  padding: EdgeInsets.only(right: 16.0),
-                                  child: Icon(
-                                    Icons.arrow_drop_down_circle,
-                                    size: 20,color: Colors.grey,
+                                  value: selectedAccom,
+                                  icon: const Padding(
+                                    padding: EdgeInsets.only(right: 16.0),
+                                    child: Icon(
+                                      Icons.arrow_drop_down_circle,
+                                      size: 20,color: Colors.grey,
+                                    ),
                                   ),
+                                  isExpanded: true,
+                                  isDense: true,
+                                  onChanged: (newValue) {
+                                    if(selectedLocation!=null){
+                                      setState(() {
+                                        selectedAccom=newValue;
+                                        getHouseList(selectedAccom);
+
+                                      });
+                                    }else{
+                                      Fluttertoast.showToast(msg: "Please first select location");
+                                    }
+
+                                  },
+                                  items: accommodationList.map((value) {
+                                    return DropdownMenuItem<String>(
+                                      value: value.houseType,
+                                      child: Text(value.houseType!),
+                                    );
+                                  }).toList(),
                                 ),
-                                isExpanded: true,
-                                isDense: true,
-                                onChanged: (newValue) {
-                                  setState(() {
-                                    selectIssueType=newValue;
-                                    print('selectIssueType-->$selectIssueType');
-                                    getSubIssueType(selectIssueType);
-                                  });
-                                },
-                                items: issueTypeList.map((value) {
-                                  return DropdownMenuItem<String>(
-                                    value: value.issueId,
-                                    child: Text(value.issue.toString()),
-                                  );
-                                }).toList(),
                               ),
                             ),
                           ),
-                        ),
-                        const SizedBox(height: 10,),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 3, bottom: 3, right: 30, left: 30),
-                          child: Container(
-                            height: 40,
-                            padding: const EdgeInsets.all(5.0),
-                            decoration: BoxDecoration(
-                              color: ColorsForApp.whiteColor,
-                              borderRadius: BorderRadius.circular(10.0),
-                            ),
-                            child: DropdownButtonHideUnderline(
-                              child: DropdownButton(
-                                hint:  const Text(" Select Sub Issue Type",
-                                    style:  TextStyle(
-                                        fontWeight: FontWeight.w400,
-                                        fontSize: 15.0, color: Colors.black38)
-                                ),
-                                value: selectSubIssueType,
-                                icon: const Padding(
-                                  padding: EdgeInsets.only(right: 16.0),
-                                  child: Icon(
-                                    Icons.arrow_drop_down_circle,
-                                    size: 20,color: Colors.grey,
+                          const SizedBox(height: 10,),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 3, bottom: 3, right: 30, left: 30),
+                            child: Container(
+                              height: 40,
+                              padding: const EdgeInsets.all(8.0),
+                              decoration: BoxDecoration(
+                                color: ColorsForApp.whiteColor,
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                              child: DropdownButtonHideUnderline(
+                                child: DropdownButton(
+                                  hint: const Text(" Select House number",style: TextStyle(
+                                      fontSize: 15.0, fontWeight: FontWeight.w400,
+                                      color: Colors.black38)),
+                                  value: selectHouseNo,
+                                  isExpanded: true,
+                                  icon: const Padding(
+                                    padding: EdgeInsets.only(right: 16.0),
+                                    child: Icon(
+                                      Icons.arrow_drop_down_circle,
+                                      size: 20,color: Colors.grey,
+                                    ),
                                   ),
+                                  isDense: true,
+                                  onChanged: (newValue) {
+
+                                    setState(() {
+                                      selectHouseNo=newValue;
+                                      print('selectHouseNo-->$selectHouseNo');
+                                    });
+                                  },
+                                  items: houseList.map((value) {
+                                    return DropdownMenuItem<String>(
+                                      value: value.houseId,
+                                      child: Text(value.houseNo!),
+                                    );
+                                  }).toList(),
                                 ),
-                                isExpanded: true,
-                                isDense: true,
-                                onChanged: (newValue) {
-                                  setState(() {
-
-                                    selectSubIssueType=newValue;
-                                    print('selectSubIssueType--->$selectSubIssueType');
-                                  });
-                                },
-                                items: subIssueTypeList.map((value) {
-                                  return DropdownMenuItem<String>(
-                                    value: value.subIssueId,
-                                    child: Text(value.subIssue.toString()),
-                                  );
-                                }).toList(),
                               ),
                             ),
                           ),
-                        ),
-                        const SizedBox(height: 10,),
-                       // CommonTextField.commonTextField(null, "Description", describeComplaintTxt, TextInputType.text),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 3, bottom: 3, right: 30, left: 30),
-                          child: Container(
-                            height: 70,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10.0),
-                              color: ColorsForApp.whiteColor,
-                              // border: Border.all()
-                            ),
-                            child: TextFormField(
-                              controller: describeComplaintTxt,
-                              textInputAction: TextInputAction.done,
-                              autofocus: false,
-                              keyboardType: TextInputType.text,
-                              decoration: const InputDecoration(
-                                contentPadding: EdgeInsets.all(8.0),
-                                // prefixIcon: Icon(icon, color: SavangadiAppTheme.grey,),
-                                counterText: "",
-                                // iconColor: ColorsForApp.lightGrayColor,
-                                isDense: true,
-                                fillColor: Colors.black,
-                                //border: OutlineInputBorder(),
-                                labelText: "Description",
-                                labelStyle:  TextStyle(
-                                    fontWeight: FontWeight.w400,
-                                    fontSize: 15.0, color: Colors.black38),
-
-                                border: InputBorder.none,
-
+                          const SizedBox(height: 20,),
+                          //CommonTextField.commonTextField(null, "Complaint Type", complaintTypeTxt, TextInputType.text),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 3, bottom: 3, right: 30, left: 30),
+                            child: Container(
+                              height: 40,
+                              padding: const EdgeInsets.all(8.0),
+                              decoration: BoxDecoration(
+                                color: ColorsForApp.whiteColor,
+                                borderRadius: BorderRadius.circular(10.0),
                               ),
-                              minLines: 1,
-                              maxLines: 4,
+                              child: DropdownButtonHideUnderline(
+                                child: DropdownButton(
+                                  hint:  const Text(" Select Issue Type",
+                                      style:  TextStyle(
+                                          fontWeight: FontWeight.w400,
+                                          fontSize: 15.0, color: Colors.black38)
+                                  ),
+                                  value: selectIssueType,
+                                  icon: const Padding(
+                                    padding: EdgeInsets.only(right: 16.0),
+                                    child: Icon(
+                                      Icons.arrow_drop_down_circle,
+                                      size: 20,color: Colors.grey,
+                                    ),
+                                  ),
+                                  isExpanded: true,
+                                  isDense: true,
+                                  onChanged: (newValue) {
+                                    setState(() {
+                                      selectIssueType=newValue;
+                                      print('selectIssueType-->$selectIssueType');
+                                      getSubIssueType(selectIssueType);
+                                    });
+                                  },
+                                  items: issueTypeList.map((value) {
+                                    return DropdownMenuItem<String>(
+                                      value: value.issueId,
+                                      child: Text(value.issue.toString()),
+                                    );
+                                  }).toList(),
+                                ),
+                              ),
                             ),
                           ),
-                        ),
-                        const SizedBox(height: 10,),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 30.0,right: 20.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                             // CommonTextField.commonTextField(null, "Add Photos", stationTxt, TextInputType.text),
-                              image!=null?
-                              Container(
-                                  height: 100,
-                                  width: 100,
+                          const SizedBox(height: 10,),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 3, bottom: 3, right: 30, left: 30),
+                            child: Container(
+                              height: 40,
+                              padding: const EdgeInsets.all(5.0),
+                              decoration: BoxDecoration(
+                                color: ColorsForApp.whiteColor,
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                              child: DropdownButtonHideUnderline(
+                                child: DropdownButton(
+                                  hint:  const Text(" Select Sub Issue Type",
+                                      style:  TextStyle(
+                                          fontWeight: FontWeight.w400,
+                                          fontSize: 15.0, color: Colors.black38)
+                                  ),
+                                  value: selectSubIssueType,
+                                  icon: const Padding(
+                                    padding: EdgeInsets.only(right: 16.0),
+                                    child: Icon(
+                                      Icons.arrow_drop_down_circle,
+                                      size: 20,color: Colors.grey,
+                                    ),
+                                  ),
+                                  isExpanded: true,
+                                  isDense: true,
+                                  onChanged: (newValue) {
+                                    setState(() {
+
+                                      selectSubIssueType=newValue;
+                                      print('selectSubIssueType--->$selectSubIssueType');
+                                    });
+                                  },
+                                  items: subIssueTypeList.map((value) {
+                                    return DropdownMenuItem<String>(
+                                      value: value.subIssueId,
+                                      child: Text(value.subIssue.toString()),
+                                    );
+                                  }).toList(),
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 10,),
+                          // CommonTextField.commonTextField(null, "Description", describeComplaintTxt, TextInputType.text),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 3, bottom: 3, right: 30, left: 30),
+                            child: Container(
+                              height: 70,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10.0),
+                                color: ColorsForApp.whiteColor,
+                                // border: Border.all()
+                              ),
+                              child: TextFormField(
+                                controller: describeComplaintTxt,
+                                textInputAction: TextInputAction.done,
+                                autofocus: false,
+                                keyboardType: TextInputType.text,
+                                decoration: const InputDecoration(
+                                  contentPadding: EdgeInsets.all(8.0),
+                                  // prefixIcon: Icon(icon, color: SavangadiAppTheme.grey,),
+                                  counterText: "",
+                                  // iconColor: ColorsForApp.lightGrayColor,
+                                  isDense: true,
+                                  fillColor: Colors.black,
+                                  //border: OutlineInputBorder(),
+                                  labelText: "Description",
+                                  labelStyle:  TextStyle(
+                                      fontWeight: FontWeight.w400,
+                                      fontSize: 15.0, color: Colors.black38),
+
+                                  border: InputBorder.none,
+
+                                ),
+                                minLines: 1,
+                                maxLines: 4,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 10,),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 30.0,right: 20.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                // CommonTextField.commonTextField(null, "Add Photos", stationTxt, TextInputType.text),
+                                image!=null?
+                                Container(
+                                    height: 100,
+                                    width: 100,
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10.0),
+                                        color: ColorsForApp.grayColor,
+                                        border: Border.all()
+                                    ),
+                                    child: Image.file(image!)
+                                ):Container(
+                                  height: 47,
+                                  width: 200,
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(10.0),
-                                    color: ColorsForApp.grayColor,
-                                     border: Border.all()
+                                    color: ColorsForApp.whiteColor,
+                                    // border: Border.all()
                                   ),
-                                  child: Image.file(image!)
-                              ):Container(
-                                height: 47,
-                                width: 200,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10.0),
-                                  color: ColorsForApp.whiteColor,
-                                  // border: Border.all()
+                                  child:  const Padding(
+                                    padding: EdgeInsets.all(10.0),
+                                    child: Text("Upload Image",textAlign:TextAlign.start,style: TextStyle(fontSize: 15,fontWeight: FontWeight.w400,color: Colors.black38),),
+                                  ),
                                 ),
-                                child:  const Padding(
-                                  padding: EdgeInsets.all(10.0),
-                                  child: Text("Upload Image",textAlign:TextAlign.start,style: TextStyle(fontSize: 15,fontWeight: FontWeight.w400,color: Colors.black38),),
-                                ),
-                              ),
-                              IconButton(onPressed: (){
-                                pickImage();
-                              }, icon: const Icon(Icons.add_box))
-                            ],
+                                IconButton(onPressed: (){
+                                  pickImage();
+                                }, icon: const Icon(Icons.add_box))
+                              ],
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 40,),
-                        CommonButtonForAllApp(
-                            onPressed: (){
-                          if(selectedLocation.toString().isEmpty || selectedLocation==null||selectedLocation==""){
-                            Fluttertoast.showToast(msg: "Please select location");
-                          }else if(selectedAccom.toString().isEmpty || selectedAccom==null||selectedAccom==""){
-                            Fluttertoast.showToast(msg: "Please select accommodation");
-                          }else if(selectHouseNo.toString().isEmpty || selectHouseNo==null||selectHouseNo==""){
-                            Fluttertoast.showToast(msg: "Please select house");
-                          }else if(selectIssueType.toString().isEmpty || selectIssueType==null||selectIssueType==""){
-                            Fluttertoast.showToast(msg: "Please select Issue Type");
-                          }else if(selectSubIssueType.toString().isEmpty || selectSubIssueType==null||selectSubIssueType==""){
-                            Fluttertoast.showToast(msg: "Please select Sub Issue Type");
-                          } else{
-                            postComplaint();
-                         //   Navigator.push(context, MaterialPageRoute(builder: (context)=>const MyComplaintListPage()));
-                          }
-                        }, title: "Submit"),
-                        const SizedBox(height: 20,),
-                      ],
+                          const SizedBox(height: 40,),
+                          CommonButtonForAllApp(
+                              onPressed: (){
+                                if(selectedLocation.toString().isEmpty || selectedLocation==null||selectedLocation==""){
+                                  Fluttertoast.showToast(msg: "Please select location");
+                                }else if(selectedAccom.toString().isEmpty || selectedAccom==null||selectedAccom==""){
+                                  Fluttertoast.showToast(msg: "Please select accommodation");
+                                }else if(selectHouseNo.toString().isEmpty || selectHouseNo==null||selectHouseNo==""){
+                                  Fluttertoast.showToast(msg: "Please select house");
+                                }else if(selectIssueType.toString().isEmpty || selectIssueType==null||selectIssueType==""){
+                                  Fluttertoast.showToast(msg: "Please select Issue Type");
+                                }else if(selectSubIssueType.toString().isEmpty || selectSubIssueType==null||selectSubIssueType==""){
+                                  Fluttertoast.showToast(msg: "Please select Sub Issue Type");
+                                } else{
+                                  postComplaint();
+                                  //   Navigator.push(context, MaterialPageRoute(builder: (context)=>const MyComplaintListPage()));
+                                }
+                              }, title: "Submit"),
+                          const SizedBox(height: 20,),
+                        ],
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 10,),
+                    const SizedBox(height: 10,),
 
-                  //downloadAndShare()
+                    //downloadAndShare()
 
-                ],
+                  ],
+                ),
               ),
             ),
           ),
@@ -552,26 +559,27 @@ class _MyHomePageState extends State<RegisterComplaint> {
     Map<String,dynamic> obj={
       "cat_issue_id": selectIssueType,
       "sub_issue_id": selectSubIssueType,
-      "house_no": selectHouseNo,
-      "image_url": addPhotosTxt.text
+      "house_id": selectHouseNo,
+      "image_url": image?.path.toString()
+
     };
 
+
     print('obj of post complaint--->$obj');
-    var url=Uri.parse("${APIConstant.APIURL}/register-complaint");
+    var url=Uri.parse("${APIConstant.APIURL}/register-complaint/");
     var response= await http.post(url, body: jsonEncode(obj));
     print("url of register complaint-->${url}");
     print("RES of register complaint-->${response.body}");
     var decodeRes=json.decode(response.body);
     print("decodeRes of register complaint-->${decodeRes}");
-   /* var msg=decodeRes["message"];
-    if(msg=="Vendor Created") {
-      Fluttertoast.showToast(msg: "Vendor Created successfully");
-      vendorNameTxt.clear();
-      emailIDTxt.clear();
-      contactTxt.clear();
+     var msg=decodeRes["message"];
+    if(msg=="Complaint Registered") {
+      Fluttertoast.showToast(msg: "Complaint Registered successfully");
+      Navigator.push(context, MaterialPageRoute(builder: (context)=>MyComplaintListPage()));
+
     }else{
-      Fluttertoast.showToast(msg: "Vendor Created successfully");
-    }*/
+      Fluttertoast.showToast(msg: "Something went wrong please try again!");
+    }
 
 
   }

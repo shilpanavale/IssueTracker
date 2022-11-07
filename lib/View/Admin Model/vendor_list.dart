@@ -63,7 +63,7 @@ class _MyHomePageState extends State<VendorListPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Text("List of Vendor",style: StyleForApp.subHeadline,),
+                Text("List of MES Reps",style: StyleForApp.subHeadline,),
                 const SizedBox(height: 10,),
                 issueListView(context),
                 //downloadAndShare()

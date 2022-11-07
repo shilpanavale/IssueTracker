@@ -1,14 +1,19 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:untitled/App%20Theme/app_theme.dart';
 import 'package:untitled/App%20Theme/asset_files.dart';
 import 'package:untitled/App%20Theme/text_fileds.dart';
 import 'package:untitled/CustomeWidget/common_button.dart';
 import 'package:untitled/CustomeWidget/custome_widget.dart';
 import 'package:untitled/View/Admin%20Model/admin_dashboard.dart';
+import 'package:untitled/View/User%20Model/api_constant.dart';
 import 'package:untitled/View/User%20Model/otp_page.dart';
-
+import 'package:http/http.dart' as http;
 class UserLoginPage extends StatefulWidget {
   const UserLoginPage({Key? key}) : super(key: key);
 
@@ -68,9 +73,9 @@ class _MyHomePageState extends State<UserLoginPage> {
                         child: RichText(
                           textAlign: TextAlign.center,
                           text: TextSpan(children: <TextSpan>[
-                            TextSpan(text: 'We will send you an ', style: TextStyle(color: ColorsForApp.blackColor)),
+                            TextSpan(text: 'Login with ', style: TextStyle(color: ColorsForApp.blackColor)),
                             TextSpan(
-                                text: 'One Time Password ', style: TextStyle(color: ColorsForApp.blackColor, fontWeight: FontWeight.bold)),
+                                text: 'OTP ', style: TextStyle(color: ColorsForApp.blackColor, fontWeight: FontWeight.bold)),
                             TextSpan(text: 'on this mobile number', style: TextStyle(color: ColorsForApp.blackColor)),
                           ]),
                         )),
@@ -84,10 +89,11 @@ class _MyHomePageState extends State<UserLoginPage> {
                       child: CupertinoTextField(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         decoration: BoxDecoration(
-                            color: ColorsForApp.grayColor,
+                            color: ColorsForApp.whiteColor,
                             borderRadius: const BorderRadius.all(Radius.circular(10))
                         ),
                         controller: phoneController,
+                        style: const TextStyle(fontSize: 15,color: Colors.black38,fontWeight: FontWeight.w400),
                         maxLength: 10,
                         clearButtonMode: OverlayVisibilityMode.editing,
                         keyboardType: TextInputType.phone,
@@ -103,7 +109,14 @@ class _MyHomePageState extends State<UserLoginPage> {
                       ),
                       child: ElevatedButton(
                         onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context)=>OtpPage()));
+                          if(phoneController.text.isEmpty){
+                            Fluttertoast.showToast(msg: "Please enter mobile number");
+                          }else if(phoneController.text.length<10){
+                            Fluttertoast.showToast(msg: "Please enter valid number");
+                          }else {
+                            getOTP(phoneController.text);
+                          }
+
                         },
                         style: ElevatedButton.styleFrom(
                           primary: ColorsForApp.appButtonColor,
@@ -146,5 +159,26 @@ class _MyHomePageState extends State<UserLoginPage> {
         ),
       ),
     );
+  }
+  getOTP(String mobile) async {
+    //https://api.creshsolutions.com/otp/
+    var url=Uri.parse("${APIConstant.APIURL}/otp");
+
+    var obj={
+      "mobile_no":mobile,
+    };
+    var response= await http.post(url, body: jsonEncode(obj));
+    var decodeRes=json.decode(response.body);
+    print("decodeRes-->$decodeRes");
+    if(decodeRes['message']==false){
+      Fluttertoast.showToast(msg: "Error Occurred");
+    }else{
+      final prefs = await SharedPreferences.getInstance();
+      prefs.setString(UT.mobileNo, mobile);
+      Fluttertoast.showToast(msg: "OTP sent to your mobile number");
+      Navigator.push(context, MaterialPageRoute(builder: (context)=>OtpPage()));
+    }
+
+
   }
 }

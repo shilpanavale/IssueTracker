@@ -1,7 +1,11 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:untitled/App%20Theme/app_theme.dart';
 import 'package:untitled/App%20Theme/asset_files.dart';
+import 'package:untitled/View/Admin%20Model/admin_dashboard.dart';
+import 'package:untitled/View/User%20Model/api_constant.dart';
+import 'package:untitled/View/User%20Model/my_complaints.dart';
 import 'package:untitled/View/select_user_type.dart';
 import 'Admin Model/admin_login_page.dart';
 
@@ -15,27 +19,36 @@ class SplashPage extends StatefulWidget {
 }
 
 class SplashPageState extends State<SplashPage> {
-  bool? loginStatus;
+  String? loginStatus;
 
   startTime() async {
-    //SharedPreferences preferences = await SharedPreferences.getInstance();
-    // setState(() {
-    //  loginStatus = preferences.getBool("islogin");
-    // });
+
     var duration = const Duration(seconds: 2);
     return Timer(duration, navigationPage);
   }
 
   Future<void> navigationPage() async {
-    print("loginStatus-->$loginStatus");
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    loginStatus = preferences.getString(UT.loginStatus);
+    String? appType=preferences.getString(UT.appType);
 
-    Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(
-        builder: (BuildContext context) =>  const SelectUserTypePage(),
-      ),
-          (route) => false,
-    );
+    print("loginStatus-->$loginStatus");
+    print("loginStatus-->$appType");
+   if(loginStatus=="True"&&appType=="User"){
+     Navigator.push(context, MaterialPageRoute(builder: (BuildContext context)=>MyComplaintListPage()));
+   }else if(loginStatus=="True"&&appType=="Admin"){
+     Navigator.push(context, MaterialPageRoute(builder: (BuildContext context)=>AdminDashboardPage()));
+   }
+   else{
+     Navigator.pushAndRemoveUntil(
+       context,
+       MaterialPageRoute(
+         builder: (BuildContext context) =>  const SelectUserTypePage(),
+       ),
+           (route) => false,
+     );
+   }
+
 
   }
 

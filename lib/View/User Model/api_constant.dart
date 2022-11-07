@@ -9,6 +9,9 @@ class APIConstant{
 
 }
 class UT{
+  static String loginStatus="False";
+  static String mobileNo="Mobile";
+  static String appType="";
   static displayDateConverter(DateTime? selectedDate){
     String sendDateToApi = "${selectedDate!.day.toString().padLeft(2,"0")}-${selectedDate.month.toString().padLeft(2,'0')}-${selectedDate.year.toString().padLeft(2,'0')}";
     return sendDateToApi;

@@ -163,8 +163,7 @@ class _MyHomePageState extends State<ComplaintListPage> {
           }
         }
         return const Center(child: CircularProgressIndicator(),);
-
-      },
+        },
     );
   }
   Widget _buildListView(List<IssueModelClass> vendors) {
@@ -341,7 +340,7 @@ class _MyHomePageState extends State<ComplaintListPage> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: <Widget>[
-                                const Text("Select From Date"),
+                                const Text("From"),
                                 Container(
                                   height: 45, width: 100,
                                   decoration: const BoxDecoration(
@@ -387,7 +386,7 @@ class _MyHomePageState extends State<ComplaintListPage> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: <Widget>[
-                                const Text("Select To Date"),
+                                const Text("To"),
                                 Container(
                                   height: 45, width: 100,
                                   decoration: const BoxDecoration(
@@ -476,8 +475,25 @@ class _MyHomePageState extends State<ComplaintListPage> {
     final DateTime picked = (await showDatePicker(
       context: context,
       initialDate: currentDate,
-      firstDate: DateTime.now().subtract(Duration(days: 0)),
-      lastDate: DateTime(2100),
+      firstDate: DateTime(2010),
+      lastDate:DateTime(2025),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme:  ColorScheme.light(
+              primary: ColorsForApp.appButtonColor, // <-- SEE HERE
+              onPrimary: Colors.white, // <-- SEE HERE
+              onSurface: Colors.blueAccent, // <-- SEE HERE
+            ),
+            textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(
+                primary: Colors.red, // button text color
+              ),
+            ),
+          ),
+          child: child!,
+        );
+      },
     ))!;
     if (picked != null && picked != currentDate) {
       setState2(() {
@@ -491,8 +507,25 @@ class _MyHomePageState extends State<ComplaintListPage> {
     final DateTime picked = (await showDatePicker(
       context: context,
       initialDate: currentDate,
-      firstDate: DateTime.now().subtract(Duration(days: 0)),
-      lastDate: DateTime(2100),
+      firstDate: DateTime(2010),
+      lastDate:DateTime(2025),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme:  ColorScheme.light(
+              primary: ColorsForApp.appButtonColor, // <-- SEE HERE
+              onPrimary: Colors.white, // <-- SEE HERE
+              onSurface: Colors.blueAccent, // <-- SEE HERE
+            ),
+            textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(
+                primary: Colors.red, // button text color
+              ),
+            ),
+          ),
+          child: child!,
+        );
+      },
     ))!;
     if (picked != null && picked != currentDate) {
       setState2(() {

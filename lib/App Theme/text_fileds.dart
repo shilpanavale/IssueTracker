@@ -86,6 +86,48 @@ class CommonTextField{
       ),
     );
   }
+  static passwordText(var icon, var labelText,TextEditingController controller,TextInputType type) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 3, bottom: 3, right: 30, left: 30),
+      child: Column(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10.0),
+              color: ColorsForApp.whiteColor,
+              // border: Border.all()
+            ),
+            child: TextFormField(
+              controller: controller,
+              textInputAction: TextInputAction.done,
+              autofocus: false,
+              keyboardType: type,
+              decoration: InputDecoration(
+                contentPadding: const EdgeInsets.all(8.0),
+                // prefixIcon: Icon(icon, color: SavangadiAppTheme.grey,),
+                counterText: "",
+                // iconColor: ColorsForApp.lightGrayColor,
+                isDense: true,
+                fillColor: ColorsForApp.whiteColor,
+                //border: OutlineInputBorder(),
+                labelText: labelText,
+                labelStyle:  TextStyle(
+                    fontWeight: FontWeight.w400,
+                    fontSize: 15.0, color: ColorsForApp.blackColor),
+
+                border: InputBorder.none,
+
+              ),
+              minLines: 1,
+              maxLines: 1,
+            ),
+          ),
+
+        ],
+      ),
+    );
+  }
+
   static commonTextField(var icon, var labelText,TextEditingController controller,TextInputType type) {
     return Padding(
       padding: const EdgeInsets.only(top: 3, bottom: 3, right: 30, left: 30),

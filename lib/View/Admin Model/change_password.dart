@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:untitled/App%20Theme/app_theme.dart';
 import 'package:untitled/App%20Theme/asset_files.dart';
 import 'package:untitled/App%20Theme/text_fileds.dart';
@@ -12,17 +11,18 @@ import 'package:http/http.dart' as http;
 
 import '../User Model/api_constant.dart';
 
-class AdminLoginPage extends StatefulWidget {
-  const AdminLoginPage({Key? key}) : super(key: key);
+class ChangePassPage extends StatefulWidget {
+  const ChangePassPage({Key? key}) : super(key: key);
 
 
   @override
-  State<AdminLoginPage> createState() => _MyHomePageState();
+  State<ChangePassPage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<AdminLoginPage> {
+class _MyHomePageState extends State<ChangePassPage> {
   final TextEditingController userNameTxt=TextEditingController();
-  final TextEditingController passwordTxt=TextEditingController();
+  final TextEditingController oldPasswordTxt=TextEditingController();
+  final TextEditingController newPasswordTxt=TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -30,13 +30,14 @@ class _MyHomePageState extends State<AdminLoginPage> {
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
           child: Column(
            // mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: <Widget>[
-              const SizedBox(height: 40,),
-              Text("Welcome Admin",style: StyleForApp.headline,),
+              const SizedBox(height: 30,),
+              Text("Change password ",style: StyleForApp.headline,),
               const SizedBox(height: 35,),
-              Container(
+             /* Container(
                 height: 150,
                 //width: double.infinity,
                 decoration:  const BoxDecoration(
@@ -47,24 +48,29 @@ class _MyHomePageState extends State<AdminLoginPage> {
                       AssetFiles.login1,
                     ),
                   ),
+
                 ),
-              ),
-             const SizedBox(height: 70,),
+              ),*/
+            //const SizedBox(height: 70,),
              CommonTextField.userNameTextField(null, "Username", userNameTxt, TextInputType.name),
               const SizedBox(height: 10,),
-             CommonTextField.passwordText(null, "Password", passwordTxt, TextInputType.text),
+             CommonTextField.passwordText(null, "Old Password", oldPasswordTxt, TextInputType.text),
+              const SizedBox(height: 10,),
+             CommonTextField.passwordText(null, "New Password", newPasswordTxt, TextInputType.text),
               const SizedBox(height: 20,),
-              CommonButtonForAllApp(title: 'LOGIN',onPressed: (){
+              CommonButtonForAllApp(title: 'CHANGE',onPressed: (){
                 if(userNameTxt.text.isEmpty){
                   Fluttertoast.showToast(msg: "Please enter username");
-                }else if(passwordTxt.text.isEmpty){
-                  Fluttertoast.showToast(msg: "Please enter password");
+                }else if(oldPasswordTxt.text.isEmpty){
+                  Fluttertoast.showToast(msg: "Please enter old password");
+                }else if(newPasswordTxt.text.length<8){
+                  Fluttertoast.showToast(msg: "Password must be minimum 8 character");
                 }else{
-                  postLogin(userNameTxt.text,passwordTxt.text);
+                  changePassword(userNameTxt.text,oldPasswordTxt.text,newPasswordTxt.text);
                 }
                 },),
               const SizedBox(height: 10,),
-              Padding(
+              /*Padding(
                 padding: const EdgeInsets.only(right: 30.0,top: 8.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
@@ -72,28 +78,27 @@ class _MyHomePageState extends State<AdminLoginPage> {
                     Text("Forgot Password?",style: StyleForApp.textStyle14dp,),
                   ],
                 ),
-              )
+              )*/
             ],
           ),
         ),
       ),
     );
   }
-  postLogin(String userName,String pass) async {
+  changePassword(String userName,String oldPass,String newPassword) async {
     Map<String,dynamic> obj={
       "user_name":userName,
-      "passcode":pass
+      "old_passcode": oldPass,
+      "new_passcode": newPassword
     };
     var url=Uri.parse("${APIConstant.APIURL}/admin-log-up");
-    var response= await http.post(url, body: jsonEncode(obj));
+    var response= await http.patch(url, body: jsonEncode(obj));
     var decodeRes=json.decode(response.body);
-    print("decode-->${decodeRes['message']}");
+    print("decodeRes-->$decodeRes");
     if(decodeRes['message']==false){
-      Fluttertoast.showToast(msg: "Invalid username & password");
+      Fluttertoast.showToast(msg: "Invalid username or password");
     }else{
-      final prefs = await SharedPreferences.getInstance();
-      prefs.setString(UT.loginStatus, "True");
-      Fluttertoast.showToast(msg: "Login Successfully done");
+      Fluttertoast.showToast(msg: "Password Changed Successfully");
       Navigator.push(context, MaterialPageRoute(builder: (context)=>AdminDashboardPage()));
     }
 

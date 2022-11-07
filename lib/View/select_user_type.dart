@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:untitled/App%20Theme/app_theme.dart';
 import 'package:untitled/App%20Theme/asset_files.dart';
 import 'package:untitled/App%20Theme/text_fileds.dart';
 import 'package:untitled/CustomeWidget/common_button.dart';
 import 'package:untitled/View/Admin%20Model/admin_dashboard.dart';
 import 'package:untitled/View/Admin%20Model/admin_login_page.dart';
+import 'package:untitled/View/User%20Model/api_constant.dart';
 import 'package:untitled/View/User%20Model/enter_client_code.dart';
 import 'package:untitled/View/User%20Model/select_login.dart';
 
@@ -39,7 +41,9 @@ class _MyHomePageState extends State<SelectUserTypePage> {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   InkWell(
-                    onTap: (){
+                    onTap: () async {
+                      final prefs = await SharedPreferences.getInstance();
+                      prefs.setString(UT.appType, "User");
                       Navigator.push(context, MaterialPageRoute(builder: (context)=>const ClientCodePage()));
                     },
                     child: Column(
@@ -69,8 +73,10 @@ class _MyHomePageState extends State<SelectUserTypePage> {
                     ),
                   ),
                   InkWell(
-                    onTap: (){
-                      Navigator.push(context, MaterialPageRoute(builder: (context)=>AdminLoginPage()));
+                    onTap: () async {
+                      final prefs = await SharedPreferences.getInstance();
+                      prefs.setString(UT.appType, "Admin");
+                      Navigator.push(context, MaterialPageRoute(builder: (context)=>const AdminLoginPage()));
                     },
                     child: Column(
                       children: [

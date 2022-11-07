@@ -82,7 +82,7 @@ class _MyHomePageState extends State<AddVendor> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text("Add Vendor",style: StyleForApp.subHeadline,),
+                    Text("Add MES Reps",style: StyleForApp.subHeadline,),
                     const SizedBox(height: 30,),
                     Container(
                       width: double.infinity,
@@ -139,9 +139,9 @@ class _MyHomePageState extends State<AddVendor> {
                             ),
                           ),*/
                           const SizedBox(height: 10,),
-                           CommonTextField.commonTextField(null, "Vendor Name", vendorNameTxt, TextInputType.text),
+                           CommonTextField.commonTextField(null, "Name", vendorNameTxt, TextInputType.text),
                           const SizedBox(height: 10,),
-                           CommonTextField.mobileTextField(null, "Vendor Contact Number", contactTxt, TextInputType.number),
+                           CommonTextField.mobileTextField(null, "Contact Number", contactTxt, TextInputType.number),
                           const SizedBox(height: 10,),
                           CommonTextField.emailTextField(null, "Email Id", emailIDTxt, TextInputType.emailAddress),
 
@@ -150,11 +150,11 @@ class _MyHomePageState extends State<AddVendor> {
                           CommonButtonForAllApp(
                               onPressed: (){
                             if(vendorNameTxt.text.isEmpty){
-                              Fluttertoast.showToast(msg: "Please enter vendor name");
+                              Fluttertoast.showToast(msg: "Please enter name");
                             }else if(contactTxt.text.isEmpty){
-                              Fluttertoast.showToast(msg: "Please enter vendor contact");
+                              Fluttertoast.showToast(msg: "Please enter contact");
                             }else if(emailIDTxt.text.isEmpty){
-                              Fluttertoast.showToast(msg: "Please enter vendor email");
+                              Fluttertoast.showToast(msg: "Please enter email");
                             }else if(contactTxt.text.length<10){}
                             else {
                               postVendor();

@@ -1,9 +1,14 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:untitled/App%20Theme/app_theme.dart';
+import 'package:untitled/View/User%20Model/api_constant.dart';
 import 'package:untitled/View/User%20Model/my_complaints.dart';
-
+import 'package:http/http.dart' as http;
 import '../../CustomeWidget/custome_widget.dart';
 
 class OtpPage extends StatefulWidget {
@@ -25,7 +30,7 @@ class _OtpPageState extends State<OtpPage> {
       text = text + value;
     });
   }
-
+   String mobileNo="";
   Widget otpNumberWidget(int position) {
     try {
       return Container(
@@ -48,6 +53,17 @@ class _OtpPageState extends State<OtpPage> {
       );
     }
   }
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getMobileNumber();
+  }
+   getMobileNumber() async {
+     final prefs = await SharedPreferences.getInstance();
+     mobileNo= prefs.getString(UT.mobileNo)!;
+     print("mobileNo-->$mobileNo");
+   }
 
   @override
   Widget build(BuildContext context) {
@@ -104,23 +120,6 @@ class _OtpPageState extends State<OtpPage> {
                             // });
                           }, // end onSubmit
                         ),
-                       /* Container(
-                          constraints: const BoxConstraints(
-                              maxWidth: 500
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: <Widget>[
-                              otpNumberWidget(0),
-                              otpNumberWidget(1),
-                              otpNumberWidget(2),
-                              otpNumberWidget(3),
-                              otpNumberWidget(4),
-                              otpNumberWidget(5),
-                            ],
-                          ),
-                        ),*/
                       ],
                     ),
                   ),
@@ -131,7 +130,11 @@ class _OtpPageState extends State<OtpPage> {
                     ),
                     child: ElevatedButton(
                       onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context)=>const MyComplaintListPage()));
+                        if(_verificationCode==null||_verificationCode==""){
+                          Fluttertoast.showToast(msg: "Please enter OTP");
+                        }else{
+                          validateOTP(_verificationCode);
+                        }
                       },
                       style: ElevatedButton.styleFrom(
                           primary: ColorsForApp.appButtonColor,
@@ -168,5 +171,26 @@ class _OtpPageState extends State<OtpPage> {
         ),
       ),
     );
+  }
+  validateOTP(String otp) async {
+
+    var obj={
+      "mobile_no":mobileNo,
+      "otp": otp
+    };
+    var url=Uri.parse("${APIConstant.APIURL}/otp");
+    print("url-->$url");
+    var response= await http.patch(url,body: jsonEncode(obj));
+    var decodeRes=json.decode(response.body);
+    print("decodeRes OTP-->$decodeRes");
+    if(decodeRes['message']==false){
+      Fluttertoast.showToast(msg: "Invalid OTP");
+    }else{
+      final prefs = await SharedPreferences.getInstance();
+      prefs.setString(UT.loginStatus, "True");
+      Navigator.push(context,
+          MaterialPageRoute(builder: (context) => const MyComplaintListPage()));
+    }
+
   }
 }

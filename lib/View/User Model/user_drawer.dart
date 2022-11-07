@@ -8,20 +8,36 @@ import 'package:untitled/View/User%20Model/my_complaints.dart';
 import 'package:untitled/View/select_user_type.dart';
 
 import '../../App Theme/app_theme.dart';
+import 'api_constant.dart';
 
 
-class AdminDrawerPage extends StatefulWidget {
-  const AdminDrawerPage({Key? key}) : super(key: key);
+class UserDrawerPage extends StatefulWidget {
+  const UserDrawerPage({Key? key}) : super(key: key);
 
   @override
-  AdminDrawerPageState createState() => AdminDrawerPageState();
+  UserDrawerPageState createState() => UserDrawerPageState();
 }
 
-class AdminDrawerPageState extends State<AdminDrawerPage> {
+class UserDrawerPageState extends State<UserDrawerPage> {
 
 
 
+  String mobileNo="";
 
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getMobileNumber();
+  }
+  getMobileNumber() async {
+    final prefs = await SharedPreferences.getInstance();
+    mobileNo= prefs.getString(UT.mobileNo)!;
+    print("mobileNo-->$mobileNo");
+    setState(() {
+
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +50,7 @@ class AdminDrawerPageState extends State<AdminDrawerPage> {
         Expanded(child: Column(
           children: [
             Container(
-              height: 80,
+              height: 100,
               width: MediaQuery.of(context).size.width,
               // width: 110,
               decoration: BoxDecoration(
@@ -49,14 +65,14 @@ class AdminDrawerPageState extends State<AdminDrawerPage> {
                       height: 30,width: 30,
                       padding: const EdgeInsets.all(3.0),
 
-                      child:  const Icon(Icons.settings,size: 20, color: Colors.white),
+                      child:  const Icon(Icons.person,size: 25, color: Colors.white),
                     ),
-                    title: Text("Admin Setting",style: TextStyle(fontSize:18,color: ColorsForApp.whiteColor),),
+                    title: Text("Mobile No \n$mobileNo",style: TextStyle(fontSize:18,color: ColorsForApp.whiteColor),),
                   ),
                 ),
               ),
             ),
-            ListTile(
+           /* ListTile(
               onTap: (){
                 Navigator.push(context, MaterialPageRoute(builder: (context)=>const VendorListPage()));
 
@@ -67,11 +83,11 @@ class AdminDrawerPageState extends State<AdminDrawerPage> {
 
                 child:  const Icon(Icons.person,size: 18, color: Colors.black38),
               ),
-              /*trailing: Container(
+              *//*trailing: Container(
             height: 30,width: 30,
             padding: const EdgeInsets.all(3.0),
             child: Icon(Icons.arrow_forward_ios,size: 16, color: ColorsForApp.white),
-          ),*/
+          ),*//*
               title: Text("Manage MES Reps",style: StyleForApp.textStyle15dp),
             ),
             Divider(color: ColorsForApp.grayLabelColor,),
@@ -85,11 +101,11 @@ class AdminDrawerPageState extends State<AdminDrawerPage> {
                 padding: const EdgeInsets.all(3.0),
                 child:  const Icon(Icons.edit,size: 18, color: Colors.black38),
               ),
-              /*trailing: Container(
+              *//*trailing: Container(
             height: 30,width: 30,
             padding: const EdgeInsets.all(3.0),
             child: Icon(Icons.arrow_forward_ios,size: 16, color: ColorsForApp.white),
-          ),*/
+          ),*//*
               title: Text("Manage Secret Key",style: StyleForApp.textStyle15dp),
             ),
             Divider(color: ColorsForApp.grayLabelColor,),
@@ -103,13 +119,13 @@ class AdminDrawerPageState extends State<AdminDrawerPage> {
                 padding: const EdgeInsets.all(3.0),
                 child:  const Icon(Icons.security,size: 18, color: Colors.black38),
               ),
-              /*trailing: Container(
+              *//*trailing: Container(
             height: 30,width: 30,
             padding: const EdgeInsets.all(3.0),
             child: Icon(Icons.arrow_forward_ios,size: 16, color: ColorsForApp.white),
-          ),*/
+          ),*//*
               title: Text("Change password",style: StyleForApp.textStyle15dp),
-            ),
+            ),*/
           ],
         )),
 
