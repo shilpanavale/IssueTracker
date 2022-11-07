@@ -162,7 +162,9 @@ class _MyHomePageState extends State<ClientCodePage> {
     //https://api.creshsolutions.com/secret/{secret}
     // https://api.creshsolutions.com/secretcode/
     var url=Uri.parse("${APIConstant.APIURL}/secretcode/$key");
+    print("secretcode url-->$url");
     var response=await http.get(url);
+    print("secretcode res code-->${response.statusCode}");
     var decodeRes=json.decode(response.body);
     print("SK-->$decodeRes");
     if(decodeRes['message']==false){

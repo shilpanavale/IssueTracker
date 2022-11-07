@@ -192,9 +192,10 @@ class _MyHomePageState extends State<ComplaintListPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(issueModelClass.id.toString(),textAlign:TextAlign.start,style: StyleForApp.textStyle20dpBold,),
+              //Text(issueModelClass.issue.toString(),textAlign:TextAlign.start,style: StyleForApp.textStyle20dpBold,),
+              Text(issueModelClass.issue!=null?issueModelClass.issue!:"",textAlign:TextAlign.start,style: StyleForApp.textStyle20dpBold,),
               const SizedBox(height: 15,),
-             // Text(issueModelClass.,textAlign:TextAlign.start,style: StyleForApp.textStyle16dpBold,),
+              Text(issueModelClass.subIssue!=null?issueModelClass.subIssue!:"",textAlign:TextAlign.start,style: StyleForApp.textStyle16dpBold,),
               const SizedBox(height: 5,),
              // Text(issue['issueDetails'],textAlign:TextAlign.start,style: StyleForApp.textStyle16dpBold,),
               Row(
@@ -221,7 +222,7 @@ class _MyHomePageState extends State<ComplaintListPage> {
                   ),
                 ],
               ),
-              Text(issueModelClass.createdOn.toString(),textAlign:TextAlign.start,style: StyleForApp.textStyle15dp,),
+              Text(issueModelClass.issueCreatedOn!=null?issueModelClass.issueCreatedOn!:"",textAlign:TextAlign.start,style: StyleForApp.textStyle15dp,),
 
 
 
@@ -483,7 +484,7 @@ class _MyHomePageState extends State<ComplaintListPage> {
             colorScheme:  ColorScheme.light(
               primary: ColorsForApp.appButtonColor, // <-- SEE HERE
               onPrimary: Colors.white, // <-- SEE HERE
-              onSurface: Colors.blueAccent, // <-- SEE HERE
+              onSurface: Colors.black, // <-- SEE HERE
             ),
             textButtonTheme: TextButtonThemeData(
               style: TextButton.styleFrom(
@@ -515,7 +516,7 @@ class _MyHomePageState extends State<ComplaintListPage> {
             colorScheme:  ColorScheme.light(
               primary: ColorsForApp.appButtonColor, // <-- SEE HERE
               onPrimary: Colors.white, // <-- SEE HERE
-              onSurface: Colors.blueAccent, // <-- SEE HERE
+              onSurface: Colors.black, // <-- SEE HERE
             ),
             textButtonTheme: TextButtonThemeData(
               style: TextButton.styleFrom(

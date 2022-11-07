@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:untitled/App%20Theme/app_theme.dart';
 import 'package:untitled/CustomeWidget/common_button.dart';
 import 'package:untitled/CustomeWidget/custome_dialog.dart';
@@ -441,6 +442,7 @@ class _MyHomePageState extends State<RegisterComplaint> {
                                 }else if(selectSubIssueType.toString().isEmpty || selectSubIssueType==null||selectSubIssueType==""){
                                   Fluttertoast.showToast(msg: "Please select Sub Issue Type");
                                 } else{
+                                  DialogBuilder(context).showLoadingIndicator();
                                   postComplaint();
                                   //   Navigator.push(context, MaterialPageRoute(builder: (context)=>const MyComplaintListPage()));
                                 }
@@ -474,7 +476,8 @@ class _MyHomePageState extends State<RegisterComplaint> {
       setState(() {});
       //DialogBuilder(context).hideOpenDialog();
     } else {
-      throw Exception('Failed to load house list');
+     // DialogBuilder(context).hideOpenDialog();
+      throw Exception('Failed to Location house list');
     }
 
   }
@@ -491,7 +494,8 @@ class _MyHomePageState extends State<RegisterComplaint> {
       setState(() {});
       DialogBuilder(context).hideOpenDialog();
     } else {
-      throw Exception('Failed to load house list');
+      DialogBuilder(context).hideOpenDialog();
+      throw Exception('Failed to load Accomadation list');
     }
   }
 
@@ -512,6 +516,7 @@ class _MyHomePageState extends State<RegisterComplaint> {
       });
       DialogBuilder(context).hideOpenDialog();
     } else {
+      DialogBuilder(context).hideOpenDialog();
       throw Exception('Failed to load house list');
     }
 
@@ -533,6 +538,7 @@ class _MyHomePageState extends State<RegisterComplaint> {
 
       });
     } else {
+      DialogBuilder(context).hideOpenDialog();
       throw Exception('Failed to load house list');
     }
 
@@ -554,7 +560,8 @@ class _MyHomePageState extends State<RegisterComplaint> {
       });
       DialogBuilder(context).hideOpenDialog();
     } else {
-      throw Exception('Failed to load house list');
+      DialogBuilder(context).hideOpenDialog();
+      throw Exception('Failed to Sub Issue  list');
     }
 
   }
@@ -562,12 +569,15 @@ class _MyHomePageState extends State<RegisterComplaint> {
 
   postComplaint() async{
 
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    int? userId=preferences.getInt(UT.userId);
+
     Map<String,dynamic> obj={
       "cat_issue_id": selectIssueType,
       "sub_issue_id": selectSubIssueType,
       "house_id": selectHouseNo,
-      "image_url": image?.path.toString()
-
+      "image_url": image?.path.toString(),
+      "user_id": userId
     };
 
 
@@ -580,10 +590,12 @@ class _MyHomePageState extends State<RegisterComplaint> {
     print("decodeRes of register complaint-->${decodeRes}");
      var msg=decodeRes["message"];
     if(msg=="Complaint Registered") {
+      DialogBuilder(context).hideOpenDialog();
       Fluttertoast.showToast(msg: "Complaint Registered successfully");
       Navigator.push(context, MaterialPageRoute(builder: (context)=>MyComplaintListPage()));
 
     }else{
+      DialogBuilder(context).hideOpenDialog();
       Fluttertoast.showToast(msg: "Something went wrong please try again!");
     }
 

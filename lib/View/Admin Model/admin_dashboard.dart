@@ -610,7 +610,7 @@ class _MyHomePageState extends State<AdminDashboardPage> {
             colorScheme:  ColorScheme.light(
               primary: ColorsForApp.appButtonColor, // <-- SEE HERE
               onPrimary: Colors.white, // <-- SEE HERE
-              onSurface: Colors.blueAccent, // <-- SEE HERE
+              onSurface: Colors.black, // <-- SEE HERE
             ),
             textButtonTheme: TextButtonThemeData(
               style: TextButton.styleFrom(
@@ -644,7 +644,7 @@ class _MyHomePageState extends State<AdminDashboardPage> {
             colorScheme:  ColorScheme.light(
               primary: ColorsForApp.appButtonColor, // <-- SEE HERE
               onPrimary: Colors.white, // <-- SEE HERE
-              onSurface: Colors.blueAccent, // <-- SEE HERE
+              onSurface: Colors.black, // <-- SEE HERE
             ),
             textButtonTheme: TextButtonThemeData(
               style: TextButton.styleFrom(

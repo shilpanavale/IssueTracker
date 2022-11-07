@@ -170,11 +170,18 @@ class _MyHomePageState extends State<UserLoginPage> {
     var response= await http.post(url, body: jsonEncode(obj));
     var decodeRes=json.decode(response.body);
     print("decodeRes-->$decodeRes");
-    if(decodeRes['message']==false){
+    var status=decodeRes['status'];
+    print("status-->$status");
+    var status1=status['status'];
+    var userId=status['user_id'];
+    print("status1-->$status1");
+    print("userId-->$userId");
+    if(status1==false){
       Fluttertoast.showToast(msg: "Error Occurred");
     }else{
       final prefs = await SharedPreferences.getInstance();
       prefs.setString(UT.mobileNo, mobile);
+      prefs.setInt(UT.userId, userId);
       Fluttertoast.showToast(msg: "OTP sent to your mobile number");
       Navigator.push(context, MaterialPageRoute(builder: (context)=>OtpPage()));
     }

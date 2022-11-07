@@ -34,7 +34,7 @@ class CommonButtonForAllApp extends StatelessWidget {
               child: TextButton(
                 onPressed: onPressed,
                 child:  Text(
-                  title,
+                  title.toUpperCase(),
                   style:  TextStyle(fontSize:20,fontWeight:FontWeight.w700,color: ColorsForApp.whiteColor),
                 ),
               ),
