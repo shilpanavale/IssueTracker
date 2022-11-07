@@ -127,3 +127,57 @@ class Consts {
   static const double padding = 16.0;
   static const double avatarRadius = 50;
 }
+
+
+
+class DialogBuilder {
+  DialogBuilder(this.context);
+
+  final BuildContext context;
+
+  void showLoadingIndicator([String? text]) {
+    showDialog(
+      context: context,
+      //barrierDismissible: true,
+      builder: (BuildContext context) {
+        return WillPopScope(
+            onWillPop: () async => true,
+            child: AlertDialog(
+                shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(8.0))
+                ),
+                backgroundColor: Colors.white,
+                content: Container(
+                    padding: const EdgeInsets.all(8.0),
+                    color: Colors.white,
+                    height: 55,
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 1),
+                            child: SizedBox(
+                              width: 40,
+                              height: 40,
+                              child: CircularProgressIndicator(
+                                  strokeWidth: 3,
+                                  valueColor: AlwaysStoppedAnimation<Color>(ColorsForApp.appButtonColor)
+                              ),
+
+                            ),
+                          ),
+                          //_getText(displayedText)
+                        ]
+                    )
+                )
+            )
+        );
+      },
+    );
+  }
+
+  void hideOpenDialog() {
+    Navigator.of(context).pop();
+  }
+
+}

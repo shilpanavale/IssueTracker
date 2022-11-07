@@ -1,13 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
-
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:untitled/App%20Theme/app_theme.dart';
 import 'package:untitled/CustomeWidget/common_button.dart';
+import 'package:untitled/CustomeWidget/custome_dialog.dart';
 import 'package:untitled/CustomeWidget/custome_widget.dart';
 import 'package:untitled/View/User%20Model/Model/HouseModelPage.dart';
 import 'package:untitled/View/User%20Model/Model/IssueTypeModelPage.dart';
@@ -156,7 +155,10 @@ class _MyHomePageState extends State<RegisterComplaint> {
                                   isDense: true,
                                   onChanged: (newValue) {
                                     setState(() {
+                                      selectedAccom=null;
+                                      selectHouseNo=null;
                                       selectedLocation=newValue;
+                                      print('selectedLocation--->$selectedLocation');
                                       getAccommodationList(selectedLocation);
                                     });
                                   },
@@ -201,6 +203,7 @@ class _MyHomePageState extends State<RegisterComplaint> {
                                   onChanged: (newValue) {
                                     if(selectedLocation!=null){
                                       setState(() {
+                                        selectHouseNo=null;
                                         selectedAccom=newValue;
                                         getHouseList(selectedAccom);
 
@@ -208,7 +211,6 @@ class _MyHomePageState extends State<RegisterComplaint> {
                                     }else{
                                       Fluttertoast.showToast(msg: "Please first select location");
                                     }
-
                                   },
                                   items: accommodationList.map((value) {
                                     return DropdownMenuItem<String>(
@@ -292,6 +294,7 @@ class _MyHomePageState extends State<RegisterComplaint> {
                                   isDense: true,
                                   onChanged: (newValue) {
                                     setState(() {
+                                      selectSubIssueType=null;
                                       selectIssueType=newValue;
                                       print('selectIssueType-->$selectIssueType');
                                       getSubIssueType(selectIssueType);
@@ -461,21 +464,22 @@ class _MyHomePageState extends State<RegisterComplaint> {
   }
 
   getLocationList() async {
-
+    //DialogBuilder(context).showLoadingIndicator();
     var response= await http.get(Uri.parse(APIConstant.locationList));
     var decodeRes=json.decode(response.body) as List;
     if (response.statusCode == 200) {
       print("decodeRes-->$decodeRes");
       locationList = decodeRes.map((tagJson) => LocationModelClass.fromJson(tagJson)).toList();
-      setState(() {
 
-      });
+      setState(() {});
+      //DialogBuilder(context).hideOpenDialog();
     } else {
       throw Exception('Failed to load house list');
     }
 
   }
   getAccommodationList(String selectedLocation) async {
+    DialogBuilder(context).showLoadingIndicator();
 
     var url=Uri.parse("${APIConstant.accommodation}/$selectedLocation");
     var response= await http.get(url);
@@ -484,9 +488,8 @@ class _MyHomePageState extends State<RegisterComplaint> {
       var decodeRes=json.decode(response.body) as List;
       print("accommodationList-->$decodeRes");
       accommodationList = decodeRes.map((tagJson) => AccommodationModel.fromJson(tagJson)).toList();
-      setState(() {
-
-      });
+      setState(() {});
+      DialogBuilder(context).hideOpenDialog();
     } else {
       throw Exception('Failed to load house list');
     }
@@ -494,7 +497,7 @@ class _MyHomePageState extends State<RegisterComplaint> {
 
 
   getHouseList(String selectedAccom ) async {
-
+    DialogBuilder(context).showLoadingIndicator();
     var url=Uri.parse("${APIConstant.houseNo}/$selectedAccom/$selectedLocation");
     print("House URL-->$url");
     var response= await http.get(url);
@@ -507,6 +510,7 @@ class _MyHomePageState extends State<RegisterComplaint> {
       setState(() {
 
       });
+      DialogBuilder(context).hideOpenDialog();
     } else {
       throw Exception('Failed to load house list');
     }
@@ -514,7 +518,7 @@ class _MyHomePageState extends State<RegisterComplaint> {
   }
 
   getIssueType() async {
-
+    //DialogBuilder(context).showLoadingIndicator();
     var url=Uri.parse("${APIConstant.APIURL}/issue-category");
     print("Issue-category URL-->$url");
     var response= await http.get(url);
@@ -524,6 +528,7 @@ class _MyHomePageState extends State<RegisterComplaint> {
 
       issueTypeList = decodeRes.map((tagJson) => IssueTypeModel.fromJson(tagJson)).toList();
       print("IssueTypeModel -->$issueTypeList");
+      //DialogBuilder(context).hideOpenDialog();
       setState(() {
 
       });
@@ -534,7 +539,7 @@ class _MyHomePageState extends State<RegisterComplaint> {
   }
 
   getSubIssueType(String selecteIssueId) async {
-
+    DialogBuilder(context).showLoadingIndicator();
     var url=Uri.parse("${APIConstant.APIURL}/issue-category/$selectIssueType");
     print("House URL-->$url");
     var response= await http.get(url);
@@ -547,6 +552,7 @@ class _MyHomePageState extends State<RegisterComplaint> {
       setState(() {
 
       });
+      DialogBuilder(context).hideOpenDialog();
     } else {
       throw Exception('Failed to load house list');
     }

@@ -36,7 +36,8 @@ class _MyHomePageState extends State<AdminDashboardPage> {
   void initState() {
     // TODO: implement initState
     displayFromDate=UT.displayDateConverter(fromDate);
-    displayToDate=UT.displayDateConverter(toDate);
+    displayToDate=UT.displayDateConverter(fromDate.add(Duration(days: 1)));
+  //  displayToDate=UT.displayDateConverter(toDate);
     super.initState();
   }
   @override
@@ -625,6 +626,8 @@ class _MyHomePageState extends State<AdminDashboardPage> {
       setState2(() {
         fromDate = picked;
         displayFromDate=UT.displayDateConverter(fromDate);
+        displayToDate=UT.displayDateConverter(fromDate.add(Duration(days: 1)));
+        print('displayToDate--->$displayToDate');
       });
     }
   }
@@ -632,8 +635,8 @@ class _MyHomePageState extends State<AdminDashboardPage> {
       StateSetter setState2) async {
     final DateTime picked = (await showDatePicker(
       context: context,
-      initialDate: currentDate,
-      firstDate: DateTime(2010),
+      initialDate: fromDate,
+      firstDate: fromDate,
       lastDate:DateTime(2025),
       builder: (context, child) {
         return Theme(
