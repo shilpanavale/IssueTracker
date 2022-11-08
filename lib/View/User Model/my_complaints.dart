@@ -91,7 +91,7 @@ class _MyHomePageState extends State<MyComplaintListPage> {
                 children: <Widget>[
                   Text("My Complaints",style: StyleForApp.subHeadline,),
                   const SizedBox(height: 10,),
-                  InkWell(
+                /*  InkWell(
                     onTap: (){
                       pickDateDialog(context);
                     },
@@ -127,7 +127,7 @@ class _MyHomePageState extends State<MyComplaintListPage> {
                               ],
                             ),
                           ),
-                          /*Padding(
+                          *//*Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Text("Today",style: TextStyle(
                               // fontFamily: fontName,
@@ -136,12 +136,12 @@ class _MyHomePageState extends State<MyComplaintListPage> {
                               letterSpacing: 0.27,
                               color: ColorsForApp.blackColor,
                             ),),
-                          )*/
+                          )*//*
 
                         ],
                       ),
                     ),
-                  ),
+                  ),*/
                   const SizedBox(height: 10,),
                   issueListView(context),
                   //downloadAndShare()
@@ -296,7 +296,7 @@ class _MyHomePageState extends State<MyComplaintListPage> {
     List<IssueModelClass> vendors=[];
     SharedPreferences preferences = await SharedPreferences.getInstance();
     String? mobileNo=preferences.getString(UT.mobileNo);
-    var url=Uri.parse("${APIConstant.APIURL}/register-complaint/$mobileNo");
+    var url=Uri.parse("${APIConstant.APIURL}/register-complaint/?number=$mobileNo&secret=d146d69ec7f6635f3f05f2bf4a51b318");
     print("url-->$url");
     var response= await http.get(url);
     print(response.body);

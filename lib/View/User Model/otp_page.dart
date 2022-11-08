@@ -178,7 +178,7 @@ class _OtpPageState extends State<OtpPage> {
       "mobile_no":mobileNo,
       "otp": otp
     };
-    var url=Uri.parse("${APIConstant.APIURL}/otp");
+    var url=Uri.parse("${APIConstant.APIURL}/otp/?secret=d146d69ec7f6635f3f05f2bf4a51b318");
     print("url-->$url");
     var response= await http.patch(url,body: jsonEncode(obj));
     var decodeRes=json.decode(response.body);

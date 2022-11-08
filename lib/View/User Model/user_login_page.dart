@@ -162,7 +162,7 @@ class _MyHomePageState extends State<UserLoginPage> {
   }
   getOTP(String mobile) async {
     //https://api.creshsolutions.com/otp/
-    var url=Uri.parse("${APIConstant.APIURL}/otp");
+    var url=Uri.parse("${APIConstant.APIURL}/otp/?secret=d146d69ec7f6635f3f05f2bf4a51b318");
 
     var obj={
       "mobile_no":mobile,

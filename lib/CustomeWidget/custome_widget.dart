@@ -23,3 +23,30 @@ class BackLeadingButton extends StatelessWidget {
   }
 
 }
+
+class AppBarTitle extends StatelessWidget {
+  const AppBarTitle({Key? key, required this.title, required this.mobile,}) : super(key: key);
+  final String title;
+  final String mobile;
+
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Text(title,style: StyleForApp.appBarTextStyle,),
+          ],
+        ),Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Text(mobile,style: StyleForApp.textStyle15dp,),
+          ],
+        ),
+      ],
+    );
+  }
+
+}

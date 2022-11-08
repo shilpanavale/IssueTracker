@@ -67,10 +67,14 @@ class _MyHomePageState extends State<AdminDashboardPage> {
             ),
           ),
 
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
+          title: Column(
             children: [
-              Text("Admin Dashboard",style: StyleForApp.appBarTextStyle,),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Text("Admin Dashboard",style: StyleForApp.appBarTextStyle,),
+                ],
+              ),
             ],
           ),
         ),

@@ -1,11 +1,13 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:pie_chart/pie_chart.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:untitled/App%20Theme/app_theme.dart';
 import 'package:untitled/App%20Theme/asset_files.dart';
 import 'package:untitled/App%20Theme/text_fileds.dart';
 import 'package:untitled/CustomeWidget/common_button.dart';
+import 'package:untitled/CustomeWidget/custome_dialog.dart';
 import 'package:untitled/CustomeWidget/custome_widget.dart';
 import 'package:untitled/View/Admin%20Model/Model/IssueModel.dart';
 import 'package:untitled/View/Admin%20Model/admin_dashboard.dart';
@@ -37,7 +39,7 @@ class _MyHomePageState extends State<ComplaintListPage> {
     displayFromDate=UT.displayDateConverter(fromDate);
     displayToDate=UT.displayDateConverter(toDate);
     super.initState();
-    registerComplaints=getRegisterComplaints();
+    registerComplaints=getRegisterComplaints('','');
   }
 
   @override
@@ -193,7 +195,7 @@ class _MyHomePageState extends State<ComplaintListPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               //Text(issueModelClass.issue.toString(),textAlign:TextAlign.start,style: StyleForApp.textStyle20dpBold,),
-              Text(issueModelClass.issue!=null?issueModelClass.issue!:"",textAlign:TextAlign.start,style: StyleForApp.textStyle20dpBold,),
+              Text(issueModelClass.issue!=null?issueModelClass.issue!:"",textAlign:TextAlign.start,style: StyleForApp.textStyle16dpBold,),
               const SizedBox(height: 15,),
               Text(issueModelClass.subIssue!=null?issueModelClass.subIssue!:"",textAlign:TextAlign.start,style: StyleForApp.textStyle16dpBold,),
               const SizedBox(height: 5,),
@@ -204,20 +206,22 @@ class _MyHomePageState extends State<ComplaintListPage> {
                   Text("Status ",textAlign:TextAlign.start,style: StyleForApp.textStyle16dpBold,),
                   Container(
                     height: 40,
-                    width: 150,
-                    decoration: BoxDecoration(
+                    width: 130,
+                    /*decoration: BoxDecoration(
                         color: ColorsForApp.appButtonColor,
                         borderRadius: BorderRadius.circular(10.0)
-                    ),
+                    ),*/
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: Text(issueModelClass.status.toString(),textAlign:TextAlign.center,style: TextStyle(
-                        // fontFamily: fontName,
-                        fontWeight: FontWeight.w500,
-                        fontSize: 20,
-                        letterSpacing: 0.27,
-                        color: ColorsForApp.whiteColor,
-                      ),),
+                      child: Center(
+                        child: Text(issueModelClass.status.toString(),textAlign:TextAlign.center,style: TextStyle(
+                          // fontFamily: fontName,
+                          fontWeight: FontWeight.w500,
+                          fontSize: 18,
+                         // letterSpacing: 0.27,
+                          color: ColorsForApp.appButtonColor,
+                        ),),
+                      ),
                     ),
                   ),
                 ],
@@ -291,9 +295,27 @@ class _MyHomePageState extends State<ComplaintListPage> {
     );
   }
 
-  Future<List<IssueModelClass>> getRegisterComplaints() async {
+  Future<List<IssueModelClass>> getRegisterComplaints(String fromDate,String toDate) async {
     //List<VendorModelClass> vendors=[];
-    var url=Uri.parse("${APIConstant.APIURL}/register-complaint/");
+    //var url=Uri.parse("${APIConstant.APIURL}/register-complaint/?secret=d146d69ec7f6635f3f05f2bf4a51b318");
+    //2022-11-06 00:00:00' AND '2022-11-07 23:59:59'
+
+    var frmDt,toDt;
+    var url;
+    if(fromDate!=''&&toDate!=''){
+      fromDate = DateFormat('yyyy-MM-dd').format(DateTime.parse(fromDate));
+      toDate = DateFormat('yyyy-MM-dd').format(DateTime.parse(toDate));
+      frmDt="$fromDate 000:00:00";
+      toDt="$toDate 000:00:00";
+      url=Uri.parse("${APIConstant.APIURL}/register-complaint/?from=$frmDt&to=$toDt&secret=d146d69ec7f6635f3f05f2bf4a51b318");
+
+    }else{
+      fromDate='';
+      toDate='';
+      url=Uri.parse("${APIConstant.APIURL}/register-complaint/?from=${fromDate.toString()}&to=${toDate.toString()}&secret=d146d69ec7f6635f3f05f2bf4a51b318");
+
+    //https://api.creshsolutions.com/register-complaint/?from=&to=&secret=d146d69ec7f6635f3f05f2bf4a51b318
+    }
     print("url-->$url");
     var response= await http.get(url);
     print(response.body);
@@ -306,7 +328,40 @@ class _MyHomePageState extends State<ComplaintListPage> {
       throw Exception('Failed to load house list');
     }
   }
+  Future<List<IssueModelClass>> getFilterRegisterComplaints(DateTime fromDate,DateTime toDate) async {
+    //List<VendorModelClass> vendors=[];
+    //var url=Uri.parse("${APIConstant.APIURL}/register-complaint/?secret=d146d69ec7f6635f3f05f2bf4a51b318");
+    //2022-11-06 00:00:00' AND '2022-11-07 23:59:59'
 
+    var frmDt,toDt;
+    var url;
+    final DateFormat formatter = DateFormat('yyyy-MM-dd');
+    final String formattedFrm = formatter.format(fromDate);
+
+    final DateFormat formatter1 = DateFormat('yyyy-MM-dd');
+    final String formattedTo = formatter.format(toDate);
+
+      frmDt="$formattedFrm 000:00:00";
+      toDt="$formattedTo 000:00:00";
+      url=Uri.parse("${APIConstant.APIURL}/register-complaint/?from=$frmDt&to=$toDt&secret=d146d69ec7f6635f3f05f2bf4a51b318");
+      print("url-->$url");
+    var response= await http.get(url);
+    print(response.body);
+    if (response.statusCode == 200) {
+      DialogBuilder(context).hideOpenDialog();
+      var decodeRes=json.decode(response.body) as List;
+      List<IssueModelClass> vendors = decodeRes.map((tagJson) => IssueModelClass.fromJson(tagJson)).toList();
+      setState(() {
+
+      });
+      return vendors;
+    } else {
+      DialogBuilder(context).hideOpenDialog();
+      throw Exception('Failed to load house list');
+    }
+  }
+
+ /*  Todo:Not in use
   assignComplaint(int userComplaintId,int vendorId,String imageUrl) async {
 
     var url=Uri.parse("${APIConstant.APIURL}/assign-complaint");
@@ -320,7 +375,7 @@ class _MyHomePageState extends State<ComplaintListPage> {
     var decodeRes=json.decode(response.body);
     //print()
 
-  }
+  }*/
 
   pickDateDialog(BuildContext context) {
     return showDialog(
@@ -457,8 +512,11 @@ class _MyHomePageState extends State<ComplaintListPage> {
                                 )
                           ),
                           onPressed: () {
+                             DialogBuilder(context).showLoadingIndicator('');
+
+                            registerComplaints=getFilterRegisterComplaints(fromDate,toDate);
                             Navigator.of(context).pop(context);
-                          // DialogBuilder(context).showLoadingIndicator('');
+
                           },
                           child: const Text("OK"),
                         ),

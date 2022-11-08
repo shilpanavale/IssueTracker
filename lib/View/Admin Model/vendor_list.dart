@@ -36,51 +36,58 @@ class _MyHomePageState extends State<VendorListPage> {
     super.initState();
     _vendorApi=getVendorList();
   }
+  Future<bool> willPopScopeBack() async{
+    Navigator.push(context, MaterialPageRoute(builder: (context)=>const AdminDashboardPage()));
+    return true;
+  }
   @override
   Widget build(BuildContext context) {
 
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0.0,
-        leading: BackLeadingButton(onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (context)=>const AdminDashboardPage()));
-        },),
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            Text("Admin Dashboard",style: StyleForApp.appBarTextStyle,),
-          ],
+    return WillPopScope(
+      onWillPop:willPopScopeBack,
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0.0,
+          leading: BackLeadingButton(onPressed: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context)=>const AdminDashboardPage()));
+          },),
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Text("Admin Dashboard",style: StyleForApp.appBarTextStyle,),
+            ],
+          ),
         ),
-      ),
-      body: SizedBox(
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height,
-        child: SingleChildScrollView(
-          controller: ScrollController(),
-          child: Padding(
-            padding: const EdgeInsets.all(15.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text("List of MES Reps",style: StyleForApp.subHeadline,),
-                const SizedBox(height: 10,),
-                issueListView(context),
-                //downloadAndShare()
+        body: SizedBox(
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height,
+          child: SingleChildScrollView(
+            controller: ScrollController(),
+            child: Padding(
+              padding: const EdgeInsets.all(15.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text("List of MES Reps",style: StyleForApp.subHeadline,),
+                  const SizedBox(height: 10,),
+                  issueListView(context),
+                  //downloadAndShare()
 
-              ],
+                ],
+              ),
             ),
           ),
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        // isExtended: true,
-        backgroundColor: ColorsForApp.appButtonColor,
-        onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (context)=>const AddVendor()));
-        },
-        // isExtended: true,
-        child: const Icon(Icons.add),
+        floatingActionButton: FloatingActionButton(
+          // isExtended: true,
+          backgroundColor: ColorsForApp.appButtonColor,
+          onPressed: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context)=>const AddVendor()));
+          },
+          // isExtended: true,
+          child: const Icon(Icons.add),
+        ),
       ),
     );
   }
@@ -186,7 +193,7 @@ class _MyHomePageState extends State<VendorListPage> {
 
   Future<List<VendorModelClass>> getVendorList() async {
     //List<VendorModelClass> vendors=[];
-    var url=Uri.parse("${APIConstant.APIURL}/vendor");
+    var url=Uri.parse("${APIConstant.APIURL}/vendor/?secret=d146d69ec7f6635f3f05f2bf4a51b318");
     print("vendor URL-->$url");
     var response= await http.get(url);
 
@@ -203,7 +210,7 @@ class _MyHomePageState extends State<VendorListPage> {
 
 
   deleteVendor() async{
-    var url=Uri.parse("${APIConstant.APIURL}/vendor/${vendorID}");
+    var url=Uri.parse("${APIConstant.APIURL}/vendor/?id=${vendorID}&secret=d146d69ec7f6635f3f05f2bf4a51b318");
     print("vendor URL-->$url");
     var response= await http.delete(url);
 

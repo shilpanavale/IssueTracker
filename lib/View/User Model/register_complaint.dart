@@ -467,7 +467,7 @@ class _MyHomePageState extends State<RegisterComplaint> {
 
   getLocationList() async {
     //DialogBuilder(context).showLoadingIndicator();
-    var response= await http.get(Uri.parse(APIConstant.locationList));
+    var response= await http.get(Uri.parse("${APIConstant.locationList}/?secret=d146d69ec7f6635f3f05f2bf4a51b318"));
     var decodeRes=json.decode(response.body) as List;
     if (response.statusCode == 200) {
       print("decodeRes-->$decodeRes");
@@ -484,7 +484,7 @@ class _MyHomePageState extends State<RegisterComplaint> {
   getAccommodationList(String selectedLocation) async {
     DialogBuilder(context).showLoadingIndicator();
 
-    var url=Uri.parse("${APIConstant.accommodation}/$selectedLocation");
+    var url=Uri.parse("${APIConstant.accommodation}/?location=$selectedLocation&secret=d146d69ec7f6635f3f05f2bf4a51b318");
     var response= await http.get(url);
     print("Accomadation-->$url");
     if (response.statusCode == 200) {
@@ -502,7 +502,7 @@ class _MyHomePageState extends State<RegisterComplaint> {
 
   getHouseList(String selectedAccom ) async {
     DialogBuilder(context).showLoadingIndicator();
-    var url=Uri.parse("${APIConstant.houseNo}/$selectedAccom/$selectedLocation");
+    var url=Uri.parse("${APIConstant.houseNo}/?accomType=$selectedAccom&location=$selectedLocation&secret=d146d69ec7f6635f3f05f2bf4a51b318");
     print("House URL-->$url");
     var response= await http.get(url);
 
@@ -524,7 +524,7 @@ class _MyHomePageState extends State<RegisterComplaint> {
 
   getIssueType() async {
     //DialogBuilder(context).showLoadingIndicator();
-    var url=Uri.parse("${APIConstant.APIURL}/issue-category");
+    var url=Uri.parse("${APIConstant.APIURL}/issue-category/?secret=d146d69ec7f6635f3f05f2bf4a51b318");
     print("Issue-category URL-->$url");
     var response= await http.get(url);
     print("Issue-category URL-->${response.body}");
@@ -546,7 +546,7 @@ class _MyHomePageState extends State<RegisterComplaint> {
 
   getSubIssueType(String selecteIssueId) async {
     DialogBuilder(context).showLoadingIndicator();
-    var url=Uri.parse("${APIConstant.APIURL}/issue-category/$selectIssueType");
+    var url=Uri.parse("${APIConstant.APIURL}/issue-category/?id=$selectIssueType&secret=d146d69ec7f6635f3f05f2bf4a51b318");
     print("House URL-->$url");
     var response= await http.get(url);
     print("sub Issue-category URL-->${response.body}");
@@ -577,18 +577,32 @@ class _MyHomePageState extends State<RegisterComplaint> {
       "sub_issue_id": selectSubIssueType,
       "house_id": selectHouseNo,
       "image_url": image?.path.toString(),
-      "user_id": userId
+      "user_id": userId,
+      "description": describeComplaintTxt.text,
     };
 
 
     print('obj of post complaint--->$obj');
-    var url=Uri.parse("${APIConstant.APIURL}/register-complaint/");
+    var url=Uri.parse("${APIConstant.APIURL}/register-complaint/?secret=d146d69ec7f6635f3f05f2bf4a51b318");
     var response= await http.post(url, body: jsonEncode(obj));
     print("url of register complaint-->${url}");
     print("RES of register complaint-->${response.body}");
     var decodeRes=json.decode(response.body);
     print("decodeRes of register complaint-->${decodeRes}");
      var msg=decodeRes["message"];
+
+
+       /* {
+      "message": "Complaint Registered",
+    "id": {
+    "status": true,
+    "house_complaint_id": 20,
+    "complaint_status_id": 17
+    }
+    }*/
+
+
+
     if(msg=="Complaint Registered") {
       DialogBuilder(context).hideOpenDialog();
       Fluttertoast.showToast(msg: "Complaint Registered successfully");

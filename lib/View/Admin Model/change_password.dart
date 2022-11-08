@@ -91,7 +91,7 @@ class _MyHomePageState extends State<ChangePassPage> {
       "old_passcode": oldPass,
       "new_passcode": newPassword
     };
-    var url=Uri.parse("${APIConstant.APIURL}/admin-log-up");
+    var url=Uri.parse("${APIConstant.APIURL}/admin-log-up/?secret=d146d69ec7f6635f3f05f2bf4a51b318");
     var response= await http.patch(url, body: jsonEncode(obj));
     var decodeRes=json.decode(response.body);
     print("decodeRes-->$decodeRes");

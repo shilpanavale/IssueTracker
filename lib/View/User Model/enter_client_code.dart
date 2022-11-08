@@ -161,7 +161,7 @@ class _MyHomePageState extends State<ClientCodePage> {
   validateUserCode(String key) async {
     //https://api.creshsolutions.com/secret/{secret}
     // https://api.creshsolutions.com/secretcode/
-    var url=Uri.parse("${APIConstant.APIURL}/secretcode/$key");
+    var url=Uri.parse("${APIConstant.APIURL}/secretcode/?code=$key&secret=d146d69ec7f6635f3f05f2bf4a51b318&");
     print("secretcode url-->$url");
     var response=await http.get(url);
     print("secretcode res code-->${response.statusCode}");
