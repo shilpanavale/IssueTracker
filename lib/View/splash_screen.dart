@@ -68,6 +68,9 @@ class SplashPageState extends State<SplashPage> {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                const SizedBox(height: 10),
+                Text("SAMADHAN",style: StyleForApp.headline,),
+                const SizedBox(height: 10),
               Container(
               height: 150,
               //width: double.infinity,

@@ -1,14 +1,20 @@
+
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:open_filex/open_filex.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:pie_chart/pie_chart.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:syncfusion_flutter_pdf/pdf.dart';
 import 'package:untitled/App%20Theme/app_theme.dart';
 import 'package:untitled/App%20Theme/asset_files.dart';
-import 'package:untitled/App%20Theme/text_fileds.dart';
-import 'package:untitled/CustomeWidget/common_button.dart';
 import 'package:untitled/View/Admin%20Model/admin_drawer.dart';
 import 'package:untitled/View/Admin%20Model/complaints_list.dart';
 import 'package:untitled/View/User%20Model/api_constant.dart';
-
+import 'package:url_launcher/url_launcher.dart';
+import 'package:http/http.dart' as http;
 import '../../CustomeWidget/custome_dialog.dart';
 
 class AdminDashboardPage extends StatefulWidget {
@@ -20,10 +26,7 @@ class AdminDashboardPage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<AdminDashboardPage> {
-  Map<String, double> dataMap = {
-    "Resolved": 80,
-    "Pending": 20,
-  };
+  Map<String, double> dataMap ={};
   final colorList = <Color>[
     Colors.greenAccent,
   ];
@@ -32,12 +35,16 @@ class _MyHomePageState extends State<AdminDashboardPage> {
   DateTime toDate=DateTime.now();
   String displayFromDate="";
   String displayToDate="";
+  double resolvedPer=0;
+  double pending=100;
+  dynamic assigned,resolved,not_resolved,not_assigned;
   @override
   void initState() {
     // TODO: implement initState
     displayFromDate=UT.displayDateConverter(fromDate);
     displayToDate=UT.displayDateConverter(fromDate.add(Duration(days: 1)));
   //  displayToDate=UT.displayDateConverter(toDate);
+    getData();
     super.initState();
   }
   @override
@@ -160,7 +167,7 @@ class _MyHomePageState extends State<AdminDashboardPage> {
                 ),
               ),
             ),
-            SizedBox(
+            dataMap.isNotEmpty? SizedBox(
               height: 100,
               child: PieChart(
                 dataMap: dataMap,
@@ -195,31 +202,127 @@ class _MyHomePageState extends State<AdminDashboardPage> {
                 // gradientList: ---To add gradient colors---
                 // emptyColorGradient: ---Empty Color gradient---
               ),
-            ),
+            ):Container(),
             const SizedBox(height: 20,),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                SizedBox(
-                  width: 100,
-                  child: Row(
-                    children: [
-                      const SizedBox(width: 8,),
-                      Container(
-                        height: 25,width: 25,
-                        decoration:  const BoxDecoration(
-                          color: Colors.transparent,
-                          image:  DecorationImage(
-                            fit: BoxFit.contain,
-                            image: AssetImage(
-                              AssetFiles.download,
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Expanded(
+                    child: SizedBox(
+                      width: 100,
+                      child: Row(
+                        children: [
+                          const SizedBox(width: 8,),
+                          Container(
+                            height: 25,width: 25,
+                            decoration:  const BoxDecoration(
+                              color: Colors.transparent,
+                              image:  DecorationImage(
+                                fit: BoxFit.contain,
+                                image: AssetImage(
+                                  AssetFiles.download,
+                                ),
+                              ),
                             ),
                           ),
-                        ),
+                          const SizedBox(width: 10,),
+                          Text("Download",style: StyleForApp.extraSmaller12dp,),
+                        ],
                       ),
-                      const SizedBox(width: 10,),
-                      Text("Download",style: StyleForApp.extraSmaller12dp,),
-                    ],
+                    ),
+                  ),
+                  InkWell(
+                    onTap: (){
+                      Share.share('check out my website https://example.com');
+                    },
+                    child: SizedBox(
+                      width: 100,
+                      child: Row(
+                        children: [
+                          const SizedBox(width: 8,),
+                          Container(
+                            height: 25,width: 25,
+                            decoration:  const BoxDecoration(
+                              color: Colors.transparent,
+                              image:  DecorationImage(
+                                fit: BoxFit.contain,
+                                image: AssetImage(
+                                  AssetFiles.share,
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 10,),
+                          Text("Share",style: StyleForApp.extraSmaller12dp,),
+                        ],
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+            const SizedBox(height: 10,),
+          ],
+        ),
+      ),
+    );
+  }
+  Widget statusWiseComplaintUI(BuildContext context){
+    return Container(
+      //width: double.infinity,
+      decoration:   BoxDecoration(
+        color: HexColor("#F2F2F2"),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(15.0),
+            child: Text("Status wise Complaints",textAlign:TextAlign.start,style: StyleForApp.subHeadline,),
+          ),
+          importantIssueUI(context),
+          notAssignedUI(context),
+          const SizedBox(height: 10,),
+          notResolved(context),
+          const SizedBox(height: 10,),
+          assignedUI(context),
+          const SizedBox(height: 10,),
+          resolvedUI(context),
+          const SizedBox(height: 10,),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Expanded(
+                  child: InkWell(
+                    onTap: (){
+                      _createPDF();
+                    },
+                    child: SizedBox(
+                      width: 100,
+                      child: Row(
+                        children: [
+                          const SizedBox(width: 8,),
+                          Container(
+                            height: 25,width: 25,
+                            decoration:  const BoxDecoration(
+                              color: Colors.transparent,
+                              image:  DecorationImage(
+                                fit: BoxFit.contain,
+                                image: AssetImage(
+                                  AssetFiles.download,
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 10,),
+                          Text("Download",style: StyleForApp.extraSmaller12dp,),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
                 InkWell(
@@ -251,164 +354,9 @@ class _MyHomePageState extends State<AdminDashboardPage> {
                 )
               ],
             ),
-            const SizedBox(height: 10,),
-          ],
-        ),
-      ),
-    );
-  }
-  Widget statusWiseComplaintUI(BuildContext context){
-    return Container(
-      //width: double.infinity,
-      decoration:   BoxDecoration(
-        color: HexColor("#F2F2F2"),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(15.0),
-            child: Text("Status wise Complaints",textAlign:TextAlign.start,style: StyleForApp.subHeadline,),
-          ),
-          importantIssueUI(context),
-          openIssueUI(context),
-          const SizedBox(height: 10,),
-          noUpdateUI(context),
-          const SizedBox(height: 10,),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              SizedBox(
-                width: 100,
-                child: Row(
-                  children: [
-                    const SizedBox(width: 8,),
-                    Container(
-                      height: 25,width: 25,
-                      decoration:  const BoxDecoration(
-                        color: Colors.transparent,
-                        image:  DecorationImage(
-                          fit: BoxFit.contain,
-                          image: AssetImage(
-                            AssetFiles.download,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 10,),
-                    Text("Download",style: StyleForApp.extraSmaller12dp,),
-                  ],
-                ),
-              ),
-              InkWell(
-                onTap: (){
-                  Share.share('check out my website https://example.com');
-                },
-                child: SizedBox(
-                  width: 100,
-                  child: Row(
-                    children: [
-                      const SizedBox(width: 8,),
-                      Container(
-                        height: 25,width: 25,
-                        decoration:  const BoxDecoration(
-                          color: Colors.transparent,
-                          image:  DecorationImage(
-                            fit: BoxFit.contain,
-                            image: AssetImage(
-                              AssetFiles.share,
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 10,),
-                      Text("Share",style: StyleForApp.extraSmaller12dp,),
-                    ],
-                  ),
-                ),
-              )
-            ],
           ),
           const SizedBox(height: 10,),
         ],
-      ),
-    );
-  }
-  Widget noUpdateUI(BuildContext context){
-    return  InkWell(
-      onTap: (){
-        Navigator.push(context, MaterialPageRoute(builder: (context)=>const ComplaintListPage()));
-      },
-      child: Padding(
-        padding: const EdgeInsets.all(15.0),
-        child: Container(
-          height: 60,
-          decoration: BoxDecoration(
-              color: HexColor("#C6BFB7"),
-              borderRadius: BorderRadius.circular(10.0)
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text("No Updates",style: TextStyle(
-                  // fontFamily: fontName,
-                  fontWeight: FontWeight.w700,
-                  fontSize: 20,
-                  letterSpacing: 0.27,
-                  color: ColorsForApp.blackColor,
-                ),),
-                Text("10",style:  TextStyle(
-                  // fontFamily: fontName,
-                  fontWeight: FontWeight.w700,
-                  fontSize: 20,
-                  letterSpacing: 0.27,
-                  color: ColorsForApp.blackColor,
-                ),),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-  Widget openIssueUI(BuildContext context){
-    return  InkWell(
-      onTap: (){
-        Navigator.push(context, MaterialPageRoute(builder: (context)=>const ComplaintListPage()));
-        },
-      child: Padding(
-        padding: const EdgeInsets.all(15.0),
-        child: Container(
-          height: 60,
-          decoration: BoxDecoration(
-              color: HexColor("#C6BFB7"),
-              borderRadius: BorderRadius.circular(10.0)
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text("Open Issues",style: TextStyle(
-                  // fontFamily: fontName,
-                  fontWeight: FontWeight.w700,
-                  fontSize: 20,
-                  letterSpacing: 0.27,
-                  color: ColorsForApp.blackColor,
-                ),),
-                Text("8",style:  TextStyle(
-                  // fontFamily: fontName,
-                  fontWeight: FontWeight.w700,
-                  fontSize: 20,
-                  letterSpacing: 0.27,
-                  color: ColorsForApp.blackColor,
-                ),),
-              ],
-            ),
-          ),
-        ),
       ),
     );
   }
@@ -416,7 +364,7 @@ class _MyHomePageState extends State<AdminDashboardPage> {
     return  InkWell(
       onTap: (){
         Navigator.push(context, MaterialPageRoute(builder: (context)=>const ComplaintListPage()));
-        },
+      },
       child: Padding(
         padding: const EdgeInsets.all(15.0),
         child: Container(
@@ -437,7 +385,7 @@ class _MyHomePageState extends State<AdminDashboardPage> {
                   letterSpacing: 0.27,
                   color: ColorsForApp.whiteColor,
                 ),),
-                Text("8",style:  TextStyle(
+                Text("0",style:  TextStyle(
                   // fontFamily: fontName,
                   fontWeight: FontWeight.w700,
                   fontSize: 28,
@@ -451,7 +399,235 @@ class _MyHomePageState extends State<AdminDashboardPage> {
       ),
     );
   }
+  Widget notResolved(BuildContext context){
+    return  InkWell(
+      onTap: (){
+        Navigator.push(context, MaterialPageRoute(builder: (context)=>const ComplaintListPage()));
+      },
+      child: Padding(
+        padding: const EdgeInsets.all(15.0),
+        child: Container(
+          height: 60,
+          decoration: BoxDecoration(
+              color: HexColor("#C6BFB7"),
+              borderRadius: BorderRadius.circular(10.0)
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text("Not Resolved",style: TextStyle(
+                  // fontFamily: fontName,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 20,
+                  letterSpacing: 0.27,
+                  color: ColorsForApp.blackColor,
+                ),),
+                Text(not_resolved!=null?not_resolved.toString():"",style:  TextStyle(
+                  // fontFamily: fontName,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 20,
+                  letterSpacing: 0.27,
+                  color: ColorsForApp.blackColor,
+                ),),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+  Widget notAssignedUI(BuildContext context){
+    return  InkWell(
+      onTap: (){
+        Navigator.push(context, MaterialPageRoute(builder: (context)=>const ComplaintListPage()));
+        },
+      child: Padding(
+        padding: const EdgeInsets.all(15.0),
+        child: Container(
+          height: 60,
+          decoration: BoxDecoration(
+              color: HexColor("#C6BFB7"),
+              borderRadius: BorderRadius.circular(10.0)
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text("Not Assigned",style: TextStyle(
+                  // fontFamily: fontName,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 20,
+                  letterSpacing: 0.27,
+                  color: ColorsForApp.blackColor,
+                ),),
+                Text(not_assigned!=null?not_assigned.toString():"",style:  TextStyle(
+                  // fontFamily: fontName,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 20,
+                  letterSpacing: 0.27,
+                  color: ColorsForApp.blackColor,
+                ),),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+  Widget assignedUI(BuildContext context){
+    return  InkWell(
+      onTap: (){
+        Navigator.push(context, MaterialPageRoute(builder: (context)=>const ComplaintListPage()));
+        },
+      child: Padding(
+        padding: const EdgeInsets.all(15.0),
+        child: Container(
+          height: 60,
+          decoration: BoxDecoration(
+              color: HexColor("#C6BFB7"),
+              borderRadius: BorderRadius.circular(10.0)
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text("Assigned",style: TextStyle(
+                  // fontFamily: fontName,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 20,
+                  letterSpacing: 0.27,
+                  color: ColorsForApp.blackColor,
+                ),),
+                Text(assigned!=null?assigned.toString():"",style:  TextStyle(
+                  // fontFamily: fontName,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 20,
+                  letterSpacing: 0.27,
+                  color: ColorsForApp.blackColor,
+                ),),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+  Widget resolvedUI(BuildContext context){
+    return  InkWell(
+      onTap: (){
+        Navigator.push(context, MaterialPageRoute(builder: (context)=>const ComplaintListPage()));
+        },
+      child: Padding(
+        padding: const EdgeInsets.all(15.0),
+        child: Container(
+          height: 60,
+          decoration: BoxDecoration(
+              color: HexColor("#C6BFB7"),
+              borderRadius: BorderRadius.circular(10.0)
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text("Resolved",style: TextStyle(
+                  // fontFamily: fontName,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 20,
+                  letterSpacing: 0.27,
+                  color: ColorsForApp.blackColor,
+                ),),
+                Text(resolved!=null?resolved.toString():"",style:  TextStyle(
+                  // fontFamily: fontName,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 20,
+                  letterSpacing: 0.27,
+                  color: ColorsForApp.blackColor,
+                ),),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 
+
+
+  getData() async {
+    //https://api.creshsolutions.com/admin-home/?secret=d146d69ec7f6635f3f05f2bf4a51b318
+    var url =Uri.parse("${APIConstant.APIURL}/admin-home/?secret=d146d69ec7f6635f3f05f2bf4a51b318");
+    print("url-->$url");
+    var response= await http.get(url);
+    print(response.body);
+    var decodeRes=json.decode(response.body);
+    var statusCount=decodeRes["statusWiseCount"];
+    var totalCount=decodeRes["totalCount"];
+    var resolvedCount=decodeRes["resolvedCount"];
+    if(totalCount!=0){
+       resolvedPer=100*resolvedCount/totalCount ;
+       pending =100-resolvedPer;
+    }
+   dataMap= {
+      "Resolved": resolvedPer,
+    "Pending": pending,
+    };
+    assigned=statusCount["assigned"];
+    resolved=statusCount["resolved"];
+    not_resolved=statusCount["not_resolved"];
+    not_assigned=statusCount["not_assigned"];
+    setState(() {
+
+    });
+  }
+
+  //Todo:Create pdf for status wise complaints
+  Future<void> _createPDF() async {
+    //Create a new PDF document
+    PdfDocument document = PdfDocument();
+    PdfFont subHeadingFont = PdfStandardFont(PdfFontFamily.timesRoman, 14);
+    //Add a new page and draw text
+    document.pages.add().graphics.drawString(
+        'Status Wise Complaints', PdfStandardFont(PdfFontFamily.helvetica, 20),
+        brush: PdfSolidBrush(PdfColor(0, 0, 0)),
+        bounds: Rect.fromLTWH(0, 0, 500, 50));
+
+    //Save the document
+    List<int> bytes = await document.save();
+
+    //Save the file and launch/download
+    saveAndLaunchFile(bytes, 'output.pdf');
+    //Dispose the document
+    document.dispose();
+  }
+  Future<void> saveAndLaunchFile(
+      List<int> bytes, String fileName) async {
+    //Get external storage directory
+    Directory directory = await getApplicationSupportDirectory();
+    //Get directory path
+    String path = directory.path;
+    //Create an empty file to write PDF data
+    File file = File('$path/$fileName');
+
+     await file.writeAsBytes(bytes, flush: true);
+   // _launchURL('$path/$fileName');
+    //Write PDF data
+
+    //Open the PDF document in mobile
+    OpenFilex.open('$path/$fileName');
+  }
+  _launchURL(String path) async {
+    var url = 'https:/$path';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
   pickDateDialog(BuildContext context) {
     return showDialog(
         context: context,
@@ -601,6 +777,7 @@ class _MyHomePageState extends State<AdminDashboardPage> {
           );
         });
   }
+
   Future<void> fromDatePicker(BuildContext context,
       StateSetter setState2) async {
     final DateTime picked = (await showDatePicker(
@@ -676,3 +853,6 @@ class _MyHomePageState extends State<AdminDashboardPage> {
     );
   }
 }
+
+
+

@@ -310,6 +310,7 @@ class _MyHomePageState extends State<MyComplaintListPage> {
       return vendors;
     }
     else{
+      return vendors;
       throw Exception('Failed to load house list');
     }
   }

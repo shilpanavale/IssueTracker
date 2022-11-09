@@ -161,7 +161,19 @@ class _MyHomePageState extends State<ComplaintListPage> {
           } else if (snapshot.hasData) {
             // Extracting data from snapshot object
             List<IssueModelClass>? vendor = snapshot.data;
-            return  _buildListView(vendor!);
+            if(vendor!.isNotEmpty){
+              return  _buildListView(vendor);
+            }else{
+              return const Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Center(
+                  child: Text(
+                    'No complaints found',
+                    style: TextStyle(fontSize: 18),
+                  ),
+                ),
+              );
+            }
           }
         }
         return const Center(child: CircularProgressIndicator(),);
@@ -194,33 +206,36 @@ class _MyHomePageState extends State<ComplaintListPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              //Text(issueModelClass.issue.toString(),textAlign:TextAlign.start,style: StyleForApp.textStyle20dpBold,),
-              Text(issueModelClass.issue!=null?issueModelClass.issue!:"",textAlign:TextAlign.start,style: StyleForApp.textStyle16dpBold,),
-              const SizedBox(height: 15,),
-              Text(issueModelClass.subIssue!=null?issueModelClass.subIssue!:"",textAlign:TextAlign.start,style: StyleForApp.textStyle16dpBold,),
+              Text("House No : ${issueModelClass.houseNo.toString()}",textAlign:TextAlign.start,style: StyleForApp.textStyle16dpBold,),
+              const SizedBox(height: 8,),
+              Text(issueModelClass.issue!=null?issueModelClass.issue!:"",textAlign:TextAlign.start,style: StyleForApp.textStyle15dp,),
+              const SizedBox(height: 5,),
+              Text(issueModelClass.subIssue!=null?issueModelClass.subIssue!:"",textAlign:TextAlign.start,style: StyleForApp.textStyle15dp,),
               const SizedBox(height: 5,),
              // Text(issue['issueDetails'],textAlign:TextAlign.start,style: StyleForApp.textStyle16dpBold,),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text("Status ",textAlign:TextAlign.start,style: StyleForApp.textStyle16dpBold,),
-                  Container(
-                    height: 40,
-                    width: 130,
-                    /*decoration: BoxDecoration(
-                        color: ColorsForApp.appButtonColor,
-                        borderRadius: BorderRadius.circular(10.0)
-                    ),*/
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Center(
-                        child: Text(issueModelClass.status.toString(),textAlign:TextAlign.center,style: TextStyle(
-                          // fontFamily: fontName,
-                          fontWeight: FontWeight.w500,
-                          fontSize: 18,
-                         // letterSpacing: 0.27,
+                  Expanded(child: Text("Status ",textAlign:TextAlign.start,style: StyleForApp.textStyle16dpBold,)),
+                  Expanded(
+                    child: SizedBox(
+                      height: 40,
+                      //width: 130,
+                      /*decoration: BoxDecoration(
                           color: ColorsForApp.appButtonColor,
-                        ),),
+                          borderRadius: BorderRadius.circular(10.0)
+                      ),*/
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Center(
+                          child: Text(issueModelClass.status.toString(),textAlign:TextAlign.end,style: TextStyle(
+                            // fontFamily: fontName,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 18,
+                           // letterSpacing: 0.27,
+                            color: ColorsForApp.appButtonColor,
+                          ),),
+                        ),
                       ),
                     ),
                   ),
@@ -239,64 +254,69 @@ class _MyHomePageState extends State<ComplaintListPage> {
     );
   }
   Widget downloadAndShare(){
-    return  Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: [
-        SizedBox(
-          width: 100,
-          child: Row(
-            children: [
-              const SizedBox(width: 8,),
-              Container(
-                height: 25,width: 25,
-                decoration:  const BoxDecoration(
-                  color: Colors.transparent,
-                  image:  DecorationImage(
-                    fit: BoxFit.contain,
-                    image: AssetImage(
-                      AssetFiles.download,
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 10,),
-              Text("Download",style: StyleForApp.extraSmaller12dp,),
-            ],
-          ),
-        ),
-        InkWell(
-          onTap: (){
-            Share.share('check out my website https://example.com');
-          },
-          child: SizedBox(
-            width: 100,
-            child: Row(
-              children: [
-                const SizedBox(width: 8,),
-                Container(
-                  height: 25,width: 25,
-                  decoration:  const BoxDecoration(
-                    color: Colors.transparent,
-                    image:  DecorationImage(
-                      fit: BoxFit.contain,
-                      image: AssetImage(
-                        AssetFiles.share,
+    return  Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          Expanded(
+            child: SizedBox(
+              width: 100,
+              child: Row(
+                children: [
+                  const SizedBox(width: 8,),
+                  Container(
+                    height: 25,width: 25,
+                    decoration:  const BoxDecoration(
+                      color: Colors.transparent,
+                      image:  DecorationImage(
+                        fit: BoxFit.contain,
+                        image: AssetImage(
+                          AssetFiles.download,
+                        ),
                       ),
                     ),
                   ),
-                ),
-                const SizedBox(width: 10,),
-                Text("Share",style: StyleForApp.extraSmaller12dp,),
-              ],
+                  const SizedBox(width: 10,),
+                  Text("Download",style: StyleForApp.extraSmaller12dp,),
+                ],
+              ),
             ),
           ),
-        )
-      ],
+          InkWell(
+            onTap: (){
+              Share.share('check out my website https://example.com');
+            },
+            child: SizedBox(
+              width: 100,
+              child: Row(
+                children: [
+                  const SizedBox(width: 8,),
+                  Container(
+                    height: 25,width: 25,
+                    decoration:  const BoxDecoration(
+                      color: Colors.transparent,
+                      image:  DecorationImage(
+                        fit: BoxFit.contain,
+                        image: AssetImage(
+                          AssetFiles.share,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 10,),
+                  Text("Share",style: StyleForApp.extraSmaller12dp,),
+                ],
+              ),
+            ),
+          )
+        ],
+      ),
     );
   }
 
   Future<List<IssueModelClass>> getRegisterComplaints(String fromDate,String toDate) async {
-    //List<VendorModelClass> vendors=[];
+    List<IssueModelClass> vendors=[];
     //var url=Uri.parse("${APIConstant.APIURL}/register-complaint/?secret=d146d69ec7f6635f3f05f2bf4a51b318");
     //2022-11-06 00:00:00' AND '2022-11-07 23:59:59'
 
@@ -321,11 +341,12 @@ class _MyHomePageState extends State<ComplaintListPage> {
     print(response.body);
     if (response.statusCode == 200) {
       var decodeRes=json.decode(response.body) as List;
-      List<IssueModelClass> vendors = decodeRes.map((tagJson) => IssueModelClass.fromJson(tagJson)).toList();
-
+       vendors = decodeRes.map((tagJson) => IssueModelClass.fromJson(tagJson)).toList();
+     // nlist.sort((b, a) => a.compareTo(b));
       return vendors;
     } else {
-      throw Exception('Failed to load house list');
+      return vendors;
+     // throw Exception('Failed to complaint list');
     }
   }
   Future<List<IssueModelClass>> getFilterRegisterComplaints(DateTime fromDate,DateTime toDate) async {
@@ -529,6 +550,7 @@ class _MyHomePageState extends State<ComplaintListPage> {
           );
         });
   }
+
   Future<void> fromDatePicker(BuildContext context,
       StateSetter setState2) async {
     final DateTime picked = (await showDatePicker(
@@ -558,6 +580,8 @@ class _MyHomePageState extends State<ComplaintListPage> {
       setState2(() {
         fromDate = picked;
         displayFromDate=UT.displayDateConverter(fromDate);
+        displayToDate=UT.displayDateConverter(fromDate.add(Duration(days: 1)));
+        print('displayToDate--->$displayToDate');
       });
     }
   }
@@ -565,8 +589,8 @@ class _MyHomePageState extends State<ComplaintListPage> {
       StateSetter setState2) async {
     final DateTime picked = (await showDatePicker(
       context: context,
-      initialDate: currentDate,
-      firstDate: DateTime(2010),
+      initialDate: fromDate,
+      firstDate: fromDate,
       lastDate:DateTime(2025),
       builder: (context, child) {
         return Theme(
