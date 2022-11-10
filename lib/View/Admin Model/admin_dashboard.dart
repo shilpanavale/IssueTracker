@@ -16,7 +16,13 @@ import 'package:untitled/View/User%20Model/api_constant.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
 import '../../CustomeWidget/custome_dialog.dart';
-
+import 'dart:typed_data';
+import 'dart:ui' as ui;
+import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
+import 'package:path_provider/path_provider.dart';
+import 'dart:io';
 class AdminDashboardPage extends StatefulWidget {
   const AdminDashboardPage({Key? key}) : super(key: key);
 
@@ -26,6 +32,7 @@ class AdminDashboardPage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<AdminDashboardPage> {
+  static GlobalKey previewContainer = new GlobalKey();
   Map<String, double> dataMap ={};
   final colorList = <Color>[
     Colors.greenAccent,
@@ -38,6 +45,7 @@ class _MyHomePageState extends State<AdminDashboardPage> {
   double resolvedPer=0;
   double pending=100;
   dynamic assigned,resolved,not_resolved,not_assigned;
+  bool clickOnShare=false;
   @override
   void initState() {
     // TODO: implement initState
@@ -46,6 +54,7 @@ class _MyHomePageState extends State<AdminDashboardPage> {
   //  displayToDate=UT.displayDateConverter(toDate);
     getData();
     super.initState();
+
   }
   @override
   Widget build(BuildContext context) {
@@ -167,40 +176,49 @@ class _MyHomePageState extends State<AdminDashboardPage> {
                 ),
               ),
             ),
-            dataMap.isNotEmpty? SizedBox(
-              height: 100,
-              child: PieChart(
-                dataMap: dataMap,
-                animationDuration: const Duration(milliseconds: 800),
-                chartLegendSpacing: 36,
-                //chartRadius: MediaQuery.of(context).size.width / 3.2,
-                colorList: <Color>[
-                  HexColor("#C6BFB7"),
-                  HexColor("#BD1D38"),
-                ],
-                initialAngleInDegree: 0,
-                chartType: ChartType.disc,
-                ringStrokeWidth: 36,
-                //centerText: "HYBRID",
-                legendOptions: const LegendOptions(
-                  showLegendsInRow: false,
-                  legendPosition: LegendPosition.left,
-                  showLegends: true,
-                  legendShape: BoxShape.rectangle,
-                  legendTextStyle: TextStyle(
-                      fontWeight: FontWeight.w300,
-                      fontSize: 15
+            dataMap.isNotEmpty? RepaintBoundary(
+              key: previewContainer,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Container(
+                  height: 120,
+                  decoration: BoxDecoration(
+                    color: HexColor("#F2F2F2"),
+                  ),
+                  child: PieChart(
+                    dataMap: dataMap,
+                    animationDuration: const Duration(milliseconds: 800),
+                    chartLegendSpacing: 36,
+                    //chartRadius: MediaQuery.of(context).size.width / 3.2,
+                    colorList: <Color>[
+                      HexColor("#C6BFB7"),
+                      HexColor("#BD1D38"),
+                    ],
+                    initialAngleInDegree: 0,
+                    chartType: ChartType.disc,
+                    ringStrokeWidth: 36,
+                    //centerText: "HYBRID",
+                    legendOptions: const LegendOptions(
+                      showLegendsInRow: false,
+                      legendPosition: LegendPosition.left,
+                      showLegends: true,
+                      legendShape: BoxShape.rectangle,
+                      legendTextStyle: TextStyle(
+                          fontWeight: FontWeight.w300,
+                          fontSize: 15
+                      ),
+                    ),
+                    chartValuesOptions:const ChartValuesOptions(
+                      showChartValueBackground: true,
+                      //showChartValues: true,
+                      showChartValuesInPercentage: true,
+                      showChartValuesOutside: false,
+                      decimalPlaces: 1,
+                    ),
+                    // gradientList: ---To add gradient colors---
+                    // emptyColorGradient: ---Empty Color gradient---
                   ),
                 ),
-                chartValuesOptions:const ChartValuesOptions(
-                  showChartValueBackground: true,
-                  //showChartValues: true,
-                  showChartValuesInPercentage: true,
-                  showChartValuesOutside: true,
-                  decimalPlaces: 1,
-                ),
-                // gradientList: ---To add gradient colors---
-                // emptyColorGradient: ---Empty Color gradient---
               ),
             ):Container(),
             const SizedBox(height: 20,),
@@ -210,32 +228,38 @@ class _MyHomePageState extends State<AdminDashboardPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   Expanded(
-                    child: SizedBox(
-                      width: 100,
-                      child: Row(
-                        children: [
-                          const SizedBox(width: 8,),
-                          Container(
-                            height: 25,width: 25,
-                            decoration:  const BoxDecoration(
-                              color: Colors.transparent,
-                              image:  DecorationImage(
-                                fit: BoxFit.contain,
-                                image: AssetImage(
-                                  AssetFiles.download,
+                    child: InkWell(
+                      onTap: (){
+                        _captureSocialPng("");
+                      },
+                      child: SizedBox(
+                        width: 100,
+                        child: Row(
+                          children: [
+                            const SizedBox(width: 8,),
+                            Container(
+                              height: 25,width: 25,
+                              decoration:  const BoxDecoration(
+                                color: Colors.transparent,
+                                image:  DecorationImage(
+                                  fit: BoxFit.contain,
+                                  image: AssetImage(
+                                    AssetFiles.download,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                          const SizedBox(width: 10,),
-                          Text("Download",style: StyleForApp.extraSmaller12dp,),
-                        ],
+                            const SizedBox(width: 10,),
+                            Text("Download",style: StyleForApp.extraSmaller12dp,),
+                          ],
+                        ),
                       ),
                     ),
                   ),
                   InkWell(
                     onTap: (){
-                      Share.share('check out my website https://example.com');
+                      _captureSocialPng("Share");
+                      //Share.share('check out my website https://example.com');
                     },
                     child: SizedBox(
                       width: 100,
@@ -299,7 +323,7 @@ class _MyHomePageState extends State<AdminDashboardPage> {
                 Expanded(
                   child: InkWell(
                     onTap: (){
-                      _createPDF();
+                      _createPDF("");
                     },
                     child: SizedBox(
                       width: 100,
@@ -327,7 +351,8 @@ class _MyHomePageState extends State<AdminDashboardPage> {
                 ),
                 InkWell(
                   onTap: (){
-                    Share.share('check out my website https://example.com');
+
+                  _createPDF("Share");
                   },
                   child: SizedBox(
                     width: 100,
@@ -556,7 +581,32 @@ class _MyHomePageState extends State<AdminDashboardPage> {
     );
   }
 
+  Future<void> _captureSocialPng(String flag) {
+    String imagePaths ;
+    final RenderBox box = context.findRenderObject() as RenderBox;
+    return Future.delayed(const Duration(milliseconds: 20), () async {
+      RenderRepaintBoundary? boundary = previewContainer.currentContext!
+          .findRenderObject() as RenderRepaintBoundary?;
+      ui.Image image = await boundary!.toImage();
+      final directory = (await getApplicationDocumentsDirectory()).path;
+      ByteData? byteData =
+      await image.toByteData(format: ui.ImageByteFormat.png);
+      Uint8List pngBytes = byteData!.buffer.asUint8List();
+      File imgFile = new File('$directory/pieChart.png');
+     // imagePaths.add(imgFile.path);
+      imgFile.writeAsBytes(pngBytes).then((value) async {
 
+        if(flag=="Share"){
+          Share.shareXFiles([XFile('${imgFile.path}')], text: '');
+        }else{
+          OpenFilex.open('${imgFile.path}');
+        }
+
+      }).catchError((onError) {
+        print(onError);
+      });
+    });
+  }
 
   getData() async {
     //https://api.creshsolutions.com/admin-home/?secret=d146d69ec7f6635f3f05f2bf4a51b318
@@ -586,21 +636,81 @@ class _MyHomePageState extends State<AdminDashboardPage> {
   }
 
   //Todo:Create pdf for status wise complaints
-  Future<void> _createPDF() async {
+  Future<void> _createPDF(String flag) async {
     //Create a new PDF document
+   // PdfDocument document = PdfDocument();
+    PdfFont subHeadingFont = PdfStandardFont(PdfFontFamily.timesRoman, 20);
     PdfDocument document = PdfDocument();
-    PdfFont subHeadingFont = PdfStandardFont(PdfFontFamily.timesRoman, 14);
-    //Add a new page and draw text
-    document.pages.add().graphics.drawString(
-        'Status Wise Complaints', PdfStandardFont(PdfFontFamily.helvetica, 20),
-        brush: PdfSolidBrush(PdfColor(0, 0, 0)),
-        bounds: Rect.fromLTWH(0, 0, 500, 50));
+
+    //Adds page settings
+    document.pageSettings.orientation = PdfPageOrientation.portrait;
+    document.pageSettings.margins.all = 100;
+
+    //Adds a page to the document
+    PdfPage page = document.pages.add();
+    PdfGraphics graphics = page.graphics;
+
+    PdfBrush solidBrush = PdfSolidBrush(PdfColor(126, 151, 173));
+    Rect bounds = const Rect.fromLTWH(0, 160, 500, 30);
+    graphics.drawRectangle(brush: solidBrush, bounds: bounds);
+    PdfTextElement element =
+    PdfTextElement(text: 'Status Wise Complaints\n', font: subHeadingFont);
+    element.brush = PdfBrushes.white;
+
+    PdfLayoutResult result = element.draw(
+        page: page, bounds: Rect.fromLTWH(10, bounds.top + 8, 0, 0))!;
+
+    element = PdfTextElement(
+        text: 'Important Issues count:0 ',
+        font: PdfStandardFont(PdfFontFamily.timesRoman, 15,
+            style: PdfFontStyle.bold));
+    element.brush = PdfSolidBrush(PdfColor(126, 155, 203));
+    result = element.draw(
+        page: page, bounds: Rect.fromLTWH(10, result.bounds.bottom + 25, 0, 0))!;
+
+    PdfFont timesRoman = PdfStandardFont(PdfFontFamily.timesRoman, 10);
+    element = PdfTextElement(text: 'Not Assigned  count : $not_assigned ', font: timesRoman);
+    element.brush = PdfBrushes.black;
+    result = element.draw(
+        page: page, bounds: Rect.fromLTWH(10, result.bounds.bottom + 15, 0, 0))!;
+
+    element = PdfTextElement(
+        text: 'Not Resolved  count : $not_resolved ', font: timesRoman);
+    element.brush = PdfBrushes.black;
+    result = element.draw(
+        page: page, bounds: Rect.fromLTWH(10, result.bounds.bottom + 15, 0, 0))!;
+
+    element = PdfTextElement(
+        text: 'Assigned count : $assigned ', font: timesRoman);
+    element.brush = PdfBrushes.black;
+    result = element.draw(
+        page: page, bounds: Rect.fromLTWH(10, result.bounds.bottom + 15, 0, 0))!;
+
+    element = PdfTextElement(
+        text: 'Resolved count : $resolved ', font: timesRoman);
+    element.brush = PdfBrushes.black;
+    result = element.draw(
+        page: page, bounds: Rect.fromLTWH(10, result.bounds.bottom + 15, 0, 0))!;
+
+//Draws a line at the bottom of the address
+    graphics.drawLine(
+        PdfPen(PdfColor(126, 151, 173), width: 0.7),
+        Offset(0, result.bounds.bottom + 6),
+        Offset(graphics.clientSize.width, result.bounds.bottom + 3));
+
+
+
 
     //Save the document
     List<int> bytes = await document.save();
 
-    //Save the file and launch/download
-    saveAndLaunchFile(bytes, 'output.pdf');
+    if(flag=="Share"){
+      saveAndShareFile(bytes,'statusWiseReport.pdf');
+    }else{
+      //Save the file and launch/download
+      saveAndLaunchFile(bytes, 'statusWiseReport.pdf');
+    }
+
     //Dispose the document
     document.dispose();
   }
@@ -620,14 +730,25 @@ class _MyHomePageState extends State<AdminDashboardPage> {
     //Open the PDF document in mobile
     OpenFilex.open('$path/$fileName');
   }
-  _launchURL(String path) async {
-    var url = 'https:/$path';
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      throw 'Could not launch $url';
-    }
+
+  Future<void> saveAndShareFile(
+      List<int> bytes, String fileName) async {
+    //Get external storage directory
+    Directory directory = await getApplicationSupportDirectory();
+    //Get directory path
+    String path = directory.path;
+    //Create an empty file to write PDF data
+    File file = File('$path/$fileName');
+
+    await file.writeAsBytes(bytes, flush: true);
+    // _launchURL('$path/$fileName');
+    //Write PDF data
+
+    //Open the PDF document in mobile
+   // OpenFilex.open('$path/$fileName');
+    Share.shareXFiles([XFile('$path/$fileName')], text: '');
   }
+
   pickDateDialog(BuildContext context) {
     return showDialog(
         context: context,

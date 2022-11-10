@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pie_chart/pie_chart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:untitled/App%20Theme/app_theme.dart';
@@ -24,6 +25,7 @@ class MyComplaintListPage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyComplaintListPage> {
+  List<bool> isSelected=[true, false];
   Map<String, double> dataMap = {
     "Resolved": 80,
     "Pending": 20,
@@ -79,74 +81,79 @@ class _MyHomePageState extends State<MyComplaintListPage> {
           ),
         ),
         drawer: const UserDrawerPage(),
-        body: SizedBox(
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height,
-          child: SingleChildScrollView(
-            controller: ScrollController(),
-            child: Padding(
-              padding: const EdgeInsets.all(15.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text("My Complaints",style: StyleForApp.subHeadline,),
-                  const SizedBox(height: 10,),
-                /*  InkWell(
-                    onTap: (){
-                      pickDateDialog(context);
-                    },
-                    child: Container(
-                      width: double.infinity,
-                      height: 40,
-                      decoration: BoxDecoration(
-                          color: ColorsForApp.grayColor.withOpacity(0.3),
-                          borderRadius: BorderRadius.circular(10.0)
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          SizedBox(
-                            width: 200,
-                            child: Row(
-                              children: [
-                                const SizedBox(width: 8,),
-                                Container(
-                                  height: 25,width: 25,
-                                  decoration:  const BoxDecoration(
-                                    color: Colors.transparent,
-                                    image:  DecorationImage(
-                                      fit: BoxFit.contain,
-                                      image: AssetImage(
-                                        AssetFiles.calendar,
+        body: RefreshIndicator(
+          onRefresh: (){
+           return Navigator.of(context).push(MaterialPageRoute(builder: (context)=>super.widget));
+          },
+          child: SizedBox(
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height,
+            child: SingleChildScrollView(
+              controller: ScrollController(),
+              child: Padding(
+                padding: const EdgeInsets.all(15.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text("My Complaints",style: StyleForApp.subHeadline,),
+                    const SizedBox(height: 10,),
+                  /*  InkWell(
+                      onTap: (){
+                        pickDateDialog(context);
+                      },
+                      child: Container(
+                        width: double.infinity,
+                        height: 40,
+                        decoration: BoxDecoration(
+                            color: ColorsForApp.grayColor.withOpacity(0.3),
+                            borderRadius: BorderRadius.circular(10.0)
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            SizedBox(
+                              width: 200,
+                              child: Row(
+                                children: [
+                                  const SizedBox(width: 8,),
+                                  Container(
+                                    height: 25,width: 25,
+                                    decoration:  const BoxDecoration(
+                                      color: Colors.transparent,
+                                      image:  DecorationImage(
+                                        fit: BoxFit.contain,
+                                        image: AssetImage(
+                                          AssetFiles.calendar,
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
-                                const SizedBox(width: 5,),
-                                Text("Select Date Range",style: StyleForApp.extraSmaller12dp,),
-                              ],
+                                  const SizedBox(width: 5,),
+                                  Text("Select Date Range",style: StyleForApp.extraSmaller12dp,),
+                                ],
+                              ),
                             ),
-                          ),
-                          *//*Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text("Today",style: TextStyle(
-                              // fontFamily: fontName,
-                              fontWeight: FontWeight.w700,
-                              fontSize: 12,
-                              letterSpacing: 0.27,
-                              color: ColorsForApp.blackColor,
-                            ),),
-                          )*//*
+                            *//*Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text("Today",style: TextStyle(
+                                // fontFamily: fontName,
+                                fontWeight: FontWeight.w700,
+                                fontSize: 12,
+                                letterSpacing: 0.27,
+                                color: ColorsForApp.blackColor,
+                              ),),
+                            )*//*
 
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                  ),*/
-                  const SizedBox(height: 10,),
-                  issueListView(context),
-                  //downloadAndShare()
+                    ),*/
+                    const SizedBox(height: 10,),
+                    issueListView(context),
+                    //downloadAndShare()
 
-                ],
+                  ],
+                ),
               ),
             ),
           ),
@@ -253,7 +260,55 @@ class _MyHomePageState extends State<MyComplaintListPage> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
               issueModelClass.status=="Assigned"?
-                InkWell(
+              SizedBox(
+                height: 40,
+                child: ToggleButtons(
+                  disabledBorderColor: ColorsForApp.grayColor,
+                  disabledColor: ColorsForApp.grayColor,
+                  //color: Colors.black,
+                  //borderColor: Colors.black,
+                  fillColor: ColorsForApp.appButtonColor,
+                  borderWidth: 2,
+                  selectedBorderColor: ColorsForApp.appButtonColor,
+                  selectedColor: ColorsForApp.appButtonColor,
+                  borderRadius: BorderRadius.circular(0),
+                  onPressed: (int index) {
+                    setState(() {
+                      for (int i = 1; i < isSelected.length; i++) {
+                        isSelected[i] = i == index;
+                        print("isSelected[i]-->${isSelected[i]}");
+                        if(isSelected[i]==false){
+                          updateComplaintStatus(issueModelClass.userComplaintId,"1");
+
+                        }else{
+                          updateComplaintStatus(issueModelClass.userComplaintId,"2");
+
+                        }
+                        print("index-->${index}");
+                      }
+                    });
+                  },
+                  isSelected: isSelected,
+                  children: const <Widget>[
+                    Padding(
+                      padding:  EdgeInsets.all(8.0),
+                      child: Text(
+                        'Resolved',
+                        style: TextStyle(fontSize: 16,color: Colors.white),
+                      ),
+                    ),
+                    Padding(
+                      padding:  EdgeInsets.all(8.0),
+                      child: Text(
+                        'Not Resolved',
+                        style: TextStyle(fontSize: 16,color: Colors.white),
+                      ),
+                    ),
+                  ],
+                ),
+              )
+
+                /*InkWell(
                   onTap: (){
                     Navigator.push(context, MaterialPageRoute(builder: (context)=>const FeedBackPage()));
                   },
@@ -267,7 +322,7 @@ class _MyHomePageState extends State<MyComplaintListPage> {
                   ),
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Text("Feedback",textAlign:TextAlign.center,style: TextStyle(
+                    child: Text("Update",textAlign:TextAlign.center,style: TextStyle(
                       // fontFamily: fontName,
                       fontWeight: FontWeight.w500,
                       fontSize: 20,
@@ -276,7 +331,7 @@ class _MyHomePageState extends State<MyComplaintListPage> {
                     ),),
                   ),
               ),
-                ):Container(),
+                )*/:Container(),
                  // Text(issue['issueStatus']=="Assigned"?"Give Feedback":"",textAlign:TextAlign.end,style: StyleForApp.textStyle16dpBold,),
                 ],
               ),
@@ -292,7 +347,26 @@ class _MyHomePageState extends State<MyComplaintListPage> {
       ),
     );
   }
+
+  updateComplaintStatus(String userComalaintId ,String status) async {
+    DialogBuilder(context).showLoadingIndicator();
+    var url=Uri.parse("${APIConstant.APIURL}/update-complaint-status/?id=$userComalaintId&status=$status&secret=d146d69ec7f6635f3f05f2bf4a51b318");
+    print("Url-->$url");
+    var response= await http.patch(url);
+    print("complaint update status res-->${response.body}");
+    var decode=json.decode(response.body);
+    //{"message":"Issue status with id 18 updated"}
+    if(decode["message"].toString().contains("updated")){
+      DialogBuilder(context).hideOpenDialog();
+      Fluttertoast.showToast(msg: "Update mark successfully");
+    }else{
+      DialogBuilder(context).hideOpenDialog();
+      Fluttertoast.showToast(msg: "Something went wrong please try again!");
+    }
+  }
+
   Future<List<IssueModelClass>> getRegisterComplaints() async {
+    //0 -assigned 1-resolved -2not resolved
     List<IssueModelClass> vendors=[];
     SharedPreferences preferences = await SharedPreferences.getInstance();
     String? mobileNo=preferences.getString(UT.mobileNo);
