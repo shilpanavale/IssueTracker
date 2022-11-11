@@ -414,7 +414,7 @@ class _MyHomePageState extends State<ComplaintListPage> {
     }
   }
   Future<List<IssueModelClass>> getFilterRegisterComplaints(DateTime fromDate,DateTime toDate) async {
-    //List<VendorModelClass> vendors=[];
+    List<IssueModelClass> vendors=[];
     //var url=Uri.parse("${APIConstant.APIURL}/register-complaint/?secret=d146d69ec7f6635f3f05f2bf4a51b318");
     //2022-11-06 00:00:00' AND '2022-11-07 23:59:59'
 
@@ -435,7 +435,32 @@ class _MyHomePageState extends State<ComplaintListPage> {
     if (response.statusCode == 200) {
       DialogBuilder(context).hideOpenDialog();
       var decodeRes=json.decode(response.body) as List;
-      List<IssueModelClass> vendors = decodeRes.map((tagJson) => IssueModelClass.fromJson(tagJson)).toList();
+   //   List<IssueModelClass> vendors = decodeRes.map((tagJson) => IssueModelClass.fromJson(tagJson)).toList();
+
+      for(var res in decodeRes){
+        if(res['status']==widget.statusFlag){
+          print('in if status-->${res['status']}');
+          IssueModelClass issueModelClass = IssueModelClass(
+            houseComplaintId: res['house_complaint_id'],
+            catIssueId: res['cat_issue_id'],
+            subIssueId: res['sub_issue_id'],
+            houseId: res['house_id'],
+            issueCreatedOn: res['issue_created_on'],
+            imageUrl: res['image_url'],
+            description: res['description'],
+            userComplaintId: res['user_complaint_id'],
+            status: res['status'],
+            vendorId: res['vendor_id'],
+            createdOn: res['created_on'],
+            issue: res['issue'],
+            subIssue: res['sub_issue'],
+            houseNo: res['house_no'],
+            escalation: res['Escalation'],
+          );
+          vendors.add(issueModelClass);
+
+        }
+      }
       setState(() {
 
       });
@@ -600,7 +625,8 @@ class _MyHomePageState extends State<ComplaintListPage> {
                             DialogBuilder(context).showLoadingIndicator('');
 
                             registerComplaints=getFilterRegisterComplaints(fromDate,toDate);
-                            Navigator.of(context).pop(context);
+                           // Navigator.of(context).pop(context);
+                            Navigator.of(context).pop();
 
                           },
                           child: const Text("OK"),
