@@ -1,8 +1,16 @@
 import 'dart:convert';
+import 'dart:typed_data';
+import 'dart:io';
+import 'dart:ui' as ui;
+import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:open_filex/open_filex.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:pie_chart/pie_chart.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:syncfusion_flutter_pdf/pdf.dart';
 import 'package:untitled/App%20Theme/app_theme.dart';
 import 'package:untitled/App%20Theme/asset_files.dart';
 import 'package:untitled/App%20Theme/text_fileds.dart';
@@ -14,8 +22,10 @@ import 'package:untitled/View/Admin%20Model/admin_dashboard.dart';
 import '../User Model/api_constant.dart';
 import 'package:http/http.dart' as http;
 
+
 class ComplaintListPage extends StatefulWidget {
-  const ComplaintListPage({Key? key}) : super(key: key);
+  final statusFlag;
+  const ComplaintListPage({Key? key, this.statusFlag}) : super(key: key);
 
 
   @override
@@ -74,7 +84,7 @@ class _MyHomePageState extends State<ComplaintListPage> {
                 InkWell(
                   onTap: (){
                     pickDateDialog(context);
-                    },
+                  },
                   child: Container(
                     width: double.infinity,
                     height: 40,
@@ -137,7 +147,7 @@ class _MyHomePageState extends State<ComplaintListPage> {
               color: HexColor("#F2F2F2"),
               borderRadius: BorderRadius.circular(10.0)
           ),
-        child: downloadAndShare(),),
+          child: downloadAndShare(),),
       ),
     );
   }
@@ -177,7 +187,7 @@ class _MyHomePageState extends State<ComplaintListPage> {
           }
         }
         return const Center(child: CircularProgressIndicator(),);
-        },
+      },
     );
   }
   Widget _buildListView(List<IssueModelClass> vendors) {
@@ -198,7 +208,7 @@ class _MyHomePageState extends State<ComplaintListPage> {
       child: Container(
         width: double.infinity,
         decoration:   BoxDecoration(
-          color: HexColor("#D6D6D6"),
+            color: HexColor("#D6D6D6"),
             borderRadius: BorderRadius.circular(10.0)
         ),
         child: Padding(
@@ -212,7 +222,7 @@ class _MyHomePageState extends State<ComplaintListPage> {
               const SizedBox(height: 5,),
               Text(issueModelClass.subIssue!=null?issueModelClass.subIssue!:"",textAlign:TextAlign.start,style: StyleForApp.textStyle15dp,),
               const SizedBox(height: 5,),
-             // Text(issue['issueDetails'],textAlign:TextAlign.start,style: StyleForApp.textStyle16dpBold,),
+              // Text(issue['issueDetails'],textAlign:TextAlign.start,style: StyleForApp.textStyle16dpBold,),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -232,7 +242,7 @@ class _MyHomePageState extends State<ComplaintListPage> {
                             // fontFamily: fontName,
                             fontWeight: FontWeight.w500,
                             fontSize: 18,
-                           // letterSpacing: 0.27,
+                            // letterSpacing: 0.27,
                             color: ColorsForApp.appButtonColor,
                           ),),
                         ),
@@ -242,11 +252,7 @@ class _MyHomePageState extends State<ComplaintListPage> {
                 ],
               ),
               Text(issueModelClass.issueCreatedOn!=null?issueModelClass.issueCreatedOn!:"",textAlign:TextAlign.start,style: StyleForApp.textStyle15dp,),
-
-
-
               const SizedBox(height: 10,),
-
             ],
           ),
         ),
@@ -260,32 +266,40 @@ class _MyHomePageState extends State<ComplaintListPage> {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           Expanded(
-            child: SizedBox(
-              width: 100,
-              child: Row(
-                children: [
-                  const SizedBox(width: 8,),
-                  Container(
-                    height: 25,width: 25,
-                    decoration:  const BoxDecoration(
-                      color: Colors.transparent,
-                      image:  DecorationImage(
-                        fit: BoxFit.contain,
-                        image: AssetImage(
-                          AssetFiles.download,
+            child: InkWell(
+              onTap: (){
+               // _captureSocialPng("");
+                _createPDF('');
+              },
+              child: SizedBox(
+                width: 100,
+                child: Row(
+                  children: [
+                    const SizedBox(width: 8,),
+                    Container(
+                      height: 25,width: 25,
+                      decoration:  const BoxDecoration(
+                        color: Colors.transparent,
+                        image:  DecorationImage(
+                          fit: BoxFit.contain,
+                          image: AssetImage(
+                            AssetFiles.download,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 10,),
-                  Text("Download",style: StyleForApp.extraSmaller12dp,),
-                ],
+                    const SizedBox(width: 10,),
+                    Text("Download",style: StyleForApp.extraSmaller12dp,),
+                  ],
+                ),
               ),
             ),
           ),
           InkWell(
             onTap: (){
-              Share.share('check out my website https://example.com');
+             // Share.share('check out my website https://example.com');
+             // _captureSocialPng("Share");
+              _createPDF("Share");
             },
             child: SizedBox(
               width: 100,
@@ -314,6 +328,33 @@ class _MyHomePageState extends State<ComplaintListPage> {
       ),
     );
   }
+  static GlobalKey previewContainer = new GlobalKey();
+  Future<void> _captureSocialPng(String flag) {
+    String imagePaths ;
+    final RenderBox box = context.findRenderObject() as RenderBox;
+    return Future.delayed(const Duration(milliseconds: 20), () async {
+      RenderRepaintBoundary? boundary = previewContainer.currentContext!
+          .findRenderObject() as RenderRepaintBoundary?;
+      ui.Image image = await boundary!.toImage();
+      final directory = (await getApplicationDocumentsDirectory()).path;
+      ByteData? byteData =
+      await image.toByteData(format: ui.ImageByteFormat.png);
+      Uint8List pngBytes = byteData!.buffer.asUint8List();
+      File imgFile = new File('$directory/pieChart.png');
+      // imagePaths.add(imgFile.path);
+      imgFile.writeAsBytes(pngBytes).then((value) async {
+
+        if(flag=="Share"){
+          Share.shareXFiles([XFile('${imgFile.path}')], text: '');
+        }else{
+          OpenFilex.open('${imgFile.path}');
+        }
+
+      }).catchError((onError) {
+        print(onError);
+      });
+    });
+  }
 
   Future<List<IssueModelClass>> getRegisterComplaints(String fromDate,String toDate) async {
     List<IssueModelClass> vendors=[];
@@ -334,19 +375,42 @@ class _MyHomePageState extends State<ComplaintListPage> {
       toDate='';
       url=Uri.parse("${APIConstant.APIURL}/register-complaint/?from=${fromDate.toString()}&to=${toDate.toString()}&secret=d146d69ec7f6635f3f05f2bf4a51b318");
 
-    //https://api.creshsolutions.com/register-complaint/?from=&to=&secret=d146d69ec7f6635f3f05f2bf4a51b318
+      //https://api.creshsolutions.com/register-complaint/?from=&to=&secret=d146d69ec7f6635f3f05f2bf4a51b318
     }
     print("url-->$url");
     var response= await http.get(url);
     print(response.body);
     if (response.statusCode == 200) {
       var decodeRes=json.decode(response.body) as List;
-       vendors = decodeRes.map((tagJson) => IssueModelClass.fromJson(tagJson)).toList();
-     // nlist.sort((b, a) => a.compareTo(b));
+     // vendors = decodeRes.map((tagJson) => IssueModelClass.fromJson(tagJson)).toList();
+
+          for(var res in decodeRes){
+            if(res['status']==widget.statusFlag){
+              print('in if status-->${res['status']}');
+              IssueModelClass issueModelClass = IssueModelClass(
+                houseComplaintId: res['house_complaint_id'],
+                catIssueId: res['cat_issue_id'],
+                subIssueId: res['sub_issue_id'],
+                houseId: res['house_id'],
+                issueCreatedOn: res['issue_created_on'],
+                imageUrl: res['image_url'],
+                description: res['description'],
+                userComplaintId: res['user_complaint_id'],
+                status: res['status'],
+                vendorId: res['vendor_id'],
+                createdOn: res['created_on'],
+                issue: res['issue'],
+                subIssue: res['sub_issue'],
+                houseNo: res['house_no'],
+                escalation: res['Escalation'],
+              );
+              vendors.add(issueModelClass);
+
+            }
+      }
       return vendors;
     } else {
       return vendors;
-     // throw Exception('Failed to complaint list');
     }
   }
   Future<List<IssueModelClass>> getFilterRegisterComplaints(DateTime fromDate,DateTime toDate) async {
@@ -362,10 +426,10 @@ class _MyHomePageState extends State<ComplaintListPage> {
     final DateFormat formatter1 = DateFormat('yyyy-MM-dd');
     final String formattedTo = formatter.format(toDate);
 
-      frmDt="$formattedFrm 000:00:00";
-      toDt="$formattedTo 000:00:00";
-      url=Uri.parse("${APIConstant.APIURL}/register-complaint/?from=$frmDt&to=$toDt&secret=d146d69ec7f6635f3f05f2bf4a51b318");
-      print("url-->$url");
+    frmDt="$formattedFrm 000:00:00";
+    toDt="$formattedTo 000:00:00";
+    url=Uri.parse("${APIConstant.APIURL}/register-complaint/?from=$frmDt&to=$toDt&secret=d146d69ec7f6635f3f05f2bf4a51b318");
+    print("url-->$url");
     var response= await http.get(url);
     print(response.body);
     if (response.statusCode == 200) {
@@ -382,7 +446,7 @@ class _MyHomePageState extends State<ComplaintListPage> {
     }
   }
 
- /*  Todo:Not in use
+  /*  Todo:Not in use
   assignComplaint(int userComplaintId,int vendorId,String imageUrl) async {
 
     var url=Uri.parse("${APIConstant.APIURL}/assign-complaint");
@@ -525,15 +589,15 @@ class _MyHomePageState extends State<ComplaintListPage> {
                             ))),
                         ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            primary: ColorsForApp.appButtonColor,
-                                textStyle: TextStyle(
-                                    //fontSize: 30,
-                                    color: ColorsForApp.whiteColor,
-                                    //fontWeight: FontWeight.bold
-                                )
+                              primary: ColorsForApp.appButtonColor,
+                              textStyle: TextStyle(
+                                //fontSize: 30,
+                                color: ColorsForApp.whiteColor,
+                                //fontWeight: FontWeight.bold
+                              )
                           ),
                           onPressed: () {
-                             DialogBuilder(context).showLoadingIndicator('');
+                            DialogBuilder(context).showLoadingIndicator('');
 
                             registerComplaints=getFilterRegisterComplaints(fromDate,toDate);
                             Navigator.of(context).pop(context);
@@ -617,4 +681,119 @@ class _MyHomePageState extends State<ComplaintListPage> {
       });
     }
   }
+
+
+  Future<void> _createPDF(String flag) async {
+    //Create a new PDF document
+    // PdfDocument document = PdfDocument();
+    PdfFont subHeadingFont = PdfStandardFont(PdfFontFamily.timesRoman, 20);
+    PdfDocument document = PdfDocument();
+
+    //Adds page settings
+    document.pageSettings.orientation = PdfPageOrientation.portrait;
+    document.pageSettings.margins.all = 100;
+
+    //Adds a page to the document
+    PdfPage page = document.pages.add();
+    PdfGraphics graphics = page.graphics;
+
+    PdfBrush solidBrush = PdfSolidBrush(PdfColor(126, 151, 173));
+    Rect bounds = const Rect.fromLTWH(0, 160, 500, 30);
+    graphics.drawRectangle(brush: solidBrush, bounds: bounds);
+    PdfTextElement element =
+    PdfTextElement(text: 'Status Wise Complaints\n', font: subHeadingFont);
+    element.brush = PdfBrushes.white;
+
+    PdfLayoutResult result = element.draw(
+        page: page, bounds: Rect.fromLTWH(10, bounds.top + 8, 0, 0))!;
+
+    element = PdfTextElement(
+        text: 'Important Issues count:0 ',
+        font: PdfStandardFont(PdfFontFamily.timesRoman, 15,
+            style: PdfFontStyle.bold));
+    element.brush = PdfSolidBrush(PdfColor(126, 155, 203));
+    result = element.draw(
+        page: page, bounds: Rect.fromLTWH(10, result.bounds.bottom + 25, 0, 0))!;
+
+    PdfFont timesRoman = PdfStandardFont(PdfFontFamily.timesRoman, 10);
+    element = PdfTextElement(text: 'Not Assigned  count : 2', font: timesRoman);
+    element.brush = PdfBrushes.black;
+    result = element.draw(
+        page: page, bounds: Rect.fromLTWH(10, result.bounds.bottom + 15, 0, 0))!;
+
+    element = PdfTextElement(
+        text: 'Not Resolved  count : 3 ', font: timesRoman);
+    element.brush = PdfBrushes.black;
+    result = element.draw(
+        page: page, bounds: Rect.fromLTWH(10, result.bounds.bottom + 15, 0, 0))!;
+
+    element = PdfTextElement(
+        text: 'Assigned count : 4 ', font: timesRoman);
+    element.brush = PdfBrushes.black;
+    result = element.draw(
+        page: page, bounds: Rect.fromLTWH(10, result.bounds.bottom + 15, 0, 0))!;
+
+    element = PdfTextElement(
+        text: 'Resolved count : 5 ', font: timesRoman);
+    element.brush = PdfBrushes.black;
+    result = element.draw(
+        page: page, bounds: Rect.fromLTWH(10, result.bounds.bottom + 15, 0, 0))!;
+
+//Draws a line at the bottom of the address
+    graphics.drawLine(
+        PdfPen(PdfColor(126, 151, 173), width: 0.7),
+        Offset(0, result.bounds.bottom + 6),
+        Offset(graphics.clientSize.width, result.bounds.bottom + 3));
+
+
+
+
+    //Save the document
+    List<int> bytes = await document.save();
+
+    if(flag=="Share"){
+      saveAndShareFile(bytes,'statusWiseReport.pdf');
+    }else{
+      //Save the file and launch/download
+      saveAndLaunchFile(bytes, 'statusWiseReport.pdf');
+    }
+
+    //Dispose the document
+    document.dispose();
+  }
+  Future<void> saveAndLaunchFile(
+      List<int> bytes, String fileName) async {
+    //Get external storage directory
+    Directory directory = await getApplicationSupportDirectory();
+    //Get directory path
+    String path = directory.path;
+    //Create an empty file to write PDF data
+    File file = File('$path/$fileName');
+
+    await file.writeAsBytes(bytes, flush: true);
+    // _launchURL('$path/$fileName');
+    //Write PDF data
+
+    //Open the PDF document in mobile
+    OpenFilex.open('$path/$fileName');
+  }
+
+  Future<void> saveAndShareFile(
+      List<int> bytes, String fileName) async {
+    //Get external storage directory
+    Directory directory = await getApplicationSupportDirectory();
+    //Get directory path
+    String path = directory.path;
+    //Create an empty file to write PDF data
+    File file = File('$path/$fileName');
+
+    await file.writeAsBytes(bytes, flush: true);
+    // _launchURL('$path/$fileName');
+    //Write PDF data
+
+    //Open the PDF document in mobile
+    // OpenFilex.open('$path/$fileName');
+    Share.shareXFiles([XFile('$path/$fileName')], text: '');
+  }
+
 }

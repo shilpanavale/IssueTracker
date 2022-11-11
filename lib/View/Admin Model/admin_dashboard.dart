@@ -388,7 +388,7 @@ class _MyHomePageState extends State<AdminDashboardPage> {
   Widget importantIssueUI(BuildContext context){
     return  InkWell(
       onTap: (){
-        Navigator.push(context, MaterialPageRoute(builder: (context)=>const ComplaintListPage()));
+        Navigator.push(context, MaterialPageRoute(builder: (context)=>const ComplaintListPage(statusFlag: "Important",)));
       },
       child: Padding(
         padding: const EdgeInsets.all(15.0),
@@ -427,7 +427,8 @@ class _MyHomePageState extends State<AdminDashboardPage> {
   Widget notResolved(BuildContext context){
     return  InkWell(
       onTap: (){
-        Navigator.push(context, MaterialPageRoute(builder: (context)=>const ComplaintListPage()));
+        Navigator.push(context, MaterialPageRoute(builder: (context)=>
+        const ComplaintListPage(statusFlag: "Not Resolved",)));
       },
       child: Padding(
         padding: const EdgeInsets.all(15.0),
@@ -466,7 +467,8 @@ class _MyHomePageState extends State<AdminDashboardPage> {
   Widget notAssignedUI(BuildContext context){
     return  InkWell(
       onTap: (){
-        Navigator.push(context, MaterialPageRoute(builder: (context)=>const ComplaintListPage()));
+        Navigator.push(context, MaterialPageRoute(builder: (context)=>
+        const ComplaintListPage(statusFlag: "Not Assigned",)));
         },
       child: Padding(
         padding: const EdgeInsets.all(15.0),
@@ -505,7 +507,8 @@ class _MyHomePageState extends State<AdminDashboardPage> {
   Widget assignedUI(BuildContext context){
     return  InkWell(
       onTap: (){
-        Navigator.push(context, MaterialPageRoute(builder: (context)=>const ComplaintListPage()));
+        Navigator.push(context, MaterialPageRoute(builder: (context)=>
+        const ComplaintListPage(statusFlag: 'Assigned',)));
         },
       child: Padding(
         padding: const EdgeInsets.all(15.0),
@@ -544,7 +547,7 @@ class _MyHomePageState extends State<AdminDashboardPage> {
   Widget resolvedUI(BuildContext context){
     return  InkWell(
       onTap: (){
-        Navigator.push(context, MaterialPageRoute(builder: (context)=>const ComplaintListPage()));
+        Navigator.push(context, MaterialPageRoute(builder: (context)=>const ComplaintListPage(statusFlag: "Resolved",)));
         },
       child: Padding(
         padding: const EdgeInsets.all(15.0),
@@ -623,7 +626,7 @@ class _MyHomePageState extends State<AdminDashboardPage> {
        pending =100-resolvedPer;
     }
    dataMap= {
-      "Resolved": resolvedPer,
+    "Resolved": resolvedPer,
     "Pending": pending,
     };
     assigned=statusCount["assigned"];

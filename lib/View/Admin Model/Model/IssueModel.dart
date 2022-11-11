@@ -16,7 +16,8 @@ class IssueModelClass {
   dynamic escalation;
 
   IssueModelClass(
-      {this.houseComplaintId,
+      {
+        this.houseComplaintId,
         this.catIssueId,
         this.subIssueId,
         this.houseId,
@@ -31,7 +32,6 @@ class IssueModelClass {
         this.subIssue,
         this.houseNo,
         this.escalation});
-
   IssueModelClass.fromJson(Map<String, dynamic> json) {
     houseComplaintId = json['house_complaint_id'];
     catIssueId = json['cat_issue_id'];
