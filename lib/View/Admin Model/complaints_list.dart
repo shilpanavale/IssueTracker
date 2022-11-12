@@ -367,9 +367,6 @@ class _MyHomePageState extends State<ComplaintListPage> {
             }
           });
         });
-
-
-
       }).catchError((onError) {
         print(onError);
       });
