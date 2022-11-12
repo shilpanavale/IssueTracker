@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:gallery_saver/gallery_saver.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pie_chart/pie_chart.dart';
@@ -599,11 +601,18 @@ class _MyHomePageState extends State<AdminDashboardPage> {
      // imagePaths.add(imgFile.path);
       imgFile.writeAsBytes(pngBytes).then((value) async {
 
-        if(flag=="Share"){
-          Share.shareXFiles([XFile('${imgFile.path}')], text: '');
-        }else{
-          OpenFilex.open('${imgFile.path}');
-        }
+        await GallerySaver.saveImage(imgFile.path).then((value) {
+          setState(() {
+            // screenshotButtonText = 'screenshot saved!';
+            Fluttertoast.showToast(msg: "Image saved into gallery!");
+            if(flag=="Share"){
+              Share.shareXFiles([XFile('${imgFile.path}')], text: '');
+            }else{
+              OpenFilex.open('${imgFile.path}');
+            }
+          });
+        });
+
 
       }).catchError((onError) {
         print(onError);

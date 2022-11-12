@@ -5,6 +5,8 @@ import 'dart:ui' as ui;
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:gallery_saver/gallery_saver.dart';
 import 'package:intl/intl.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:path_provider/path_provider.dart';
@@ -33,7 +35,7 @@ class ComplaintListPage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<ComplaintListPage> {
-
+  static GlobalKey previewContainerKey = new GlobalKey();
   final colorList = <Color>[
     Colors.greenAccent,
   ];
@@ -51,103 +53,112 @@ class _MyHomePageState extends State<ComplaintListPage> {
     super.initState();
     registerComplaints=getRegisterComplaints('','');
   }
-
+  List<int> bytes=[];
+  Future<bool> willPopScopeBack() async{
+    Navigator.push(context, MaterialPageRoute(builder: (context)=>const AdminDashboardPage()));
+    return true;
+  }
   @override
   Widget build(BuildContext context) {
 
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0.0,
-        leading: BackLeadingButton(onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (context)=>const AdminDashboardPage()));
-        },),
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            Text("Admin Dashboard",style: StyleForApp.appBarTextStyle,),
-          ],
+    return WillPopScope(
+      onWillPop: willPopScopeBack,
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0.0,
+          leading: BackLeadingButton(onPressed: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context)=>const AdminDashboardPage()));
+          },),
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Text("Admin Dashboard",style: StyleForApp.appBarTextStyle,),
+            ],
+          ),
         ),
-      ),
-      body: SizedBox(
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height,
-        child: SingleChildScrollView(
-          controller: ScrollController(),
-          child: Padding(
-            padding: const EdgeInsets.all(15.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text("List of Complaints",style: StyleForApp.subHeadline,),
-                const SizedBox(height: 10,),
-                InkWell(
-                  onTap: (){
-                    pickDateDialog(context);
-                  },
-                  child: Container(
-                    width: double.infinity,
-                    height: 40,
-                    decoration: BoxDecoration(
-                        color: ColorsForApp.grayColor,
-                        borderRadius: BorderRadius.circular(10.0)
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        SizedBox(
-                          width: 200,
-                          child: Row(
-                            children: [
-                              const SizedBox(width: 8,),
-                              Container(
-                                height: 25,width: 25,
-                                decoration:  const BoxDecoration(
-                                  color: Colors.transparent,
-                                  image:  DecorationImage(
-                                    fit: BoxFit.contain,
-                                    image: AssetImage(
-                                      AssetFiles.calendar,
+        body: SizedBox(
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height,
+          child: SingleChildScrollView(
+            controller: ScrollController(),
+            child: Padding(
+              padding: const EdgeInsets.all(15.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text("List of Complaints",style: StyleForApp.subHeadline,),
+                  const SizedBox(height: 10,),
+                  InkWell(
+                    onTap: (){
+                      pickDateDialog(context);
+                    },
+                    child: Container(
+                      width: double.infinity,
+                      height: 40,
+                      decoration: BoxDecoration(
+                          color: ColorsForApp.grayColor,
+                          borderRadius: BorderRadius.circular(10.0)
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          SizedBox(
+                            width: 200,
+                            child: Row(
+                              children: [
+                                const SizedBox(width: 8,),
+                                Container(
+                                  height: 25,width: 25,
+                                  decoration:  const BoxDecoration(
+                                    color: Colors.transparent,
+                                    image:  DecorationImage(
+                                      fit: BoxFit.contain,
+                                      image: AssetImage(
+                                        AssetFiles.calendar,
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                              const SizedBox(width: 5,),
-                              Text("Select Date Range",style: StyleForApp.extraSmaller12dp,),
-                            ],
+                                const SizedBox(width: 5,),
+                                Text("Select Date Range",style: StyleForApp.extraSmaller12dp,),
+                              ],
+                            ),
                           ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text("Today",style: TextStyle(
-                            // fontFamily: fontName,
-                            fontWeight: FontWeight.w700,
-                            fontSize: 12,
-                            letterSpacing: 0.27,
-                            color: ColorsForApp.blackColor,
-                          ),),
-                        )
-                      ],
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text("Today",style: TextStyle(
+                              // fontFamily: fontName,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 12,
+                              letterSpacing: 0.27,
+                              color: ColorsForApp.blackColor,
+                            ),),
+                          )
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(height: 10,),
-                issueListView(context),
-                //downloadAndShare()
+                  const SizedBox(height: 10,),
+                  RepaintBoundary(
+                    key: previewContainerKey,
+                      child: issueListView(context)),
+                  //downloadAndShare()
 
-              ],
+                ],
+              ),
             ),
           ),
         ),
-      ),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(15.0),
-        child: Container(height: 50,
-          decoration:   BoxDecoration(
-              color: HexColor("#F2F2F2"),
-              borderRadius: BorderRadius.circular(10.0)
-          ),
-          child: downloadAndShare(),),
+        bottomNavigationBar: Padding(
+          padding: const EdgeInsets.all(15.0),
+          child: Container(height: 50,
+            decoration:   BoxDecoration(
+                color: HexColor("#F2F2F2"),
+                borderRadius: BorderRadius.circular(10.0)
+            ),
+            child: downloadAndShare(),),
+        ),
       ),
     );
   }
@@ -196,6 +207,7 @@ class _MyHomePageState extends State<ComplaintListPage> {
       physics: const ScrollPhysics(),
       controller: ScrollController(),
       itemBuilder: (ctx, idx) {
+        _createPDF('',vendors[idx]);
         return issueListItem(vendors[idx]);
       },
       itemCount: vendors.length,
@@ -263,13 +275,14 @@ class _MyHomePageState extends State<ComplaintListPage> {
     return  Padding(
       padding: const EdgeInsets.all(8.0),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Expanded(
+       /*   Expanded(
             child: InkWell(
               onTap: (){
-               // _captureSocialPng("");
-                _createPDF('');
+
+
+
               },
               child: SizedBox(
                 width: 100,
@@ -294,12 +307,12 @@ class _MyHomePageState extends State<ComplaintListPage> {
                 ),
               ),
             ),
-          ),
+          ),*/
           InkWell(
             onTap: (){
              // Share.share('check out my website https://example.com');
-             // _captureSocialPng("Share");
-              _createPDF("Share");
+              _captureScreenShot("Share");
+
             },
             child: SizedBox(
               width: 100,
@@ -328,33 +341,41 @@ class _MyHomePageState extends State<ComplaintListPage> {
       ),
     );
   }
-  static GlobalKey previewContainer = new GlobalKey();
-  Future<void> _captureSocialPng(String flag) {
+
+
+  Future<void> _captureScreenShot(String flag) {
     String imagePaths ;
     final RenderBox box = context.findRenderObject() as RenderBox;
     return Future.delayed(const Duration(milliseconds: 20), () async {
-      RenderRepaintBoundary? boundary = previewContainer.currentContext!
+      RenderRepaintBoundary? boundary = previewContainerKey.currentContext!
           .findRenderObject() as RenderRepaintBoundary?;
       ui.Image image = await boundary!.toImage();
       final directory = (await getApplicationDocumentsDirectory()).path;
       ByteData? byteData =
       await image.toByteData(format: ui.ImageByteFormat.png);
       Uint8List pngBytes = byteData!.buffer.asUint8List();
-      File imgFile = new File('$directory/pieChart.png');
+      File imgFile = new File('$directory/complaints.png');
       // imagePaths.add(imgFile.path);
       imgFile.writeAsBytes(pngBytes).then((value) async {
 
-        if(flag=="Share"){
-          Share.shareXFiles([XFile('${imgFile.path}')], text: '');
-        }else{
-          OpenFilex.open('${imgFile.path}');
-        }
+        await GallerySaver.saveImage(imgFile.path).then((value) {
+          setState(() {
+           // screenshotButtonText = 'screenshot saved!';
+            Fluttertoast.showToast(msg: "Image saved into gallery!");
+            if(flag=="Share"){
+              Share.shareXFiles([XFile('${imgFile.path}')], text: '');
+            }
+          });
+        });
+
+
 
       }).catchError((onError) {
         print(onError);
       });
     });
   }
+
 
   Future<List<IssueModelClass>> getRegisterComplaints(String fromDate,String toDate) async {
     List<IssueModelClass> vendors=[];
@@ -367,7 +388,7 @@ class _MyHomePageState extends State<ComplaintListPage> {
       fromDate = DateFormat('yyyy-MM-dd').format(DateTime.parse(fromDate));
       toDate = DateFormat('yyyy-MM-dd').format(DateTime.parse(toDate));
       frmDt="$fromDate 000:00:00";
-      toDt="$toDate 000:00:00";
+      toDt="$toDate 23:59:59";
       url=Uri.parse("${APIConstant.APIURL}/register-complaint/?from=$frmDt&to=$toDt&secret=d146d69ec7f6635f3f05f2bf4a51b318");
 
     }else{
@@ -386,7 +407,7 @@ class _MyHomePageState extends State<ComplaintListPage> {
 
           for(var res in decodeRes){
             if(res['status']==widget.statusFlag){
-              print('in if status-->${res['status']}');
+             // print('in if status-->${res['status']}');
               IssueModelClass issueModelClass = IssueModelClass(
                 houseComplaintId: res['house_complaint_id'],
                 catIssueId: res['cat_issue_id'],
@@ -427,7 +448,7 @@ class _MyHomePageState extends State<ComplaintListPage> {
     final String formattedTo = formatter.format(toDate);
 
     frmDt="$formattedFrm 000:00:00";
-    toDt="$formattedTo 000:00:00";
+    toDt="$formattedTo 23:59:59";
     url=Uri.parse("${APIConstant.APIURL}/register-complaint/?from=$frmDt&to=$toDt&secret=d146d69ec7f6635f3f05f2bf4a51b318");
     print("url-->$url");
     var response= await http.get(url);
@@ -471,22 +492,6 @@ class _MyHomePageState extends State<ComplaintListPage> {
     }
   }
 
-  /*  Todo:Not in use
-  assignComplaint(int userComplaintId,int vendorId,String imageUrl) async {
-
-    var url=Uri.parse("${APIConstant.APIURL}/assign-complaint");
-     Map<String,dynamic> obj={
-       "user_complaint_id":userComplaintId,
-       "vendor_id":vendorId,
-       "image_url":imageUrl
-     };
-    var response= await http.post(url, body: jsonEncode(obj));
-    print("RES-->${response.body}");
-    var decodeRes=json.decode(response.body);
-    //print()
-
-  }*/
-
   pickDateDialog(BuildContext context) {
     return showDialog(
         context: context,
@@ -507,42 +512,45 @@ class _MyHomePageState extends State<ComplaintListPage> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: <Widget>[
                                 const Text("From"),
-                                Container(
-                                  height: 45, width: 100,
-                                  decoration: const BoxDecoration(
-                                    border: Border(
-                                      top: BorderSide(
-                                          width: 1.0, color: Color(0xECEAEAF6)),
-                                      left: BorderSide(
-                                          width: 1.0, color: Color(0xECEAEAF6)),
-                                      right: BorderSide(
-                                          width: 1.0, color: Color(0xECEAEAF6)),
-                                      bottom: BorderSide(
-                                          width: 1.0, color: Color(0xECEAEAF6)),
+                                const SizedBox(width: 30,),
+                                Expanded(
+                                  child: Container(
+                                    height: 45, width: 100,
+                                    decoration: const BoxDecoration(
+                                      border: Border(
+                                        top: BorderSide(
+                                            width: 1.0, color: Color(0xECEAEAF6)),
+                                        left: BorderSide(
+                                            width: 1.0, color: Color(0xECEAEAF6)),
+                                        right: BorderSide(
+                                            width: 1.0, color: Color(0xECEAEAF6)),
+                                        bottom: BorderSide(
+                                            width: 1.0, color: Color(0xECEAEAF6)),
+                                      ),
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(5)),
+                                      //color: Color(0xECEAEAF6),
                                     ),
-                                    borderRadius: BorderRadius.all(
-                                        Radius.circular(5)),
-                                    //color: Color(0xECEAEAF6),
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment
-                                          .spaceBetween,
-                                      children: <Widget>[
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment
+                                            .spaceBetween,
+                                        children: <Widget>[
 
-                                        InkWell(
-                                          child: Text(
-                                              displayFromDate.toString(),
-                                              textAlign: TextAlign.center,
-                                              style: StyleForApp.textStyle14dp
+                                          InkWell(
+                                            child: Text(
+                                                displayFromDate.toString(),
+                                                textAlign: TextAlign.center,
+                                                style: StyleForApp.textStyle14dp
+                                            ),
+                                            onTap: () {
+                                              fromDatePicker(context,setState1);
+                                            },
                                           ),
-                                          onTap: () {
-                                            fromDatePicker(context,setState1);
-                                          },
-                                        ),
 
-                                      ],
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -553,40 +561,43 @@ class _MyHomePageState extends State<ComplaintListPage> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: <Widget>[
                                 const Text("To"),
-                                Container(
-                                  height: 45, width: 100,
-                                  decoration: const BoxDecoration(
-                                      border: Border(
-                                        top: BorderSide(width: 1.0,
-                                            color: Color(0xECEAEAF6)),
-                                        left: BorderSide(width: 1.0,
-                                            color: Color(0xECEAEAF6)),
-                                        right: BorderSide(width: 1.0,
-                                            color: Color(0xECEAEAF6)),
-                                        bottom: BorderSide(width: 1.0,
-                                            color: Color(0xECEAEAF6)),
-                                      ),
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(5))
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment
-                                          .spaceBetween,
-                                      children: <Widget>[
-                                        InkWell(
-                                          child: Text(
-                                              displayToDate.toString(),
-                                              textAlign: TextAlign.center,
-                                              style: StyleForApp.textStyle14dp
-                                          ),
-                                          onTap: () {
-                                            toDatePicker(context, setState1);
-                                          },
+                                const SizedBox(width: 50,),
+                                Expanded(
+                                  child: Container(
+                                    height: 45, width: 100,
+                                    decoration: const BoxDecoration(
+                                        border: Border(
+                                          top: BorderSide(width: 1.0,
+                                              color: Color(0xECEAEAF6)),
+                                          left: BorderSide(width: 1.0,
+                                              color: Color(0xECEAEAF6)),
+                                          right: BorderSide(width: 1.0,
+                                              color: Color(0xECEAEAF6)),
+                                          bottom: BorderSide(width: 1.0,
+                                              color: Color(0xECEAEAF6)),
                                         ),
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(5))
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment
+                                            .spaceBetween,
+                                        children: <Widget>[
+                                          InkWell(
+                                            child: Text(
+                                                displayToDate.toString(),
+                                                textAlign: TextAlign.center,
+                                                style: StyleForApp.textStyle14dp
+                                            ),
+                                            onTap: () {
+                                              toDatePicker(context, setState1);
+                                            },
+                                          ),
 
-                                      ],
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -671,6 +682,7 @@ class _MyHomePageState extends State<ComplaintListPage> {
         fromDate = picked;
         displayFromDate=UT.displayDateConverter(fromDate);
         displayToDate=UT.displayDateConverter(fromDate.add(Duration(days: 1)));
+        toDate=fromDate.add(Duration(days: 1));
         print('displayToDate--->$displayToDate');
       });
     }
@@ -709,7 +721,7 @@ class _MyHomePageState extends State<ComplaintListPage> {
   }
 
 
-  Future<void> _createPDF(String flag) async {
+  Future<void> _createPDF(String flag,IssueModelClass issueModelClass) async {
     //Create a new PDF document
     // PdfDocument document = PdfDocument();
     PdfFont subHeadingFont = PdfStandardFont(PdfFontFamily.timesRoman, 20);
@@ -717,24 +729,24 @@ class _MyHomePageState extends State<ComplaintListPage> {
 
     //Adds page settings
     document.pageSettings.orientation = PdfPageOrientation.portrait;
-    document.pageSettings.margins.all = 100;
+   // document.pageSettings.margins.all = 100;
 
     //Adds a page to the document
     PdfPage page = document.pages.add();
     PdfGraphics graphics = page.graphics;
 
     PdfBrush solidBrush = PdfSolidBrush(PdfColor(126, 151, 173));
-    Rect bounds = const Rect.fromLTWH(0, 160, 500, 30);
+    Rect bounds = const Rect.fromLTWH(0, 10, 500, 30);
     graphics.drawRectangle(brush: solidBrush, bounds: bounds);
     PdfTextElement element =
-    PdfTextElement(text: 'Status Wise Complaints\n', font: subHeadingFont);
+    PdfTextElement(text: 'List Of Complaints\n', font: subHeadingFont);
     element.brush = PdfBrushes.white;
 
     PdfLayoutResult result = element.draw(
         page: page, bounds: Rect.fromLTWH(10, bounds.top + 8, 0, 0))!;
 
     element = PdfTextElement(
-        text: 'Important Issues count:0 ',
+        text: issueModelClass.houseNo!,
         font: PdfStandardFont(PdfFontFamily.timesRoman, 15,
             style: PdfFontStyle.bold));
     element.brush = PdfSolidBrush(PdfColor(126, 155, 203));
@@ -742,25 +754,25 @@ class _MyHomePageState extends State<ComplaintListPage> {
         page: page, bounds: Rect.fromLTWH(10, result.bounds.bottom + 25, 0, 0))!;
 
     PdfFont timesRoman = PdfStandardFont(PdfFontFamily.timesRoman, 10);
-    element = PdfTextElement(text: 'Not Assigned  count : 2', font: timesRoman);
+    element = PdfTextElement(text: issueModelClass.issue!, font: timesRoman);
     element.brush = PdfBrushes.black;
     result = element.draw(
         page: page, bounds: Rect.fromLTWH(10, result.bounds.bottom + 15, 0, 0))!;
 
     element = PdfTextElement(
-        text: 'Not Resolved  count : 3 ', font: timesRoman);
+        text: issueModelClass.subIssue!, font: timesRoman);
     element.brush = PdfBrushes.black;
     result = element.draw(
         page: page, bounds: Rect.fromLTWH(10, result.bounds.bottom + 15, 0, 0))!;
 
     element = PdfTextElement(
-        text: 'Assigned count : 4 ', font: timesRoman);
+        text: issueModelClass.status!, font: timesRoman);
     element.brush = PdfBrushes.black;
     result = element.draw(
         page: page, bounds: Rect.fromLTWH(10, result.bounds.bottom + 15, 0, 0))!;
 
     element = PdfTextElement(
-        text: 'Resolved count : 5 ', font: timesRoman);
+        text: issueModelClass.issueCreatedOn!, font: timesRoman);
     element.brush = PdfBrushes.black;
     result = element.draw(
         page: page, bounds: Rect.fromLTWH(10, result.bounds.bottom + 15, 0, 0))!;
@@ -775,18 +787,14 @@ class _MyHomePageState extends State<ComplaintListPage> {
 
 
     //Save the document
-    List<int> bytes = await document.save();
+     bytes = await document.save();
 
-    if(flag=="Share"){
-      saveAndShareFile(bytes,'statusWiseReport.pdf');
-    }else{
-      //Save the file and launch/download
-      saveAndLaunchFile(bytes, 'statusWiseReport.pdf');
-    }
 
     //Dispose the document
     document.dispose();
   }
+
+
   Future<void> saveAndLaunchFile(
       List<int> bytes, String fileName) async {
     //Get external storage directory
