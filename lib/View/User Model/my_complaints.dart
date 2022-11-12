@@ -261,7 +261,7 @@ class _MyHomePageState extends State<MyComplaintListPage> {
                 children: [
               issueModelClass.status=="Assigned"?
               SizedBox(
-                height: 40,
+                height: 35,
                 child: ToggleButtons(
                   disabledBorderColor: ColorsForApp.grayColor,
                   disabledColor: ColorsForApp.grayColor,
@@ -335,11 +335,13 @@ class _MyHomePageState extends State<MyComplaintListPage> {
                  // Text(issue['issueStatus']=="Assigned"?"Give Feedback":"",textAlign:TextAlign.end,style: StyleForApp.textStyle16dpBold,),
                 ],
               ),
+
+              const SizedBox(height: 10,),
               Text(issueModelClass.issueCreatedOn!=null?issueModelClass.issueCreatedOn!:"",textAlign:TextAlign.start,style: StyleForApp.textStyle15dp,),
 
 
 
-              const SizedBox(height: 10,),
+              //const SizedBox(height: 10,),
 
             ],
           ),

@@ -572,38 +572,48 @@ class _MyHomePageState extends State<RegisterComplaint> {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     int? userId=preferences.getInt(UT.userId);
 
-    Map<String,dynamic> obj={
-      "cat_issue_id": selectIssueType,
-      "sub_issue_id": selectSubIssueType,
-      "house_id": selectHouseNo,
-      "image_url": image?.path.toString(),
-      "user_id": userId,
-      "description": describeComplaintTxt.text,
-    };
 
-
-    print('obj of post complaint--->$obj');
     var url=Uri.parse("${APIConstant.APIURL}/register-complaint/?secret=d146d69ec7f6635f3f05f2bf4a51b318");
-    var response= await http.post(url, body: jsonEncode(obj));
+    var request = http.MultipartRequest("POST", url);
+    request.fields['cat_issue_id'] = selectIssueType;
+    request.fields['sub_issue_id'] = selectSubIssueType;
+    request.fields['house_id'] = selectHouseNo;
+    request.fields['user_id'] = userId.toString();
+    request.fields['description'] = describeComplaintTxt.text;
+    print(request.fields);
+//fileToUpload
+
+       /* http.MultipartFile(
+            'fileToUpload',
+            File(image!.path).readAsBytes().asStream(),
+            File(addPhotosTxt.text).lengthSync(),
+            filename:image!.path.split("/").last
+        )*/
+        request.files.add(
+            http.MultipartFile.fromBytes(
+                'fileToUpload',
+                File(image!.path).readAsBytesSync(),
+                filename: image!.path.split("/").last
+            )
+        );
+
     print("url of register complaint-->${url}");
-    print("RES of register complaint-->${response.body}");
-    var decodeRes=json.decode(response.body);
-    print("decodeRes of register complaint-->${decodeRes}");
-     var msg=decodeRes["message"];
-
-
-       /* {
-      "message": "Complaint Registered",
-    "id": {
-    "status": true,
-    "house_complaint_id": 20,
-    "complaint_status_id": 17
-    }
-    }*/
-
-
-
-    if(msg=="Complaint Registered") {
+    request.send().then((response) {
+      print(response.statusCode);
+      if (response.statusCode == 201){
+        DialogBuilder(context).hideOpenDialog();
+        Fluttertoast.showToast(msg: "Complaint Registered successfully");
+        Navigator.push(context, MaterialPageRoute(builder: (context)=>MyComplaintListPage()));
+       // var decodeRes=json.decode(response.reasonPhrase!);
+       // print("decodeRes of register complaint-->${response.stream}");
+        //print("decodeRes of register complaint-->${response.reasonPhrase}");
+      }else{
+        DialogBuilder(context).hideOpenDialog();
+        Fluttertoast.showToast(msg: "Something went wrong please try again!");
+      }
+    });
+    /* var msg=decodeRes["message"];
+     if(msg=="Complaint Registered") {
       DialogBuilder(context).hideOpenDialog();
       Fluttertoast.showToast(msg: "Complaint Registered successfully");
       Navigator.push(context, MaterialPageRoute(builder: (context)=>MyComplaintListPage()));
@@ -611,7 +621,7 @@ class _MyHomePageState extends State<RegisterComplaint> {
     }else{
       DialogBuilder(context).hideOpenDialog();
       Fluttertoast.showToast(msg: "Something went wrong please try again!");
-    }
+    }*/
 
 
   }

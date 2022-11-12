@@ -27,8 +27,8 @@ import 'package:http/http.dart' as http;
 
 
 class ImportantIssuePage extends StatefulWidget {
-  final statusFlag;
-  const ImportantIssuePage({Key? key, this.statusFlag}) : super(key: key);
+  final escalationNo;
+  const ImportantIssuePage({Key? key, this.escalationNo}) : super(key: key);
 
 
   @override
@@ -346,7 +346,7 @@ class _MyHomePageState extends State<ImportantIssuePage> {
   Future<List<ImportantIssueModel>> getRegisterComplaints() async {
     List<ImportantIssueModel> impComplaintsList=[];
     //https://api.creshsolutions.com/important-issue/?escalation=1,2%20or%203&secret=d146d69ec7f6635f3f05f2bf4a51b318
-    var url=Uri.parse("${APIConstant.APIURL}/important-issue/?escalation=1,2%20or%203&secret=d146d69ec7f6635f3f05f2bf4a51b318");
+    var url=Uri.parse("${APIConstant.APIURL}/important-issue/?escalation=${widget.escalationNo}&secret=d146d69ec7f6635f3f05f2bf4a51b318");
 
     print("url-->$url");
     var response= await http.get(url);

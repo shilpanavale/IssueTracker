@@ -310,7 +310,9 @@ class _MyHomePageState extends State<AdminDashboardPage> {
             padding: const EdgeInsets.all(15.0),
             child: Text("Status wise Complaints",textAlign:TextAlign.start,style: StyleForApp.subHeadline,),
           ),
-          importantIssueUI(context),
+          escalation1(context),
+          escalation2(context),
+          escalation3(context),
           notAssignedUI(context),
           const SizedBox(height: 10,),
           notResolved(context),
@@ -389,10 +391,10 @@ class _MyHomePageState extends State<AdminDashboardPage> {
       ),
     );
   }
-  Widget importantIssueUI(BuildContext context){
+  Widget escalation1(BuildContext context){
     return  InkWell(
       onTap: (){
-        Navigator.push(context, MaterialPageRoute(builder: (context)=>const ImportantIssuePage()));
+        Navigator.push(context, MaterialPageRoute(builder: (context)=>const ImportantIssuePage(escalationNo:"1")));
       },
       child: Padding(
         padding: const EdgeInsets.all(15.0),
@@ -407,14 +409,54 @@ class _MyHomePageState extends State<AdminDashboardPage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text("Important Issues",style: TextStyle(
+                Text("Escalation 1",style: TextStyle(
                   // fontFamily: fontName,
                   fontWeight: FontWeight.w700,
                   fontSize: 20,
                   letterSpacing: 0.27,
-                  color: ColorsForApp.whiteColor,
+                  color: ColorsForApp.blackColor,
                 ),),
-                Text("0",style:  TextStyle(
+                Text("",style:  TextStyle(
+                  // fontFamily: fontName,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 28,
+                  letterSpacing: 0.27,
+                  color: ColorsForApp.blackColor,
+                ),),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+  Widget escalation2(BuildContext context){
+    return  InkWell(
+      onTap: (){
+        Navigator.push(context, MaterialPageRoute(builder: (context)=>const ImportantIssuePage(escalationNo: "2",)));
+      },
+      child: Padding(
+        padding: const EdgeInsets.all(15.0),
+        child: Container(
+          height: 60,
+          decoration: BoxDecoration(
+              //color: HexColor("#C6BFB7"),
+              color: ColorsForApp.appButtonColor,
+              borderRadius: BorderRadius.circular(10.0)
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text("Escalation 2",style: TextStyle(
+                  // fontFamily: fontName,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 20,
+                  letterSpacing: 0.27,
+                  color: ColorsForApp.blackColor,
+                ),),
+                Text("",style:  TextStyle(
                   // fontFamily: fontName,
                   fontWeight: FontWeight.w700,
                   fontSize: 28,
@@ -428,6 +470,47 @@ class _MyHomePageState extends State<AdminDashboardPage> {
       ),
     );
   }
+  Widget escalation3(BuildContext context){
+    return  InkWell(
+      onTap: (){
+        Navigator.push(context, MaterialPageRoute(builder: (context)=>const ImportantIssuePage(escalationNo: "3",)));
+      },
+      child: Padding(
+        padding: const EdgeInsets.all(15.0),
+        child: Container(
+          height: 60,
+          decoration: BoxDecoration(
+             // color: HexColor("#C6BFB7"),
+              color: ColorsForApp.appButtonColor,
+              borderRadius: BorderRadius.circular(10.0)
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text("Escalation 3",style: TextStyle(
+                  // fontFamily: fontName,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 20,
+                  letterSpacing: 0.27,
+                  color: ColorsForApp.blackColor,
+                ),),
+                Text("",style:  TextStyle(
+                  // fontFamily: fontName,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 28,
+                  letterSpacing: 0.27,
+                  color: ColorsForApp.blackColor,
+                ),),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget notResolved(BuildContext context){
     return  InkWell(
       onTap: (){
