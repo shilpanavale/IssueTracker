@@ -25,6 +25,8 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
+
+import 'important_issue_list.dart';
 class AdminDashboardPage extends StatefulWidget {
   const AdminDashboardPage({Key? key}) : super(key: key);
 
@@ -390,7 +392,7 @@ class _MyHomePageState extends State<AdminDashboardPage> {
   Widget importantIssueUI(BuildContext context){
     return  InkWell(
       onTap: (){
-        Navigator.push(context, MaterialPageRoute(builder: (context)=>const ComplaintListPage(statusFlag: "Important",)));
+        Navigator.push(context, MaterialPageRoute(builder: (context)=>const ImportantIssuePage()));
       },
       child: Padding(
         padding: const EdgeInsets.all(15.0),

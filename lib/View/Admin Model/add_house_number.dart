@@ -18,6 +18,8 @@ import 'package:untitled/View/User%20Model/api_constant.dart';
 import 'package:untitled/View/User%20Model/my_complaints.dart';
 import 'package:http/http.dart' as http;
 
+import '../../CustomeWidget/custome_dialog.dart';
+
 class AddHouseNumber extends StatefulWidget {
   const AddHouseNumber({Key? key}) : super(key: key);
 
@@ -126,9 +128,9 @@ class _MyHomePageState extends State<AddHouseNumber> {
                           const SizedBox(height: 10,),
                           CommonTextField.commonTextField(null, "Location", houseLocationTxt, TextInputType.text),
                           const SizedBox(height: 10,),
-                          CommonTextField.mobileTextField(null, "Accommodation", accommodationTxt, TextInputType.number),
+                          CommonTextField.mobileTextField(null, "Accommodation", accommodationTxt, TextInputType.text),
                           const SizedBox(height: 10,),
-                          CommonTextField.emailTextField(null, "House Number", houseNumberTxt, TextInputType.emailAddress),
+                          CommonTextField.emailTextField(null, "House Number", houseNumberTxt, TextInputType.text),
 
                           const SizedBox(height: 40,),
 
@@ -142,6 +144,7 @@ class _MyHomePageState extends State<AddHouseNumber> {
                                   Fluttertoast.showToast(msg: "Please enter house number");
                                 }
                                 else {
+                                  DialogBuilder(context).showLoadingIndicator();
                                   postHouseNumber();
                                 }
                               }, title: "Submit"),
@@ -166,9 +169,9 @@ class _MyHomePageState extends State<AddHouseNumber> {
   postHouseNumber() async {
 
     Map<String,dynamic> obj={
-      "vendor_name": houseLocationTxt.text,
-      "vendor_email": houseNumberTxt.text,
-      "vendor_contact": accommodationTxt.text
+      "house_type": accommodationTxt.text,
+      "house_location": houseLocationTxt.text,
+      "house_no": houseNumberTxt.text
     };
 
     print('add house number-->$obj');
@@ -177,13 +180,18 @@ class _MyHomePageState extends State<AddHouseNumber> {
     print("RES-->${response.body}");
     var decodeRes=json.decode(response.body);
     var msg=decodeRes["message"];
-    if(msg=="Vendor Created") {
+    if(msg=="House Created") {
+      DialogBuilder(context).hideOpenDialog();
       Fluttertoast.showToast(msg: "House Number Added Successfully");
       houseLocationTxt.clear();
       houseNumberTxt.clear();
       accommodationTxt.clear();
+      setState(() {
+
+      });
     }else{
-      Fluttertoast.showToast(msg: "House Number Added Successfully");
+      DialogBuilder(context).hideOpenDialog();
+      Fluttertoast.showToast(msg: "Something went wrong please try again!");
     }
 
   }

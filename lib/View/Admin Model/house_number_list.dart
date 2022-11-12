@@ -17,6 +17,8 @@ import 'package:untitled/View/Admin%20Model/admin_dashboard.dart';
 import 'package:http/http.dart' as http;
 import 'package:untitled/View/User%20Model/api_constant.dart';
 
+import '../../CustomeWidget/custome_dialog.dart';
+
 class HouseNumberListPage extends StatefulWidget {
   const HouseNumberListPage({Key? key}) : super(key: key);
 
@@ -144,16 +146,17 @@ class _MyHomePageState extends State<HouseNumberListPage> {
             leading: CircleAvatar(
               backgroundColor: ColorsForApp.appButtonColor,
               radius: 18,
-              child: const Icon(Icons.person,color: Colors.white,),
-            ),/*trailing: GestureDetector(
+              child: const Icon(Icons.house,color: Colors.white,),
+            ),
+          /*  trailing: GestureDetector(
             onTap: (){
-             // vendorID = houseNumber.vendorId;
-              //deleteVendor();
+              DialogBuilder(context).showLoadingIndicator();
+              deleteHouse(houseNumber.houseId!);
             },
             child: CircleAvatar(
               backgroundColor: ColorsForApp.appButtonColor,
-              radius: 15,
-              child: const Icon(Icons.delete,color: Colors.white,size: 17,),
+              radius: 13,
+              child: const Icon(Icons.delete,color: Colors.white,size: 15,),
             ),
           ),*/
             // title:Text("Issue Type : "+issue['issueTpe'],textAlign:TextAlign.start,style: StyleForApp.textStyle16dpBold,),
@@ -168,27 +171,6 @@ class _MyHomePageState extends State<HouseNumberListPage> {
               ],
             ),
           )
-
-        /* Padding(
-          padding: const EdgeInsets.all(15.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(issue['issueTpe'],textAlign:TextAlign.start,style: StyleForApp.textStyle20dpBold,),
-              const SizedBox(height: 15,),
-              Text(issue['issueName'],textAlign:TextAlign.start,style: StyleForApp.textStyle16dpBold,),
-              const SizedBox(height: 5,),
-              Text(issue['issueDetails'],textAlign:TextAlign.start,style: StyleForApp.textStyle16dpBold,),
-              Text(issue['issueStatus'],textAlign:TextAlign.start,style: StyleForApp.textStyle16dpBold,),
-
-
-
-
-              const SizedBox(height: 10,),
-
-            ],
-          ),
-        ),*/
       ),
     );
   }
@@ -208,5 +190,23 @@ class _MyHomePageState extends State<HouseNumberListPage> {
       throw Exception('Failed to load house list');
     }
 
+  }
+  deleteHouse(String houseId) async{
+    var url=Uri.parse("${APIConstant.APIURL}/house/?id=$houseId&secret=d146d69ec7f6635f3f05f2bf4a51b318");
+    print("house URL-->$url");
+    var response= await http.delete(url);
+
+    print('delete response--->${response.body}');
+    var decodeRes=json.decode(response.body);
+    var msg=decodeRes["message"];
+    if(msg.toString().contains("SQLSTATE")) {
+      DialogBuilder(context).hideOpenDialog();
+      Fluttertoast.showToast(msg: "This house assigned with issue ");
+    }else {
+      DialogBuilder(context).hideOpenDialog();
+      Fluttertoast.showToast(msg: "House Deleted successfully");
+      Navigator.push(context,
+          MaterialPageRoute(builder: (context) => const HouseNumberListPage()));
+    }
   }
 }
