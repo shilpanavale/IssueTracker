@@ -49,7 +49,7 @@ dialogContent(BuildContext context) {
             mainAxisSize: MainAxisSize.min, // To make the card compact
             children: <Widget>[
               const Text(
-                "Are you sure you want to exit from Samadhan app?",
+                "Are you sure you want to exit from untitled app?",
                 style: TextStyle(
                   fontSize: 20.0,
                   fontWeight: FontWeight.normal,
