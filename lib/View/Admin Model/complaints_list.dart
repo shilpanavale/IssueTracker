@@ -5,12 +5,14 @@ import 'dart:ui' as ui;
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:gallery_saver/gallery_saver.dart';
 import 'package:intl/intl.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pie_chart/pie_chart.dart';
+import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
 import 'package:untitled/App%20Theme/app_theme.dart';
@@ -24,10 +26,7 @@ import 'package:untitled/View/Admin%20Model/admin_dashboard.dart';
 import '../User Model/api_constant.dart';
 import 'package:http/http.dart' as http;
 
-class JosKeys {
-  static final previewContainerKey = GlobalKey();
-  static final previewHouseKey = GlobalKey();
-}
+
 class ComplaintListPage extends StatefulWidget {
   final statusFlag;
   const ComplaintListPage({Key? key, this.statusFlag}) : super(key: key);
@@ -48,6 +47,7 @@ class _MyHomePageState extends State<ComplaintListPage> {
   String displayFromDate="";
   String displayToDate="";
   Future<List<IssueModelClass>>? registerComplaints;
+  ScreenshotController fullPageScreenshot = ScreenshotController();
   @override
   void initState() {
     // TODO: implement initState
@@ -57,6 +57,8 @@ class _MyHomePageState extends State<ComplaintListPage> {
     registerComplaints=getRegisterComplaints('','');
   }
   List<int> bytes=[];
+
+
   Future<bool> willPopScopeBack() async{
     Navigator.push(context, MaterialPageRoute(builder: (context)=>const AdminDashboardPage()));
     return true;
@@ -65,7 +67,7 @@ class _MyHomePageState extends State<ComplaintListPage> {
   void dispose() {
     // TODO: implement dispose
     super.dispose();
-    JosKeys.previewContainerKey;
+
   }
   @override
   Widget build(BuildContext context) {
@@ -86,15 +88,16 @@ class _MyHomePageState extends State<ComplaintListPage> {
             ],
           ),
         ),
-        body: SizedBox(
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height,
-          child: SingleChildScrollView(
-            controller: ScrollController(),
-            child: Padding(
-              padding: const EdgeInsets.all(15.0),
+        body: Padding(
+          padding: const EdgeInsets.all(15.0),
+          child: SizedBox(
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height,
+            child: Screenshot(
+              controller: fullPageScreenshot,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+               // mainAxisSize: MainAxisSize.max,
                 children: <Widget>[
                   Text("List of Complaints",style: StyleForApp.subHeadline,),
                   const SizedBox(height: 10,),
@@ -149,9 +152,7 @@ class _MyHomePageState extends State<ComplaintListPage> {
                     ),
                   ),
                   const SizedBox(height: 10,),
-                  RepaintBoundary(
-                    key: JosKeys.previewContainerKey,
-                      child: issueListView(context)),
+                  Expanded(child: issueListView(context)),
                   //downloadAndShare()
 
                 ],
@@ -214,7 +215,7 @@ class _MyHomePageState extends State<ComplaintListPage> {
     return ListView.builder(
       shrinkWrap: true,
       physics: const ScrollPhysics(),
-      controller: ScrollController(),
+     controller: ScrollController(),
       itemBuilder: (ctx, idx) {
         _createPDF('',vendors[idx]);
         return issueListItem(vendors[idx]);
@@ -224,89 +225,183 @@ class _MyHomePageState extends State<ComplaintListPage> {
   }
 
   Widget issueListItem(IssueModelClass issueModelClass){
-    return  Padding(
-      padding: const EdgeInsets.only(top: 8.0),
-      child: Container(
-        width: double.infinity,
-        decoration:   BoxDecoration(
-            color: HexColor("#D6D6D6"),
-            borderRadius: BorderRadius.circular(10.0)
-        ),
+    ScreenshotController screenshotController = ScreenshotController();
+
+    return  MediaQuery.removePadding(
+      context: context,
+      removeTop: true,
+      child: Screenshot(
+        controller: screenshotController,
         child: Padding(
-          padding: const EdgeInsets.all(15.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text("House No : ${issueModelClass.houseNo.toString()}",textAlign:TextAlign.start,style: StyleForApp.textStyle16dpBold,),
-              const SizedBox(height: 8,),
-              Text(issueModelClass.issue!=null?issueModelClass.issue!:"",textAlign:TextAlign.start,style: StyleForApp.textStyle15dp,),
-              const SizedBox(height: 5,),
-              Text(issueModelClass.subIssue!=null?issueModelClass.subIssue!:"",textAlign:TextAlign.start,style: StyleForApp.textStyle15dp,),
-              const SizedBox(height: 5,),
-              // Text(issue['issueDetails'],textAlign:TextAlign.start,style: StyleForApp.textStyle16dpBold,),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          padding: const EdgeInsets.only(top: 8.0),
+          child: Container(
+          //  width: double.infinity,
+            //height: 400,
+            decoration:   BoxDecoration(
+                color: HexColor("#D6D6D6"),
+                borderRadius: BorderRadius.circular(10.0)
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(15.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(child: Text("Status ",textAlign:TextAlign.start,style: StyleForApp.textStyle16dpBold,)),
-                  Expanded(
-                    child: SizedBox(
-                      height: 40,
-                      //width: 130,
-                      /*decoration: BoxDecoration(
-                          color: ColorsForApp.appButtonColor,
-                          borderRadius: BorderRadius.circular(10.0)
-                      ),*/
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Center(
-                          child: Text(issueModelClass.status.toString(),textAlign:TextAlign.end,style: TextStyle(
-                            // fontFamily: fontName,
-                            fontWeight: FontWeight.w500,
-                            fontSize: 18,
-                            // letterSpacing: 0.27,
-                            color: ColorsForApp.appButtonColor,
-                          ),),
+                  Text("House No : ${issueModelClass.houseNo.toString()}",textAlign:TextAlign.start,style: StyleForApp.textStyle16dpBold,),
+                  const SizedBox(height: 8,),
+                  Text(issueModelClass.issue!=null?issueModelClass.issue!:"",textAlign:TextAlign.start,style: StyleForApp.textStyle15dp,),
+                  const SizedBox(height: 5,),
+                  Text(issueModelClass.subIssue!=null?issueModelClass.subIssue!:"",textAlign:TextAlign.start,style: StyleForApp.textStyle15dp,),
+                  const SizedBox(height: 5,),
+                  // Text(issue['issueDetails'],textAlign:TextAlign.start,style: StyleForApp.textStyle16dpBold,),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(child: Text("Status ",textAlign:TextAlign.start,style: StyleForApp.textStyle16dpBold,)),
+                      Expanded(
+                        child: SizedBox(
+                          height: 40,
+                          //width: 130,
+                          /*decoration: BoxDecoration(
+                              color: ColorsForApp.appButtonColor,
+                              borderRadius: BorderRadius.circular(10.0)
+                          ),*/
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Center(
+                              child: Text(issueModelClass.status.toString(),textAlign:TextAlign.end,style: TextStyle(
+                                // fontFamily: fontName,
+                                fontWeight: FontWeight.w500,
+                                fontSize: 18,
+                                // letterSpacing: 0.27,
+                                color: ColorsForApp.appButtonColor,
+                              ),),
+                            ),
+                          ),
                         ),
                       ),
-                    ),
+                    ],
                   ),
-                ],
-              ),
-              Text(issueModelClass.status.toString().toLowerCase()=="Not Resolved".toLowerCase()||
-                  issueModelClass.status.toString().toLowerCase()=="Resolved".toLowerCase()
-                  ?issueModelClass.mobileNo ?? "":"",textAlign:TextAlign.start,style: StyleForApp.textStyle15dp,),
-              Text(
-                issueModelClass.status.toString().toLowerCase()=="Not Resolved".toLowerCase()
-                  ||issueModelClass.status.toString().toLowerCase()=="Resolved".toLowerCase()?
-              issueModelClass.comment ?? "":"",
-                textAlign:TextAlign.start,style: StyleForApp.textStyle15dp,),
-              Text(issueModelClass.status.toString().toLowerCase()=="Not Resolved".toLowerCase()
-                  ||issueModelClass.status.toString().toLowerCase()=="Resolved".toLowerCase()
-                  ?issueModelClass.rating??"":"",textAlign:TextAlign.start,style: StyleForApp.textStyle15dp,),
+                  issueModelClass.mobileNo!=null?Text(issueModelClass.mobileNo ?? "",textAlign:TextAlign.start,style: StyleForApp.textStyle15dp,):Container(),
+                  issueModelClass.comment==null||issueModelClass.comment==""?
+                  Container(): Row(
+                    children: [
+                      Text("User Comment : ", textAlign:TextAlign.start,style: StyleForApp.textStyle15dpBold,),
+                      Text(issueModelClass.comment!=null?issueModelClass.comment.toString(): "", textAlign:TextAlign.start,style: StyleForApp.textStyle15dp,),
+                    ],
+                  ),
 
-              issueModelClass.status.toString().toLowerCase()=="Not Resolved".toLowerCase()
-                  ||issueModelClass.status.toString().toLowerCase()=="Resolved".toLowerCase()
-              ?issueModelClass.imageUrl2==null||issueModelClass.imageUrl2==""?
-              Container() :Container(
-                  height: 100,
-                  width: 100,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10.0),
-                      color: ColorsForApp.grayColor,
-                      border: Border.all(color: ColorsForApp.grayLabelColor)
+                  issueModelClass.status.toString().toLowerCase()=="Not Resolved".toLowerCase()
+                      ||issueModelClass.status.toString().toLowerCase()=="Resolved".toLowerCase()
+                      ?issueModelClass.rating==null||issueModelClass.rating==""?
+                   Container():Padding(
+                    padding: const EdgeInsets.only(top: 3, bottom: 10, right: 0, left: 0),
+                    child: RatingBar.builder(
+                      initialRating: double.parse(issueModelClass.rating),
+                      minRating: 1,
+                      tapOnlyMode: false,
+                      itemSize: 20,
+                      direction: Axis.horizontal,
+                      allowHalfRating: false,
+                      itemCount: 5,
+                      itemPadding: const EdgeInsets.symmetric(horizontal: 1.0),
+                      itemBuilder: (context, _) => const Icon(
+                        Icons.star,
+                        color: Colors.amber,size: 10,
+                      ),
+                      onRatingUpdate: (rating1) {
+
+                      },
+                    ),
+                  ): Container(),
+                  const SizedBox(height: 10,),
+                  issueModelClass.status.toString().toLowerCase()=="Not Resolved".toLowerCase()
+                      ||issueModelClass.status.toString().toLowerCase()=="Resolved".toLowerCase()
+                  ?issueModelClass.imageUrl2==null||issueModelClass.imageUrl2==""?
+                  Container() :Container(
+                      height: 100,
+                      width: 100,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10.0),
+                          color: ColorsForApp.whiteColor,
+                          border: Border.all(color: ColorsForApp.grayLabelColor)
+                      ),
+                      child: Image.network("https://creshsolutions.com/images/samadhan/complaint_images/${issueModelClass.imageUrl2.toString()}")
+                  ):Container(),
+
+                  issueModelClass.status.toString().toLowerCase()=="Assigned".toLowerCase()
+                      ?issueModelClass.imageUrl==null||issueModelClass.imageUrl==""?
+                  Container() :Container(
+                      height: 100,
+                      width: 100,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10.0),
+                          color: ColorsForApp.whiteColor,
+                          border: Border.all(color: ColorsForApp.grayLabelColor)
+                      ),
+                      child: Image.network("https://creshsolutions.com/images/samadhan/complaint_images/${issueModelClass.imageUrl.toString()}")
+                  ):Container(),
+
+
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(issueModelClass.issueCreatedOn!=null?issueModelClass.issueCreatedOn!:"",textAlign:TextAlign.start,style: StyleForApp.textStyle15dp,),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                              InkWell(
+                              onTap: () async {
+                                // Share.share('check out my website https://example.com');
+                                print("ON TAP");
+                                //screenshotController=ScreenshotController();
+                                await screenshotController.capture(delay: const Duration(milliseconds: 10)).then((Uint8List? imageFile) async {
+                                  if (imageFile != null) {
+                                    final directory = await getApplicationDocumentsDirectory();
+                                    final imagePath = await File('${directory.path}/image.png').create();
+                                    await imagePath.writeAsBytes(imageFile);
+                                    print("sharing");
+
+                                    /// Share Plugin
+                                    await Share.shareXFiles([XFile(imagePath.path)], text: '');
+                                  }
+                                });
+
+
+                              },
+                              child: SizedBox(
+                                width: 100,
+                                child: Row(
+                                  children: [
+                                    const SizedBox(width: 8,),
+                                    Container(
+                                      height: 25,width: 25,
+                                      decoration:  const BoxDecoration(
+                                        color: Colors.transparent,
+                                        image:  DecorationImage(
+                                          fit: BoxFit.contain,
+                                          image: AssetImage(
+                                            AssetFiles.share,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 10,),
+                                    Text("Share",style: StyleForApp.extraSmaller12dp,),
+                                  ],
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
+                      )
+                    ],
                   ),
-                  child: Image.network("https://creshsolutions.com/images/samadhan/complaint_images/${issueModelClass.imageUrl2}")
-              ):Container(),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(issueModelClass.issueCreatedOn!=null?issueModelClass.issueCreatedOn!:"",textAlign:TextAlign.start,style: StyleForApp.textStyle15dp,),
-                  //downloadAndShare()
-                  ShareHouse()
+                  const SizedBox(height: 10,),
                 ],
               ),
-              const SizedBox(height: 10,),
-            ],
+            ),
           ),
         ),
       ),
@@ -318,111 +413,27 @@ class _MyHomePageState extends State<ComplaintListPage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-       /*   Expanded(
-            child: InkWell(
-              onTap: (){
-
-
-
-              },
-              child: SizedBox(
-                width: 100,
-                child: Row(
-                  children: [
-                    const SizedBox(width: 8,),
-                    Container(
-                      height: 25,width: 25,
-                      decoration:  const BoxDecoration(
-                        color: Colors.transparent,
-                        image:  DecorationImage(
-                          fit: BoxFit.contain,
-                          image: AssetImage(
-                            AssetFiles.download,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 10,),
-                    Text("Download",style: StyleForApp.extraSmaller12dp,),
-                  ],
-                ),
-              ),
-            ),
-          ),*/
           InkWell(
-            onTap: (){
-             // Share.share('check out my website https://example.com');
-              _captureScreenShot("Share");
+            onTap: () async {
+              await fullPageScreenshot.capture(delay: const Duration(milliseconds: 10)).then((Uint8List? image) async {
+                if (image != null) {
+                  final directory = await getApplicationDocumentsDirectory();
+                  final imagePath = await File('${directory.path}/image.png').create();
+                  await imagePath.writeAsBytes(image);
+                  print("sharing");
 
-            },
-            child: SizedBox(
-              width: 100,
-              child: Row(
-                children: [
-                  const SizedBox(width: 8,),
-                  Container(
-                    height: 25,width: 25,
-                    decoration:  const BoxDecoration(
-                      color: Colors.transparent,
-                      image:  DecorationImage(
-                        fit: BoxFit.contain,
-                        image: AssetImage(
-                          AssetFiles.share,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 10,),
-                  Text("Share",style: StyleForApp.extraSmaller12dp,),
-                ],
-              ),
-            ),
-          )
-        ],
-      ),
-    );
-  }
-  Widget ShareHouse(){
-    return  Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-       /*   Expanded(
-            child: InkWell(
-              onTap: (){
+                  /// Share Plugin
+                   await GallerySaver.saveImage(imagePath.path).then((value) {
+                            setState(()  {
+                              // screenshotButtonText = 'screenshot saved!';
+                              Fluttertoast.showToast(msg: "Image saved into gallery!");
 
+                             });
+                           });
+                  await Share.shareXFiles([XFile(imagePath.path)], text: '');
 
-
-              },
-              child: SizedBox(
-                width: 100,
-                child: Row(
-                  children: [
-                    const SizedBox(width: 8,),
-                    Container(
-                      height: 25,width: 25,
-                      decoration:  const BoxDecoration(
-                        color: Colors.transparent,
-                        image:  DecorationImage(
-                          fit: BoxFit.contain,
-                          image: AssetImage(
-                            AssetFiles.download,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 10,),
-                    Text("Download",style: StyleForApp.extraSmaller12dp,),
-                  ],
-                ),
-              ),
-            ),
-          ),*/
-          InkWell(
-            onTap: (){
-             // Share.share('check out my website https://example.com');
-              _captureHouseScreenShot("Share");
+                }
+              });
 
             },
             child: SizedBox(
@@ -454,64 +465,8 @@ class _MyHomePageState extends State<ComplaintListPage> {
   }
 
 
-  Future<void> _captureScreenShot(String flag) {
-    String imagePaths ;
-    final RenderBox box = context.findRenderObject() as RenderBox;
-    return Future.delayed(const Duration(milliseconds: 20), () async {
-      RenderRepaintBoundary? boundary = JosKeys.previewContainerKey.currentContext!
-          .findRenderObject() as RenderRepaintBoundary?;
-      ui.Image image = await boundary!.toImage();
-      final directory = (await getApplicationDocumentsDirectory()).path;
-      ByteData? byteData =
-      await image.toByteData(format: ui.ImageByteFormat.png);
-      Uint8List pngBytes = byteData!.buffer.asUint8List();
-      File imgFile = new File('$directory/complaints.png');
-      // imagePaths.add(imgFile.path);
-      imgFile.writeAsBytes(pngBytes).then((value) async {
 
-        await GallerySaver.saveImage(imgFile.path).then((value) {
-          setState(() {
-           // screenshotButtonText = 'screenshot saved!';
-            Fluttertoast.showToast(msg: "Image saved into gallery!");
-            if(flag=="Share"){
-              Share.shareXFiles([XFile('${imgFile.path}')], text: '');
-            }
-          });
-        });
-      }).catchError((onError) {
-        print(onError);
-      });
-    });
-  }
-  Future<void> _captureHouseScreenShot(String flag) {
-    String imagePaths ;
-    final RenderBox box = context.findRenderObject() as RenderBox;
-    return Future.delayed(const Duration(milliseconds: 20), () async {
-      RenderRepaintBoundary? boundary = JosKeys.previewHouseKey.currentContext!
-          .findRenderObject() as RenderRepaintBoundary?;
-      ui.Image image = await boundary!.toImage();
-      final directory = (await getApplicationDocumentsDirectory()).path;
-      ByteData? byteData =
-      await image.toByteData(format: ui.ImageByteFormat.png);
-      Uint8List pngBytes = byteData!.buffer.asUint8List();
-      File imgFile = new File('$directory/complaints.png');
-      // imagePaths.add(imgFile.path);
-      imgFile.writeAsBytes(pngBytes).then((value) async {
 
-        await GallerySaver.saveImage(imgFile.path).then((value) {
-          setState(() {
-           // screenshotButtonText = 'screenshot saved!';
-            Fluttertoast.showToast(msg: "Image saved into gallery!");
-            if(flag=="Share"){
-              Share.shareXFiles([XFile('${imgFile.path}')], text: '');
-            }
-          });
-        });
-      }).catchError((onError) {
-        print(onError);
-      });
-    });
-  }
 
 
   Future<List<IssueModelClass>> getRegisterComplaints(String fromDate,String toDate) async {
@@ -544,18 +499,18 @@ class _MyHomePageState extends State<ComplaintListPage> {
 
           for(var res in decodeRes){
             if(res['status'].toString().toLowerCase()==widget.statusFlag.toString().toLowerCase()){
-              print('in if status-->${res['status']}');
+              //print('in if status-->${res['status']}');
               IssueModelClass issueModelClass = IssueModelClass(
                 comment: res['comment'],
                 rating: res['rating'],
-                imageUrl2: res['image_url_2'],
-                mobileNo: res['mobile_no'],
+                imageUrl2: res['image_url_2']!=null||res['image_url_2']!=""?res['image_url_2']:"",
+                mobileNo: res['mobile_no']!=null||res['mobile_no']!=""?res['mobile_no']:"",
                 houseComplaintId: res['house_complaint_id'],
                 catIssueId: res['cat_issue_id'],
                 subIssueId: res['sub_issue_id'],
                 houseId: res['house_id'],
                 issueCreatedOn: res['issue_created_on'],
-                imageUrl: res['image_url'],
+                imageUrl: res['image_url']!=null||res['image_url']!=""?res['image_url']:"",
                 description: res['description'],
                 userComplaintId: res['user_complaint_id'],
                 status: res['status'],
@@ -591,7 +546,7 @@ class _MyHomePageState extends State<ComplaintListPage> {
     frmDt="$formattedFrm 000:00:00";
     toDt="$formattedTo 23:59:59";
     url=Uri.parse("${APIConstant.APIURL}/register-complaint/?from=$frmDt&to=$toDt&secret=d146d69ec7f6635f3f05f2bf4a51b318");
-    print("url-->$url");
+   // print("url-->$url");
     var response= await http.get(url);
     print(response.body);
     if (response.statusCode == 200) {
@@ -601,7 +556,7 @@ class _MyHomePageState extends State<ComplaintListPage> {
 
       for(var res in decodeRes){
         if(res['status'].toString().toLowerCase()==widget.statusFlag.toString().toLowerCase()){
-          print('in if status-->${res['status']}');
+         // print('in if status-->${res['status']}');
           IssueModelClass issueModelClass = IssueModelClass(
             comment: res['comment'],
             rating: res['rating'],
@@ -828,7 +783,7 @@ class _MyHomePageState extends State<ComplaintListPage> {
         displayFromDate=UT.displayDateConverter(fromDate);
         displayToDate=UT.displayDateConverter(fromDate.add(Duration(days: 1)));
         toDate=fromDate.add(Duration(days: 1));
-        print('displayToDate--->$displayToDate');
+       // print('displayToDate--->$displayToDate');
       });
     }
   }

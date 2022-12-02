@@ -48,6 +48,7 @@ dependencies:
   path_provider:
   open_filex:
   gallery_saver: ^2.3.2
+  screenshot: ^1.2.3
 
 
 dev_dependencies:

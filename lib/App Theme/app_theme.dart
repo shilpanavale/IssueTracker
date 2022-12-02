@@ -39,6 +39,12 @@ class StyleForApp{
     fontSize: 15,
     letterSpacing: 0.27,
     color: ColorsForApp.blackColor,
+  );static  TextStyle textStyle15dpBold = TextStyle(
+   // fontFamily: fontName,
+    fontWeight: FontWeight.bold,
+    fontSize: 15,
+    letterSpacing: 0.27,
+    color: ColorsForApp.blackColor,
   );
   static  TextStyle textStyle20dpBold = TextStyle(
    // fontFamily: fontName,
