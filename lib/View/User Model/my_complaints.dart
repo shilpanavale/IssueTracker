@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pie_chart/pie_chart.dart';
@@ -10,6 +11,7 @@ import 'package:untitled/App%20Theme/text_fileds.dart';
 import 'package:untitled/CustomeWidget/common_button.dart';
 import 'package:untitled/View/User%20Model/api_constant.dart';
 import 'package:untitled/View/User%20Model/enter_feedback.dart';
+import 'package:untitled/View/User%20Model/enter_rating.dart';
 import 'package:untitled/View/User%20Model/register_complaint.dart';
 import 'package:http/http.dart' as http;
 import 'package:untitled/View/User%20Model/user_drawer.dart';
@@ -235,7 +237,7 @@ class _MyHomePageState extends State<MyComplaintListPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(issueModelClass.issue!=null?issueModelClass.issue!:"",textAlign:TextAlign.start,style: StyleForApp.textStyle20dpBold,),
+              Text(issueModelClass.issue!=null?issueModelClass.issue!:"",textAlign:TextAlign.start,style: StyleForApp.textStyle16dpBold,),
               const SizedBox(height: 15,),
               Text(issueModelClass.subIssue!=null?issueModelClass.subIssue!:"",textAlign:TextAlign.start,style: StyleForApp.textStyle16dpBold,),
               const SizedBox(height: 5,),
@@ -251,16 +253,18 @@ class _MyHomePageState extends State<MyComplaintListPage> {
                       fontWeight: FontWeight.w500,
                       fontSize: 20,
                       letterSpacing: 0.27,
-                      color: ColorsForApp.whiteColor,
+                      color: ColorsForApp.appButtonColor,
                     ),),
                   ),
                 ],
               ),
               Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-              issueModelClass.status=="Assigned"?
-              SizedBox(
+                  Expanded(child: Text(issueModelClass.description!=null?issueModelClass.description!:"",textAlign:TextAlign.start,style: StyleForApp.textStyle16dpBold,)),
+
+                  issueModelClass.status=="Assigned"?
+             /* SizedBox(
                 height: 35,
                 child: ToggleButtons(
                   disabledBorderColor: ColorsForApp.grayColor,
@@ -278,10 +282,12 @@ class _MyHomePageState extends State<MyComplaintListPage> {
                         isSelected[i] = i == index;
                         print("isSelected[i]-->${isSelected[i]}");
                         if(isSelected[i]==false){
-                          updateComplaintStatus(issueModelClass.userComplaintId,"1");
+                         // updateComplaintStatus(issueModelClass.userComplaintId,"1");
+                          Navigator.push(context, MaterialPageRoute(builder: (context)=> GiveRating(issueModel:issueModelClass)));
 
                         }else{
-                          updateComplaintStatus(issueModelClass.userComplaintId,"2");
+                          Navigator.push(context, MaterialPageRoute(builder: (context)=> FeedBackPage(issueModel:issueModelClass)));
+                         // updateComplaintStatus(issueModelClass.userComplaintId,"2");
 
                         }
                         print("index-->${index}");
@@ -291,14 +297,14 @@ class _MyHomePageState extends State<MyComplaintListPage> {
                   isSelected: isSelected,
                   children: const <Widget>[
                     Padding(
-                      padding:  EdgeInsets.all(8.0),
+                      padding:  EdgeInsets.all(3.0),
                       child: Text(
                         'Resolved',
                         style: TextStyle(fontSize: 16,color: Colors.white),
                       ),
                     ),
                     Padding(
-                      padding:  EdgeInsets.all(8.0),
+                      padding:  EdgeInsets.all(3.0),
                       child: Text(
                         'Not Resolved',
                         style: TextStyle(fontSize: 16,color: Colors.white),
@@ -306,11 +312,11 @@ class _MyHomePageState extends State<MyComplaintListPage> {
                     ),
                   ],
                 ),
-              )
+              )*/
 
-                /*InkWell(
+                InkWell(
                   onTap: (){
-                    Navigator.push(context, MaterialPageRoute(builder: (context)=>const FeedBackPage()));
+                    Navigator.push(context, MaterialPageRoute(builder: (context)=>FeedBackPage(issueModel:issueModelClass)));
                   },
                   child: Container(
                   height: 40,
@@ -322,7 +328,7 @@ class _MyHomePageState extends State<MyComplaintListPage> {
                   ),
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Text("Update",textAlign:TextAlign.center,style: TextStyle(
+                    child: Text("Feedback",textAlign:TextAlign.center,style: TextStyle(
                       // fontFamily: fontName,
                       fontWeight: FontWeight.w500,
                       fontSize: 20,
@@ -331,15 +337,26 @@ class _MyHomePageState extends State<MyComplaintListPage> {
                     ),),
                   ),
               ),
-                )*/:Container(),
+                ):Container(),
                  // Text(issue['issueStatus']=="Assigned"?"Give Feedback":"",textAlign:TextAlign.end,style: StyleForApp.textStyle16dpBold,),
                 ],
               ),
 
               const SizedBox(height: 10,),
               Text(issueModelClass.issueCreatedOn!=null?issueModelClass.issueCreatedOn!:"",textAlign:TextAlign.start,style: StyleForApp.textStyle15dp,),
-
-
+              const SizedBox(height: 10,),
+              issueModelClass.imageUrl==null||issueModelClass.imageUrl==""?
+                  Container():
+            Container(
+                  height: 100,
+                  width: 100,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10.0),
+                      color: ColorsForApp.grayColor,
+                      border: Border.all(color: ColorsForApp.grayLabelColor)
+                  ),
+                  child: Image.network("https://creshsolutions.com/images/samadhan/complaint_images/${issueModelClass.imageUrl}")
+              )
 
               //const SizedBox(height: 10,),
 
@@ -352,9 +369,16 @@ class _MyHomePageState extends State<MyComplaintListPage> {
 
   updateComplaintStatus(String userComalaintId ,String status) async {
     DialogBuilder(context).showLoadingIndicator();
-    var url=Uri.parse("${APIConstant.APIURL}/update-complaint-status/?id=$userComalaintId&status=$status&secret=d146d69ec7f6635f3f05f2bf4a51b318");
+    var url=Uri.parse("${APIConstant.APIURL}/update-complaint-status/?secret=d146d69ec7f6635f3f05f2bf4a51b318");
     print("Url-->$url");
-    var response= await http.patch(url);
+    Map<String,dynamic> obj={
+        "id": userComalaintId,
+        "status": status,
+        /*"comment": "Comment",
+        "rating": "1-5",
+        "image": file*/
+    };
+    var response= await http.post(url,body: jsonEncode(obj));
     print("complaint update status res-->${response.body}");
     var decode=json.decode(response.body);
     //{"message":"Issue status with id 18 updated"}

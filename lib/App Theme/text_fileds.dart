@@ -101,6 +101,7 @@ class CommonTextField{
               controller: controller,
               textInputAction: TextInputAction.done,
               autofocus: false,
+              obscureText: true,
               keyboardType: type,
               decoration: InputDecoration(
                 contentPadding: const EdgeInsets.all(8.0),
@@ -134,7 +135,7 @@ class CommonTextField{
       child: Column(
         children: [
           Container(
-            height: 37,
+            height: 45,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10.0),
               color: ColorsForApp.whiteColor,
@@ -145,6 +146,49 @@ class CommonTextField{
               textInputAction: TextInputAction.done,
               autofocus: false,
               keyboardType: type,
+              decoration: InputDecoration(
+                contentPadding: const EdgeInsets.all(8.0),
+                // prefixIcon: Icon(icon, color: SavangadiAppTheme.grey,),
+                counterText: "",
+                // iconColor: ColorsForApp.lightGrayColor,
+                isDense: true,
+                fillColor: Colors.black,
+                //border: OutlineInputBorder(),
+                labelText: labelText,
+                labelStyle:  TextStyle(
+                  fontWeight: FontWeight.w400,
+                    fontSize: 15.0, color: ColorsForApp.grayLabelColor),
+
+                border: InputBorder.none,
+
+              ),
+              minLines: 1,
+              maxLines: 1,
+            ),
+          ),
+
+        ],
+      ),
+    );
+  }
+  static disableTextField(var icon, var labelText,TextEditingController controller,TextInputType type) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 3, bottom: 3, right: 30, left: 30),
+      child: Column(
+        children: [
+          Container(
+            height: 45,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10.0),
+              color: ColorsForApp.whiteColor,
+              // border: Border.all()
+            ),
+            child: TextFormField(
+              controller: controller,
+              textInputAction: TextInputAction.done,
+              autofocus: false,
+              keyboardType: type,
+              readOnly: true,
               decoration: InputDecoration(
                 contentPadding: const EdgeInsets.all(8.0),
                 // prefixIcon: Icon(icon, color: SavangadiAppTheme.grey,),

@@ -1,4 +1,8 @@
 class IssueModelClass {
+  dynamic comment;
+  dynamic rating;
+  dynamic mobileNo;
+  dynamic imageUrl2;
   String? houseComplaintId;
   String? catIssueId;
   String? subIssueId;
@@ -17,6 +21,10 @@ class IssueModelClass {
 
   IssueModelClass(
       {
+        this.comment,
+        this.rating,
+        this.imageUrl2,
+        this.mobileNo,
         this.houseComplaintId,
         this.catIssueId,
         this.subIssueId,

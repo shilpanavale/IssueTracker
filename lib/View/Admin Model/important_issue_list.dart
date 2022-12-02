@@ -198,7 +198,9 @@ class _MyHomePageState extends State<ImportantIssuePage> {
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Center(
-                        child: Text(issueModelClass.status.toString(),textAlign:TextAlign.end,style: TextStyle(
+                        child: Text(issueModelClass.status.toString()=="2"?"Not Resolved"
+                          :issueModelClass.status.toString()=="1"?"Resolved":"Assigned",
+                          textAlign:TextAlign.end,style: TextStyle(
                           // fontFamily: fontName,
                           fontWeight: FontWeight.w500,
                           fontSize: 18,

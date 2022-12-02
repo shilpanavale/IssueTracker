@@ -579,27 +579,25 @@ class _MyHomePageState extends State<RegisterComplaint> {
     request.fields['sub_issue_id'] = selectSubIssueType;
     request.fields['house_id'] = selectHouseNo;
     request.fields['user_id'] = userId.toString();
-    request.fields['description'] = describeComplaintTxt.text;
+    request.fields['description'] =describeComplaintTxt.text.isNotEmpty? describeComplaintTxt.text:"";
     print(request.fields);
-//fileToUpload
+    if(image?.path!=null){
+      request.files.add(
+          http.MultipartFile.fromBytes(
+              'fileToUpload',
+              File(image!.path).readAsBytesSync(),
+              filename: image!.path.split("/").last
+          )
+      );
+    }/*else{
+      request.fields['fileToUpload'] = "";
+    }*/
 
-       /* http.MultipartFile(
-            'fileToUpload',
-            File(image!.path).readAsBytes().asStream(),
-            File(addPhotosTxt.text).lengthSync(),
-            filename:image!.path.split("/").last
-        )*/
-        request.files.add(
-            http.MultipartFile.fromBytes(
-                'fileToUpload',
-                File(image!.path).readAsBytesSync(),
-                filename: image!.path.split("/").last
-            )
-        );
 
     print("url of register complaint-->${url}");
     request.send().then((response) {
       print(response.statusCode);
+      print(response.reasonPhrase);
       if (response.statusCode == 201){
         DialogBuilder(context).hideOpenDialog();
         Fluttertoast.showToast(msg: "Complaint Registered successfully");
@@ -612,18 +610,6 @@ class _MyHomePageState extends State<RegisterComplaint> {
         Fluttertoast.showToast(msg: "Something went wrong please try again!");
       }
     });
-    /* var msg=decodeRes["message"];
-     if(msg=="Complaint Registered") {
-      DialogBuilder(context).hideOpenDialog();
-      Fluttertoast.showToast(msg: "Complaint Registered successfully");
-      Navigator.push(context, MaterialPageRoute(builder: (context)=>MyComplaintListPage()));
-
-    }else{
-      DialogBuilder(context).hideOpenDialog();
-      Fluttertoast.showToast(msg: "Something went wrong please try again!");
-    }*/
-
-
   }
 
   Future pickImage() async {

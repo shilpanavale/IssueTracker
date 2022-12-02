@@ -24,7 +24,10 @@ import 'package:untitled/View/Admin%20Model/admin_dashboard.dart';
 import '../User Model/api_constant.dart';
 import 'package:http/http.dart' as http;
 
-
+class JosKeys {
+  static final previewContainerKey = GlobalKey();
+  static final previewHouseKey = GlobalKey();
+}
 class ComplaintListPage extends StatefulWidget {
   final statusFlag;
   const ComplaintListPage({Key? key, this.statusFlag}) : super(key: key);
@@ -35,7 +38,7 @@ class ComplaintListPage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<ComplaintListPage> {
-  static GlobalKey previewContainerKey = new GlobalKey();
+
   final colorList = <Color>[
     Colors.greenAccent,
   ];
@@ -57,6 +60,12 @@ class _MyHomePageState extends State<ComplaintListPage> {
   Future<bool> willPopScopeBack() async{
     Navigator.push(context, MaterialPageRoute(builder: (context)=>const AdminDashboardPage()));
     return true;
+  }
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    JosKeys.previewContainerKey;
   }
   @override
   Widget build(BuildContext context) {
@@ -141,7 +150,7 @@ class _MyHomePageState extends State<ComplaintListPage> {
                   ),
                   const SizedBox(height: 10,),
                   RepaintBoundary(
-                    key: previewContainerKey,
+                    key: JosKeys.previewContainerKey,
                       child: issueListView(context)),
                   //downloadAndShare()
 
@@ -263,7 +272,39 @@ class _MyHomePageState extends State<ComplaintListPage> {
                   ),
                 ],
               ),
-              Text(issueModelClass.issueCreatedOn!=null?issueModelClass.issueCreatedOn!:"",textAlign:TextAlign.start,style: StyleForApp.textStyle15dp,),
+              Text(issueModelClass.status.toString().toLowerCase()=="Not Resolved".toLowerCase()||
+                  issueModelClass.status.toString().toLowerCase()=="Resolved".toLowerCase()
+                  ?issueModelClass.mobileNo ?? "":"",textAlign:TextAlign.start,style: StyleForApp.textStyle15dp,),
+              Text(
+                issueModelClass.status.toString().toLowerCase()=="Not Resolved".toLowerCase()
+                  ||issueModelClass.status.toString().toLowerCase()=="Resolved".toLowerCase()?
+              issueModelClass.comment ?? "":"",
+                textAlign:TextAlign.start,style: StyleForApp.textStyle15dp,),
+              Text(issueModelClass.status.toString().toLowerCase()=="Not Resolved".toLowerCase()
+                  ||issueModelClass.status.toString().toLowerCase()=="Resolved".toLowerCase()
+                  ?issueModelClass.rating??"":"",textAlign:TextAlign.start,style: StyleForApp.textStyle15dp,),
+
+              issueModelClass.status.toString().toLowerCase()=="Not Resolved".toLowerCase()
+                  ||issueModelClass.status.toString().toLowerCase()=="Resolved".toLowerCase()
+              ?issueModelClass.imageUrl2==null||issueModelClass.imageUrl2==""?
+              Container() :Container(
+                  height: 100,
+                  width: 100,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10.0),
+                      color: ColorsForApp.grayColor,
+                      border: Border.all(color: ColorsForApp.grayLabelColor)
+                  ),
+                  child: Image.network("https://creshsolutions.com/images/samadhan/complaint_images/${issueModelClass.imageUrl2}")
+              ):Container(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(issueModelClass.issueCreatedOn!=null?issueModelClass.issueCreatedOn!:"",textAlign:TextAlign.start,style: StyleForApp.textStyle15dp,),
+                  //downloadAndShare()
+                  ShareHouse()
+                ],
+              ),
               const SizedBox(height: 10,),
             ],
           ),
@@ -341,13 +382,112 @@ class _MyHomePageState extends State<ComplaintListPage> {
       ),
     );
   }
+  Widget ShareHouse(){
+    return  Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+       /*   Expanded(
+            child: InkWell(
+              onTap: (){
+
+
+
+              },
+              child: SizedBox(
+                width: 100,
+                child: Row(
+                  children: [
+                    const SizedBox(width: 8,),
+                    Container(
+                      height: 25,width: 25,
+                      decoration:  const BoxDecoration(
+                        color: Colors.transparent,
+                        image:  DecorationImage(
+                          fit: BoxFit.contain,
+                          image: AssetImage(
+                            AssetFiles.download,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 10,),
+                    Text("Download",style: StyleForApp.extraSmaller12dp,),
+                  ],
+                ),
+              ),
+            ),
+          ),*/
+          InkWell(
+            onTap: (){
+             // Share.share('check out my website https://example.com');
+              _captureHouseScreenShot("Share");
+
+            },
+            child: SizedBox(
+              width: 100,
+              child: Row(
+                children: [
+                  const SizedBox(width: 8,),
+                  Container(
+                    height: 25,width: 25,
+                    decoration:  const BoxDecoration(
+                      color: Colors.transparent,
+                      image:  DecorationImage(
+                        fit: BoxFit.contain,
+                        image: AssetImage(
+                          AssetFiles.share,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 10,),
+                  Text("Share",style: StyleForApp.extraSmaller12dp,),
+                ],
+              ),
+            ),
+          )
+        ],
+      ),
+    );
+  }
 
 
   Future<void> _captureScreenShot(String flag) {
     String imagePaths ;
     final RenderBox box = context.findRenderObject() as RenderBox;
     return Future.delayed(const Duration(milliseconds: 20), () async {
-      RenderRepaintBoundary? boundary = previewContainerKey.currentContext!
+      RenderRepaintBoundary? boundary = JosKeys.previewContainerKey.currentContext!
+          .findRenderObject() as RenderRepaintBoundary?;
+      ui.Image image = await boundary!.toImage();
+      final directory = (await getApplicationDocumentsDirectory()).path;
+      ByteData? byteData =
+      await image.toByteData(format: ui.ImageByteFormat.png);
+      Uint8List pngBytes = byteData!.buffer.asUint8List();
+      File imgFile = new File('$directory/complaints.png');
+      // imagePaths.add(imgFile.path);
+      imgFile.writeAsBytes(pngBytes).then((value) async {
+
+        await GallerySaver.saveImage(imgFile.path).then((value) {
+          setState(() {
+           // screenshotButtonText = 'screenshot saved!';
+            Fluttertoast.showToast(msg: "Image saved into gallery!");
+            if(flag=="Share"){
+              Share.shareXFiles([XFile('${imgFile.path}')], text: '');
+            }
+          });
+        });
+      }).catchError((onError) {
+        print(onError);
+      });
+    });
+  }
+  Future<void> _captureHouseScreenShot(String flag) {
+    String imagePaths ;
+    final RenderBox box = context.findRenderObject() as RenderBox;
+    return Future.delayed(const Duration(milliseconds: 20), () async {
+      RenderRepaintBoundary? boundary = JosKeys.previewHouseKey.currentContext!
           .findRenderObject() as RenderRepaintBoundary?;
       ui.Image image = await boundary!.toImage();
       final directory = (await getApplicationDocumentsDirectory()).path;
@@ -403,9 +543,13 @@ class _MyHomePageState extends State<ComplaintListPage> {
      // vendors = decodeRes.map((tagJson) => IssueModelClass.fromJson(tagJson)).toList();
 
           for(var res in decodeRes){
-            if(res['status']==widget.statusFlag){
-             // print('in if status-->${res['status']}');
+            if(res['status'].toString().toLowerCase()==widget.statusFlag.toString().toLowerCase()){
+              print('in if status-->${res['status']}');
               IssueModelClass issueModelClass = IssueModelClass(
+                comment: res['comment'],
+                rating: res['rating'],
+                imageUrl2: res['image_url_2'],
+                mobileNo: res['mobile_no'],
                 houseComplaintId: res['house_complaint_id'],
                 catIssueId: res['cat_issue_id'],
                 subIssueId: res['sub_issue_id'],
@@ -456,9 +600,13 @@ class _MyHomePageState extends State<ComplaintListPage> {
    //   List<IssueModelClass> vendors = decodeRes.map((tagJson) => IssueModelClass.fromJson(tagJson)).toList();
 
       for(var res in decodeRes){
-        if(res['status']==widget.statusFlag){
+        if(res['status'].toString().toLowerCase()==widget.statusFlag.toString().toLowerCase()){
           print('in if status-->${res['status']}');
           IssueModelClass issueModelClass = IssueModelClass(
+            comment: res['comment'],
+            rating: res['rating'],
+            imageUrl2: res['image_url_2'],
+            mobileNo: res['mobile_no'],
             houseComplaintId: res['house_complaint_id'],
             catIssueId: res['cat_issue_id'],
             subIssueId: res['sub_issue_id'],

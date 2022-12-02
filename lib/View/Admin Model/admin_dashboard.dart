@@ -36,7 +36,7 @@ class AdminDashboardPage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<AdminDashboardPage> {
-  static GlobalKey previewContainer = new GlobalKey();
+   GlobalKey previewContainer =  GlobalKey();
   Map<String, double> dataMap ={};
   final colorList = <Color>[
     Colors.greenAccent,
@@ -59,6 +59,12 @@ class _MyHomePageState extends State<AdminDashboardPage> {
     getData();
     super.initState();
 
+  }
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    previewContainer;
   }
   @override
   Widget build(BuildContext context) {
@@ -310,17 +316,22 @@ class _MyHomePageState extends State<AdminDashboardPage> {
             padding: const EdgeInsets.all(15.0),
             child: Text("Status wise Complaints",textAlign:TextAlign.start,style: StyleForApp.subHeadline,),
           ),
-          escalation1(context),
-          escalation2(context),
-          escalation3(context),
-          notAssignedUI(context),
-          const SizedBox(height: 10,),
-          notResolved(context),
-          const SizedBox(height: 10,),
           assignedUI(context),
           const SizedBox(height: 10,),
           resolvedUI(context),
           const SizedBox(height: 10,),
+          notResolved(context),
+          const SizedBox(height: 10,),
+          escalation1(context),
+          escalation2(context),
+          escalation3(context),
+         // notAssignedUI(context),
+
+
+
+
+          const SizedBox(height: 10,),
+
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Row(
@@ -414,7 +425,7 @@ class _MyHomePageState extends State<AdminDashboardPage> {
                   fontWeight: FontWeight.w700,
                   fontSize: 20,
                   letterSpacing: 0.27,
-                  color: ColorsForApp.blackColor,
+                  color: ColorsForApp.whiteColor,
                 ),),
                 Text("",style:  TextStyle(
                   // fontFamily: fontName,
@@ -454,7 +465,7 @@ class _MyHomePageState extends State<AdminDashboardPage> {
                   fontWeight: FontWeight.w700,
                   fontSize: 20,
                   letterSpacing: 0.27,
-                  color: ColorsForApp.blackColor,
+                  color: ColorsForApp.whiteColor,
                 ),),
                 Text("",style:  TextStyle(
                   // fontFamily: fontName,
@@ -494,14 +505,14 @@ class _MyHomePageState extends State<AdminDashboardPage> {
                   fontWeight: FontWeight.w700,
                   fontSize: 20,
                   letterSpacing: 0.27,
-                  color: ColorsForApp.blackColor,
+                  color: ColorsForApp.whiteColor,
                 ),),
                 Text("",style:  TextStyle(
                   // fontFamily: fontName,
                   fontWeight: FontWeight.w700,
                   fontSize: 28,
                   letterSpacing: 0.27,
-                  color: ColorsForApp.blackColor,
+                  color: ColorsForApp.whiteColor,
                 ),),
               ],
             ),
@@ -515,7 +526,7 @@ class _MyHomePageState extends State<AdminDashboardPage> {
     return  InkWell(
       onTap: (){
         Navigator.push(context, MaterialPageRoute(builder: (context)=>
-        const ComplaintListPage(statusFlag: "Not Resolved",)));
+        const ComplaintListPage(statusFlag: "not resolved",)));
       },
       child: Padding(
         padding: const EdgeInsets.all(15.0),
@@ -715,6 +726,11 @@ class _MyHomePageState extends State<AdminDashboardPage> {
     var statusCount=decodeRes["statusWiseCount"];
     var totalCount=decodeRes["totalCount"];
     var resolvedCount=decodeRes["resolvedCount"];
+    if(resolvedCount==null||statusCount==null||totalCount==null){
+      resolvedCount=0;
+      totalCount=0;
+      resolvedCount=0;
+    }
     if(totalCount!=0){
        resolvedPer=100*resolvedCount/totalCount ;
        pending =100-resolvedPer;
