@@ -281,7 +281,13 @@ class _MyHomePageState extends State<ComplaintListPage> {
                       ),
                     ],
                   ),
-                  issueModelClass.mobileNo!=null?Text(issueModelClass.mobileNo ?? "",textAlign:TextAlign.start,style: StyleForApp.textStyle15dp,):Container(),
+                  issueModelClass.mobileNo!=null||issueModelClass.mobileNo!=""?Row(
+                    children: [
+                      Text("Mob No : ", textAlign:TextAlign.start,style: StyleForApp.textStyle15dpBold,),
+
+                      Text(issueModelClass.mobileNo ?? "",textAlign:TextAlign.start,style: StyleForApp.textStyle15dp,),
+                    ],
+                  ):Container(),
                   issueModelClass.comment==null||issueModelClass.comment==""?
                   Container(): Row(
                     children: [
