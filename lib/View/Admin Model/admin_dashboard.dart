@@ -38,6 +38,8 @@ class AdminDashboardPage extends StatefulWidget {
 class _MyHomePageState extends State<AdminDashboardPage> {
    GlobalKey previewContainer =  GlobalKey();
   Map<String, double> dataMap ={};
+  Map<String, double> subIssueMap ={};
+  List subIssue=[];
   final colorList = <Color>[
     Colors.greenAccent,
   ];
@@ -49,12 +51,13 @@ class _MyHomePageState extends State<AdminDashboardPage> {
   double resolvedPer=0;
   double pending=100;
   dynamic assigned,resolved,not_resolved,not_assigned;
+  dynamic totalIssueRegisteredToday;
   bool clickOnShare=false;
   @override
   void initState() {
     // TODO: implement initState
     displayFromDate=UT.displayDateConverter(fromDate);
-    displayToDate=UT.displayDateConverter(fromDate.add(Duration(days: 1)));
+    displayToDate=UT.displayDateConverter(fromDate.add(const Duration(days: 1)));
   //  displayToDate=UT.displayDateConverter(toDate);
     getData();
     super.initState();
@@ -113,7 +116,10 @@ class _MyHomePageState extends State<AdminDashboardPage> {
             child: Column(
              // mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: <Widget>[
+
                 selectDateRange(context),
+                const SizedBox(height: 10,),
+                subIssue.isNotEmpty?  subIssuePieChart(context):Container(),
                 const SizedBox(height: 10,),
                 statusWiseComplaintUI(context)
               ],
@@ -136,6 +142,8 @@ class _MyHomePageState extends State<AdminDashboardPage> {
         ),
         child: Column(
           children: [
+            const SizedBox(height: 10,),
+            totalIssueRegisteredToday!=null? Text("Total Issue Registered Today : $totalIssueRegisteredToday",textAlign:TextAlign.start,style: StyleForApp.subHeadline,):Container(),
             const SizedBox(height: 10,),
             Padding(
               padding: const EdgeInsets.all(15.0),
@@ -303,6 +311,43 @@ class _MyHomePageState extends State<AdminDashboardPage> {
       ),
     );
   }
+   Widget subIssuePieChart(BuildContext context){
+     return  Container(
+       // height: 250,
+       //width: double.infinity,
+       decoration:   BoxDecoration(
+         color: HexColor("#F2F2F2"),
+       ),
+       child: Column(
+         crossAxisAlignment: CrossAxisAlignment.start,
+         children: [
+           const SizedBox(height: 10,),
+           const Padding(
+             padding: EdgeInsets.only(left: 20.0),
+             child: Text("SubIssue Wise Data"),
+           ),
+           ListView.builder(
+             shrinkWrap: true,
+             padding: EdgeInsets.zero,
+             physics: const NeverScrollableScrollPhysics(),
+             itemCount: subIssue.length,
+               itemBuilder:(context,index){
+               return ListTile(
+                 title:Text(subIssue[index]["subIssue"],style: StyleForApp.textStyle14dp) ,
+                 leading: Icon(Icons.circle_sharp,color: ColorsForApp.appButtonColor,) ,
+                 trailing: Text(subIssue[index]["count"],style: StyleForApp.textStyle15dpBold),
+
+               );
+
+           } ),
+           const SizedBox(height: 20,),
+         ],
+       ),
+     );
+   }
+
+
+
   Widget statusWiseComplaintUI(BuildContext context){
     return Container(
       //width: double.infinity,
@@ -723,6 +768,7 @@ class _MyHomePageState extends State<AdminDashboardPage> {
     var response= await http.get(url);
     print(response.body);
     var decodeRes=json.decode(response.body);
+    totalIssueRegisteredToday=decodeRes["totalIssueRegisteredToday"];
     var statusCount=decodeRes["statusWiseCount"];
     var totalCount=decodeRes["totalCount"];
     var resolvedCount=decodeRes["resolvedCount"];
@@ -743,6 +789,14 @@ class _MyHomePageState extends State<AdminDashboardPage> {
     resolved=statusCount["resolved"];
     not_resolved=statusCount["not_resolved"];
     not_assigned=statusCount["not_assigned"];
+
+    subIssue=decodeRes["subIssueWiseData"];
+
+    //  subIssue.add(subIssueMap);
+
+
+
+
     setState(() {
 
     });
@@ -883,7 +937,7 @@ class _MyHomePageState extends State<AdminDashboardPage> {
                               children: <Widget>[
                                 const Text("From"),
                                 Container(
-                                  height: 45, width: 100,
+                                  height: 50, width: 150,
                                   decoration: const BoxDecoration(
                                     border: Border(
                                       top: BorderSide(
@@ -906,15 +960,17 @@ class _MyHomePageState extends State<AdminDashboardPage> {
                                           .spaceBetween,
                                       children: <Widget>[
 
-                                        InkWell(
-                                          child: Text(
-                                              displayFromDate.toString(),
-                                              textAlign: TextAlign.center,
-                                              style: StyleForApp.textStyle14dp
+                                        Expanded(
+                                          child: InkWell(
+                                            child: Text(
+                                                displayFromDate.toString(),
+                                                textAlign: TextAlign.center,
+                                                style: StyleForApp.textStyle14dp
+                                            ),
+                                            onTap: () {
+                                              fromDatePicker(context,setState1);
+                                            },
                                           ),
-                                          onTap: () {
-                                            fromDatePicker(context,setState1);
-                                          },
                                         ),
 
                                       ],
@@ -929,7 +985,7 @@ class _MyHomePageState extends State<AdminDashboardPage> {
                               children: <Widget>[
                                 const Text("To"),
                                 Container(
-                                  height: 45, width: 100,
+                                  height: 50, width: 150,
                                   decoration: const BoxDecoration(
                                       border: Border(
                                         top: BorderSide(width: 1.0,
@@ -950,15 +1006,17 @@ class _MyHomePageState extends State<AdminDashboardPage> {
                                       mainAxisAlignment: MainAxisAlignment
                                           .spaceBetween,
                                       children: <Widget>[
-                                        InkWell(
-                                          child: Text(
-                                              displayToDate.toString(),
-                                              textAlign: TextAlign.center,
-                                              style: StyleForApp.textStyle14dp
+                                        Expanded(
+                                          child: InkWell(
+                                            child: Text(
+                                                displayToDate.toString(),
+                                                textAlign: TextAlign.center,
+                                                style: StyleForApp.textStyle14dp
+                                            ),
+                                            onTap: () {
+                                              toDatePicker(context, setState1);
+                                            },
                                           ),
-                                          onTap: () {
-                                            toDatePicker(context, setState1);
-                                          },
                                         ),
 
                                       ],
@@ -1041,7 +1099,7 @@ class _MyHomePageState extends State<AdminDashboardPage> {
       setState2(() {
         fromDate = picked;
         displayFromDate=UT.displayDateConverter(fromDate);
-        displayToDate=UT.displayDateConverter(fromDate.add(Duration(days: 1)));
+        displayToDate=UT.displayDateConverter(fromDate.add(const Duration(days: 1)));
         print('displayToDate--->$displayToDate');
       });
     }
