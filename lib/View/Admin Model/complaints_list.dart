@@ -234,107 +234,115 @@ class _MyHomePageState extends State<ComplaintListPage> {
     return  MediaQuery.removePadding(
       context: context,
       removeTop: true,
-      child: Screenshot(
-        controller: screenshotController,
-        child: Padding(
-          padding: const EdgeInsets.only(top: 8.0),
-          child: Container(
-          //  width: double.infinity,
-            //height: 400,
-            decoration:   BoxDecoration(
-                color: HexColor("#D6D6D6"),
-                borderRadius: BorderRadius.circular(10.0)
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(15.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text("House No : ${issueModelClass.houseNo.toString()}",textAlign:TextAlign.start,style: StyleForApp.textStyle16dpBold,),
-                  const SizedBox(height: 8,),
-                  Text(issueModelClass.issue!=null?issueModelClass.issue!:"",textAlign:TextAlign.start,style: StyleForApp.textStyle15dp,),
-                  const SizedBox(height: 5,),
-                  Text(issueModelClass.subIssue!=null?issueModelClass.subIssue!:"",textAlign:TextAlign.start,style: StyleForApp.textStyle15dp,),
-                  const SizedBox(height: 5,),
-                  // Text(issue['issueDetails'],textAlign:TextAlign.start,style: StyleForApp.textStyle16dpBold,),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(child: Text("Status ",textAlign:TextAlign.start,style: StyleForApp.textStyle16dpBold,)),
-                      Expanded(
-                        child: SizedBox(
-                          height: 40,
-                          //width: 130,
-                          /*decoration: BoxDecoration(
-                              color: ColorsForApp.appButtonColor,
-                              borderRadius: BorderRadius.circular(10.0)
-                          ),*/
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Center(
-                              child: Text(issueModelClass.status.toString(),textAlign:TextAlign.end,style: TextStyle(
-                                // fontFamily: fontName,
-                                fontWeight: FontWeight.w500,
-                                fontSize: 18,
-                                // letterSpacing: 0.27,
-                                color: ColorsForApp.appButtonColor,
-                              ),),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  issueModelClass.status.toString().toLowerCase()=="Not Resolved".toLowerCase()
-                      ||issueModelClass.status.toString().toLowerCase()=="Resolved".toLowerCase()||
-                      issueModelClass.status.toString().toLowerCase()=="Assigned".toLowerCase()?Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Expanded(child: Container(),),
-                      Expanded(
-                        child: InkWell(
-                          onTap: (){
-                            Navigator.push(context, MaterialPageRoute(builder: (context)=>AdminFeedBackPage(issueModel:issueModelClass,statusFlag: widget.statusFlag,)));
-                          },
-                          child: Container(
+      child: InkWell(
+        onTap: (){
+          Navigator.push(context, MaterialPageRoute(builder: (context)=>DetailsScreen(issueModel: issueModelClass, statusFlag: widget.statusFlag)));
+
+        },
+        child: Screenshot(
+          controller: screenshotController,
+          child: Padding(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: Container(
+            //  width: double.infinity,
+              //height: 400,
+              decoration:   BoxDecoration(
+                  color: HexColor("#D6D6D6"),
+                  borderRadius: BorderRadius.circular(10.0)
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(15.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("House No : ${issueModelClass.houseNo.toString()}",textAlign:TextAlign.start,style: StyleForApp.textStyle16dpBold,),
+                    const SizedBox(height: 8,),
+                    Text(issueModelClass.issue!=null?issueModelClass.issue!:"",textAlign:TextAlign.start,style: StyleForApp.textStyle15dp,),
+                    const SizedBox(height: 5,),
+                    Text(issueModelClass.subIssue!=null?issueModelClass.subIssue!:"",textAlign:TextAlign.start,style: StyleForApp.textStyle15dp,),
+                    const SizedBox(height: 5,),
+                    // Text(issue['issueDetails'],textAlign:TextAlign.start,style: StyleForApp.textStyle16dpBold,),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(child: Text("Status ",textAlign:TextAlign.start,style: StyleForApp.textStyle16dpBold,)),
+                        Expanded(
+                          child: SizedBox(
                             height: 40,
-                            //width: MediaQuery.of(context).size.width,
-                            //width: 110,
-                            decoration: BoxDecoration(
+                            //width: 130,
+                            /*decoration: BoxDecoration(
                                 color: ColorsForApp.appButtonColor,
                                 borderRadius: BorderRadius.circular(10.0)
-                            ),
+                            ),*/
                             child: Padding(
                               padding: const EdgeInsets.all(8.0),
-                              child: Text("Feedback",textAlign:TextAlign.center,style: TextStyle(
-                                // fontFamily: fontName,
-                                fontWeight: FontWeight.w500,
-                                fontSize: 20,
-                                letterSpacing: 0.27,
-                                color: ColorsForApp.whiteColor,
-                              ),),
+                              child: Center(
+                                child: Text(issueModelClass.status.toString(),textAlign:TextAlign.end,style: TextStyle(
+                                  // fontFamily: fontName,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 18,
+                                  // letterSpacing: 0.27,
+                                  color: ColorsForApp.appButtonColor,
+                                ),),
+                              ),
                             ),
                           ),
                         ),
-                      )
-                    ],
-                  ):Container(),
-                  issueModelClass.mobileNo!=null||issueModelClass.mobileNo!=""?Row(
-                    children: [
-                      Text("Mob No : ", textAlign:TextAlign.start,style: StyleForApp.textStyle15dpBold,),
+                      ],
+                    ),
+                    issueModelClass.status.toString().toLowerCase()=="Not Resolved".toLowerCase()
+                        ||issueModelClass.status.toString().toLowerCase()=="Resolved".toLowerCase()||
+                        issueModelClass.status.toString().toLowerCase()=="Assigned".toLowerCase()?Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Expanded(child: Container(),),
+                        Expanded(
+                          child: InkWell(
+                            onTap: (){
+                              Navigator.push(context, MaterialPageRoute(builder: (context)=>AdminFeedBackPage(issueModel:issueModelClass,statusFlag: widget.statusFlag,)));
+                            },
+                            child: Container(
+                              height: 40,
+                              //width: MediaQuery.of(context).size.width,
+                              //width: 110,
+                              decoration: BoxDecoration(
+                                  color: ColorsForApp.appButtonColor,
+                                  borderRadius: BorderRadius.circular(10.0)
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text("Feedback",textAlign:TextAlign.center,style: TextStyle(
+                                  // fontFamily: fontName,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 20,
+                                  letterSpacing: 0.27,
+                                  color: ColorsForApp.whiteColor,
+                                ),),
+                              ),
+                            ),
+                          ),
+                        )
+                      ],
+                    ):Container(),
+                    issueModelClass.mobileNo!=null||issueModelClass.mobileNo!=""?Row(
+                      children: [
+                        Text("Mob No : ", textAlign:TextAlign.start,style: StyleForApp.textStyle15dpBold,),
 
-                      Text(issueModelClass.mobileNo ?? "",textAlign:TextAlign.start,style: StyleForApp.textStyle15dp,),
-                    ],
-                  ):Container(),
-                  const SizedBox(height: 10,),
-                  InkWell(
-                    onTap: (){
-                      Navigator.push(context, MaterialPageRoute(builder: (context)=>DetailsScreen(issueModel: issueModelClass, statusFlag: widget.statusFlag)));
-                    },
-                      child: Text("View details",textAlign:TextAlign.center,style:  StyleForApp.textStyle16dpBold,)),
+                        Text(issueModelClass.mobileNo ?? "",textAlign:TextAlign.start,style: StyleForApp.textStyle15dp,),
+                      ],
+                    ):Container(),
+                    const SizedBox(height: 10,),
+                    Text(issueModelClass.issueCreatedOn!=null?issueModelClass.issueCreatedOn!:"",textAlign:TextAlign.start,style: StyleForApp.textStyle15dp,),
 
-                  const SizedBox(height: 10,),
-                ],
+                    InkWell(
+                      onTap: (){
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=>DetailsScreen(issueModel: issueModelClass, statusFlag: widget.statusFlag)));
+                      },
+                        child: Text("View details",textAlign:TextAlign.center,style:  StyleForApp.textStyle16dpBold,)),
+
+                    const SizedBox(height: 10,),
+                  ],
+                ),
               ),
             ),
           ),

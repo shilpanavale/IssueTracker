@@ -41,6 +41,8 @@ class _MyHomePageState extends State<DetailsScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    print(widget.issueModel.imageUrl2);
+    print(widget.issueModel.imageUrl);
   }
 
   @override
@@ -106,9 +108,7 @@ class _MyHomePageState extends State<DetailsScreen> {
                             ],
                           ),
 
-                          widget.issueModel.status.toString().toLowerCase()=="Not Resolved".toLowerCase()
-                              ||widget.issueModel.status.toString().toLowerCase()=="Resolved".toLowerCase()
-                              ?widget.issueModel.rating==null||widget.issueModel.rating==""?
+                          widget.issueModel.rating==null||widget.issueModel.rating==""?
                           Container():Padding(
                             padding: const EdgeInsets.only(top: 3, bottom: 10, right: 0, left: 0),
                             child: RatingBar.builder(
@@ -128,24 +128,53 @@ class _MyHomePageState extends State<DetailsScreen> {
 
                               },
                             ),
-                          ): Container(),
+                          ),
                           const SizedBox(height: 10,),
-                          widget.issueModel.status.toString().toLowerCase()=="Not Resolved".toLowerCase()
-                              ||widget.issueModel.status.toString().toLowerCase()=="Resolved".toLowerCase()
-                              ?widget.issueModel.imageUrl2==null||widget.issueModel.imageUrl2==""?
-                          Container() :Container(
-                             // height: 100,
+
+                              widget.issueModel.imageUrl2==null||widget.issueModel.imageUrl2==""?
+                          Container(
+                            child: const Text("No image available after feedback!"),
+                          ) :Container(
+                            //  height: 100,
                               width: MediaQuery.of(context).size.width,
                               decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(10.0),
                                   color: ColorsForApp.whiteColor,
                                   border: Border.all(color: ColorsForApp.grayLabelColor)
                               ),
-                              child: Image.network("https://creshsolutions.com/images/samadhan/complaint_images/${widget.issueModel.imageUrl2.toString()}")
-                          ):Container(),
+                              child: Image.network("https://creshsolutions.com/images/samadhan/complaint_images/${widget.issueModel.imageUrl2.toString()}"
+                                  ,
+                               // height: 300,
+                                frameBuilder: (_, image, loadingBuilder, __) {
+                                print(loadingBuilder);
+                                  if (loadingBuilder == null) {
+
+                                    return const SizedBox(
+                                      //height: 300,
+                                      child: Center(child: CircularProgressIndicator()),
+                                    );
+                                  }
+                                  return image;
+                                },
+                                loadingBuilder: (BuildContext context, Widget child,
+                                  ImageChunkEvent? loadingProgress) {
+                                print('loading bu00$loadingProgress');
+                              if (loadingProgress == null) return child;
+                              return Center(
+                              child: CircularProgressIndicator(
+                              value: loadingProgress.expectedTotalBytes != null
+                              ? loadingProgress.cumulativeBytesLoaded /
+                              loadingProgress.expectedTotalBytes!
+                                  : null,
+                              ),
+                              );
+                              },)
+                          ),
                           widget.issueModel.status.toString().toLowerCase()=="Assigned".toLowerCase()
                               ?widget.issueModel.imageUrl==null||widget.issueModel.imageUrl==""?
-                          Container() :Container(
+                          Container(
+                            child: const Text("No image available during registration!"),
+                          ) :Container(
                              // height: 300,
                               width: MediaQuery.of(context).size.width,
                               decoration: BoxDecoration(
@@ -153,7 +182,35 @@ class _MyHomePageState extends State<DetailsScreen> {
                                   color: ColorsForApp.whiteColor,
                                   border: Border.all(color: ColorsForApp.grayLabelColor)
                               ),
-                              child: Image.network("https://creshsolutions.com/images/samadhan/complaint_images/${widget.issueModel.imageUrl.toString()}")
+                              child:Image.network("https://creshsolutions.com/images/samadhan/complaint_images/${widget.issueModel.imageUrl.toString()}"
+                                ,
+                               // height: 300,
+                                frameBuilder: (_, image, loadingBuilder, __) {
+                                //  print(loadingBuilder);
+                                  if (loadingBuilder == null) {
+
+                                    return const SizedBox(
+                                      //height: 300,
+                                      child: Center(child: CircularProgressIndicator()),
+                                    );
+                                  }
+                                  return image;
+                                },
+                                loadingBuilder: (BuildContext context, Widget child,
+                                    ImageChunkEvent? loadingProgress) {
+                                //  print('loading bu00$loadingProgress');
+                                  if (loadingProgress == null) return child;
+                                  return Center(
+                                    child: CircularProgressIndicator(
+                                      value: loadingProgress.expectedTotalBytes != null
+                                          ? loadingProgress.cumulativeBytesLoaded /
+                                          loadingProgress.expectedTotalBytes!
+                                          : null,
+                                    ),
+                                  );
+                                },)
+
+                              //Image.network("https://creshsolutions.com/images/samadhan/complaint_images/${widget.issueModel.imageUrl.toString()}")
                           ):Container(),
 
 

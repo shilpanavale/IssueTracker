@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:gallery_saver/gallery_saver.dart';
+import 'package:intl/intl.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pie_chart/pie_chart.dart';
@@ -143,8 +144,7 @@ class _MyHomePageState extends State<AdminDashboardPage> {
         child: Column(
           children: [
             const SizedBox(height: 10,),
-            totalIssueRegisteredToday!=null? Text("Total Issue Registered Today : $totalIssueRegisteredToday",textAlign:TextAlign.start,style: StyleForApp.subHeadline,):Container(),
-            const SizedBox(height: 10,),
+
             Padding(
               padding: const EdgeInsets.all(15.0),
               child: Container(
@@ -357,6 +357,11 @@ class _MyHomePageState extends State<AdminDashboardPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          totalIssueRegisteredToday!=null? Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text("Total Issue Registered Today : $totalIssueRegisteredToday",textAlign:TextAlign.start,style: StyleForApp.subHeadline,),
+          ):Container(),
+          const SizedBox(height: 10,),
           Padding(
             padding: const EdgeInsets.all(15.0),
             child: Text("Status wise Complaints",textAlign:TextAlign.start,style: StyleForApp.subHeadline,),
@@ -789,19 +794,58 @@ class _MyHomePageState extends State<AdminDashboardPage> {
     resolved=statusCount["resolved"];
     not_resolved=statusCount["not_resolved"];
     not_assigned=statusCount["not_assigned"];
-
     subIssue=decodeRes["subIssueWiseData"];
-
-    //  subIssue.add(subIssueMap);
-
-
-
 
     setState(() {
 
     });
   }
+    getFilterData(DateTime fromDate,DateTime toDate) async {
 
+
+     var frmDt, toDt;
+     var url;
+     final DateFormat formatter = DateFormat('yyyy-MM-dd');
+     final String formattedFrm = formatter.format(fromDate);
+
+     final DateFormat formatter1 = DateFormat('yyyy-MM-dd');
+     final String formattedTo = formatter.format(toDate);
+
+     frmDt = "$formattedFrm 000:00:00";
+     toDt = "$formattedTo 23:59:59";
+    // url = Uri.parse("${APIConstant.APIURL}/register-complaint/?from=$frmDt&to=$toDt&secret=d146d69ec7f6635f3f05f2bf4a51b318");
+      url =Uri.parse("${APIConstant.APIURL}/admin-home/?from=$frmDt&to=$toDt&secret=d146d69ec7f6635f3f05f2bf4a51b318");
+     // print("url-->$url");
+     var response = await http.get(url);
+     print(response.body);
+     var decodeRes=json.decode(response.body);
+     totalIssueRegisteredToday=decodeRes["totalIssueRegisteredToday"];
+     var statusCount=decodeRes["statusWiseCount"];
+     var totalCount=decodeRes["totalCount"];
+     var resolvedCount=decodeRes["resolvedCount"];
+     if(resolvedCount==null||statusCount==null||totalCount==null){
+       resolvedCount=0;
+       totalCount=0;
+       resolvedCount=0;
+     }
+     if(totalCount!=0){
+       resolvedPer=100*resolvedCount/totalCount ;
+       pending =100-resolvedPer;
+     }
+     dataMap= {
+       "Resolved": resolvedPer,
+       "Pending": pending,
+     };
+     assigned=statusCount["assigned"];
+     resolved=statusCount["resolved"];
+     not_resolved=statusCount["not_resolved"];
+     not_assigned=statusCount["not_assigned"];
+     subIssue=decodeRes["subIssueWiseData"];
+
+     setState(() {
+
+     });
+   }
   //Todo:Create pdf for status wise complaints
   Future<void> _createPDF(String flag) async {
     //Create a new PDF document
@@ -1056,6 +1100,7 @@ class _MyHomePageState extends State<AdminDashboardPage> {
                           ),
                           onPressed: () {
                             Navigator.of(context).pop(context);
+                            getFilterData(fromDate,toDate);
                             // DialogBuilder(context).showLoadingIndicator('');
                           },
                           child: const Text("OK"),
@@ -1069,6 +1114,7 @@ class _MyHomePageState extends State<AdminDashboardPage> {
           );
         });
   }
+
 
   Future<void> fromDatePicker(BuildContext context,
       StateSetter setState2) async {
