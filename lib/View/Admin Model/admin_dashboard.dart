@@ -145,7 +145,7 @@ class _MyHomePageState extends State<AdminDashboardPage> {
           children: [
             const SizedBox(height: 10,),
 
-            Padding(
+          /*  Padding(
               padding: const EdgeInsets.all(15.0),
               child: Container(
                 width: double.infinity,
@@ -193,7 +193,7 @@ class _MyHomePageState extends State<AdminDashboardPage> {
                   ],
                 ),
               ),
-            ),
+            ),*/
             dataMap.isNotEmpty? RepaintBoundary(
               key: previewContainer,
               child: Padding(
