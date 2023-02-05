@@ -9,7 +9,7 @@ import 'package:untitled/App%20Theme/asset_files.dart';
 import 'package:untitled/App%20Theme/text_fileds.dart';
 import 'package:untitled/CustomeWidget/common_button.dart';
 import 'package:untitled/CustomeWidget/custome_widget.dart';
-import 'package:untitled/View/Admin%20Model/admin_dashboard.dart';
+import 'package:untitled/View/Admin%20Model/user_admin_dashboard.dart';
 import 'package:untitled/View/User%20Model/api_constant.dart';
 import 'package:untitled/View/User%20Model/otp_page.dart';
 import 'package:untitled/View/User%20Model/select_login.dart';
@@ -162,9 +162,7 @@ class _MyHomePageState extends State<ClientCodePage> {
     //https://api.creshsolutions.com/secret/{secret}
     // https://api.creshsolutions.com/secretcode/
     var url=Uri.parse("${APIConstant.APIURL}/secretcode/?code=$key&secret=d146d69ec7f6635f3f05f2bf4a51b318&");
-    print("secretcode url-->$url");
     var response=await http.get(url);
-    print("secretcode res code-->${response.statusCode}");
     var decodeRes=json.decode(response.body);
     print("SK-->$decodeRes");
     if(decodeRes['message']==false){

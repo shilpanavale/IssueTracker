@@ -27,16 +27,18 @@ import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 
-import 'important_issue_list.dart';
-class AdminDashboardPage extends StatefulWidget {
-  const AdminDashboardPage({Key? key}) : super(key: key);
+import '../Admin Model/important_issue_list.dart';
+import '../Admin Model/new_admin_dashboard.dart';
+
+class GCAdminDashboardPage extends StatefulWidget {
+  const GCAdminDashboardPage({Key? key}) : super(key: key);
 
 
   @override
-  State<AdminDashboardPage> createState() => _MyHomePageState();
+  State<GCAdminDashboardPage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<AdminDashboardPage> {
+class _MyHomePageState extends State<GCAdminDashboardPage> {
    GlobalKey previewContainer =  GlobalKey();
   Map<String, double> dataMap ={};
   Map<String, double> subIssueMap ={};
@@ -70,14 +72,15 @@ class _MyHomePageState extends State<AdminDashboardPage> {
     super.dispose();
     previewContainer;
   }
+   Future<bool> willPopScopeBack() async{
+     Navigator.push(context, MaterialPageRoute(builder: (context)=>const NewAdminDashboard()));
+     return true;
+   }
   @override
   Widget build(BuildContext context) {
 
     return WillPopScope(
-      onWillPop:  ()async {
-        exitAppDialog();
-        return true;
-      },
+      onWillPop:willPopScopeBack,
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.transparent,
@@ -102,7 +105,7 @@ class _MyHomePageState extends State<AdminDashboardPage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  Text("Admin Dashboard",style: StyleForApp.appBarTextStyle,),
+                  Text("GC Dashboard",style: StyleForApp.appBarTextStyle,),
                 ],
               ),
             ],
@@ -120,8 +123,8 @@ class _MyHomePageState extends State<AdminDashboardPage> {
 
                 selectDateRange(context),
                 const SizedBox(height: 10,),
-                subIssue.isNotEmpty?  subIssuePieChart(context):Container(),
-                const SizedBox(height: 10,),
+               // subIssue.isNotEmpty?  subIssuePieChart(context):Container(),
+               // const SizedBox(height: 10,),
                 statusWiseComplaintUI(context)
               ],
             ),

@@ -21,7 +21,7 @@ import 'package:untitled/CustomeWidget/custome_dialog.dart';
 import 'package:untitled/CustomeWidget/custome_widget.dart';
 import 'package:untitled/View/Admin%20Model/Model/ImportantModelclass.dart';
 import 'package:untitled/View/Admin%20Model/Model/IssueModel.dart';
-import 'package:untitled/View/Admin%20Model/admin_dashboard.dart';
+import 'package:untitled/View/Admin%20Model/user_admin_dashboard.dart';
 import '../User Model/api_constant.dart';
 import 'package:http/http.dart' as http;
 
@@ -56,7 +56,7 @@ class _MyHomePageState extends State<ImportantIssuePage> {
   }
   List<int> bytes=[];
   Future<bool> willPopScopeBack() async{
-    Navigator.push(context, MaterialPageRoute(builder: (context)=>const AdminDashboardPage()));
+    Navigator.push(context, MaterialPageRoute(builder: (context)=>const UserAdminDashboardPage()));
     return true;
   }
   @override
@@ -69,7 +69,7 @@ class _MyHomePageState extends State<ImportantIssuePage> {
           backgroundColor: Colors.transparent,
           elevation: 0.0,
           leading: BackLeadingButton(onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context)=>const AdminDashboardPage()));
+            Navigator.push(context, MaterialPageRoute(builder: (context)=>const UserAdminDashboardPage()));
           },),
           title: Row(
             mainAxisAlignment: MainAxisAlignment.end,

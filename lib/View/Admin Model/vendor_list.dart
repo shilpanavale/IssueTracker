@@ -11,7 +11,7 @@ import 'package:untitled/CustomeWidget/common_button.dart';
 import 'package:untitled/CustomeWidget/custome_widget.dart';
 import 'package:untitled/View/Admin%20Model/Model/VendorModel.dart';
 import 'package:untitled/View/Admin%20Model/add_vendor.dart';
-import 'package:untitled/View/Admin%20Model/admin_dashboard.dart';
+import 'package:untitled/View/Admin%20Model/user_admin_dashboard.dart';
 import 'package:http/http.dart' as http;
 import 'package:untitled/View/User%20Model/api_constant.dart';
 
@@ -37,7 +37,7 @@ class _MyHomePageState extends State<VendorListPage> {
     _vendorApi=getVendorList();
   }
   Future<bool> willPopScopeBack() async{
-    Navigator.push(context, MaterialPageRoute(builder: (context)=>const AdminDashboardPage()));
+    Navigator.push(context, MaterialPageRoute(builder: (context)=>const UserAdminDashboardPage()));
     return true;
   }
   @override
@@ -50,7 +50,7 @@ class _MyHomePageState extends State<VendorListPage> {
           backgroundColor: Colors.transparent,
           elevation: 0.0,
           leading: BackLeadingButton(onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context)=>const AdminDashboardPage()));
+            Navigator.push(context, MaterialPageRoute(builder: (context)=>const UserAdminDashboardPage()));
           },),
           title: Row(
             mainAxisAlignment: MainAxisAlignment.end,

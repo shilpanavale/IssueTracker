@@ -10,10 +10,14 @@ import 'package:untitled/App%20Theme/asset_files.dart';
 import 'package:untitled/App%20Theme/text_fileds.dart';
 import 'package:untitled/CustomeWidget/common_button.dart';
 import 'package:untitled/CustomeWidget/custome_widget.dart';
-import 'package:untitled/View/Admin%20Model/admin_dashboard.dart';
+import 'package:untitled/View/Admin%20Model/user_admin_dashboard.dart';
 import 'package:untitled/View/User%20Model/api_constant.dart';
 import 'package:untitled/View/User%20Model/otp_page.dart';
 import 'package:http/http.dart' as http;
+
+import '../GC Model/GC_complaints_list.dart';
+import '../JCO Model/JCO_complaints_list.dart';
+import 'my_complaints.dart';
 class UserLoginPage extends StatefulWidget {
   const UserLoginPage({Key? key}) : super(key: key);
 
@@ -167,23 +171,36 @@ class _MyHomePageState extends State<UserLoginPage> {
     var obj={
       "mobile_no":mobile,
     };
-    var response= await http.post(url, body: jsonEncode(obj));
-    var decodeRes=json.decode(response.body);
-    print("decodeRes-->$decodeRes");
-    var status=decodeRes['status'];
-    print("status-->$status");
-    var status1=status['status'];
-    var userId=status['user_id'];
-    print("status1-->$status1");
-    print("userId-->$userId");
+ //   var response= await http.post(url, body: jsonEncode(obj));
+   // var decodeRes=json.decode(response.body);
+
+    //var status=decodeRes['status'];
+   // var status1=status['status'];
+    var status1=true;
+    var userId=33;
+    //var userId=status['user_id'];
+
     if(status1==false){
       Fluttertoast.showToast(msg: "Error Occurred");
     }else{
-      final prefs = await SharedPreferences.getInstance();
+     /* final prefs = await SharedPreferences.getInstance();
       prefs.setString(UT.mobileNo, mobile);
       prefs.setInt(UT.userId, userId);
-      Fluttertoast.showToast(msg: "OTP sent to your mobile number");
-      Navigator.push(context, MaterialPageRoute(builder: (context)=>OtpPage()));
+      Fluttertoast.showToast(msg: "OTP sent to your mobile number");*/
+     // Navigator.push(context, MaterialPageRoute(builder: (context)=>OtpPage()));
+      final prefs = await SharedPreferences.getInstance();
+      prefs.setString(UT.loginStatus, "True");
+      var userType=prefs.getString(UT.appType);
+      if(userType=="GC"){
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => const GCComplaintList()));
+      }else if(userType=="JCO"){
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => const JCOComplaintList()));
+      }else{
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => const MyComplaintListPage()));
+      }
     }
 
 

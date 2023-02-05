@@ -6,7 +6,7 @@ import 'package:untitled/App%20Theme/asset_files.dart';
 import 'package:untitled/App%20Theme/text_fileds.dart';
 import 'package:untitled/CustomeWidget/common_button.dart';
 import 'package:untitled/CustomeWidget/custome_widget.dart';
-import 'package:untitled/View/Admin%20Model/admin_dashboard.dart';
+import 'package:untitled/View/Admin%20Model/user_admin_dashboard.dart';
 
 class IssueListPage extends StatefulWidget {
   const IssueListPage({Key? key}) : super(key: key);
@@ -62,7 +62,7 @@ class _MyHomePageState extends State<IssueListPage> {
         backgroundColor: Colors.transparent,
         elevation: 0.0,
         leading: BackLeadingButton(onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (context)=>const AdminDashboardPage()));
+          Navigator.push(context, MaterialPageRoute(builder: (context)=>const UserAdminDashboardPage()));
         },),
         title: Row(
           mainAxisAlignment: MainAxisAlignment.end,

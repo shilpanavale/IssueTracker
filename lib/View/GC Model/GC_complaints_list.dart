@@ -17,17 +17,18 @@ import 'package:http/http.dart' as http;
 import 'package:untitled/View/User%20Model/user_drawer.dart';
 import '../../CustomeWidget/custome_dialog.dart';
 import '../Admin Model/Model/IssueModel.dart';
-import '../GC Model/GC_complaints_list.dart';
+import '../Admin Model/new_admin_dashboard.dart';
+import 'GC_register_complaint.dart';
 
-class MyComplaintListPage extends StatefulWidget {
-  const MyComplaintListPage({Key? key}) : super(key: key);
+class GCComplaintList extends StatefulWidget {
+  const GCComplaintList({Key? key}) : super(key: key);
 
 
   @override
-  State<MyComplaintListPage> createState() => _MyHomePageState();
+  State<GCComplaintList> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyComplaintListPage> {
+class _MyHomePageState extends State<GCComplaintList> {
   List<bool> isSelected=[true, false];
   Map<String, double> dataMap = {
     "Resolved": 80,
@@ -79,7 +80,7 @@ class _MyHomePageState extends State<MyComplaintListPage> {
           title: Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              Text("User Dashboard",style: StyleForApp.appBarTextStyle,),
+              Text("GC Dashboard",style: StyleForApp.appBarTextStyle,),
             ],
           ),
         ),
@@ -165,8 +166,8 @@ class _MyHomePageState extends State<MyComplaintListPage> {
           // isExtended: true,
           backgroundColor: ColorsForApp.appButtonColor,
           onPressed: () {
-         // Navigator.push(context, MaterialPageRoute(builder: (context)=>const GCComplaintList()));
-          Navigator.push(context, MaterialPageRoute(builder: (context)=>const RegisterComplaint()));
+          Navigator.push(context, MaterialPageRoute(builder: (context)=>const GCRegisterComplaint()));
+         // Navigator.push(context, MaterialPageRoute(builder: (context)=>const NewAdminDashboard()));
           },
           // isExtended: true,
           child: const Icon(Icons.add),

@@ -7,10 +7,11 @@ import 'package:untitled/App%20Theme/app_theme.dart';
 import 'package:untitled/App%20Theme/asset_files.dart';
 import 'package:untitled/App%20Theme/text_fileds.dart';
 import 'package:untitled/CustomeWidget/common_button.dart';
-import 'package:untitled/View/Admin%20Model/admin_dashboard.dart';
+import 'package:untitled/View/Admin%20Model/user_admin_dashboard.dart';
 import 'package:http/http.dart' as http;
 
 import '../User Model/api_constant.dart';
+import 'new_admin_dashboard.dart';
 
 class AdminLoginPage extends StatefulWidget {
   const AdminLoginPage({Key? key}) : super(key: key);
@@ -94,7 +95,7 @@ class _MyHomePageState extends State<AdminLoginPage> {
       final prefs = await SharedPreferences.getInstance();
       prefs.setString(UT.loginStatus, "True");
       Fluttertoast.showToast(msg: "Login Successfully done");
-      Navigator.push(context, MaterialPageRoute(builder: (context)=>AdminDashboardPage()));
+      Navigator.push(context, MaterialPageRoute(builder: (context)=>NewAdminDashboard()));
     }
 
 

@@ -10,6 +10,8 @@ import 'package:untitled/View/User%20Model/api_constant.dart';
 import 'package:untitled/View/User%20Model/my_complaints.dart';
 import 'package:http/http.dart' as http;
 import '../../CustomeWidget/custome_widget.dart';
+import '../GC Model/GC_complaints_list.dart';
+import '../JCO Model/JCO_complaints_list.dart';
 
 class OtpPage extends StatefulWidget {
   const OtpPage({Key? key}) : super(key: key);
@@ -188,8 +190,18 @@ class _OtpPageState extends State<OtpPage> {
     }else{
       final prefs = await SharedPreferences.getInstance();
       prefs.setString(UT.loginStatus, "True");
-      Navigator.push(context,
-          MaterialPageRoute(builder: (context) => const MyComplaintListPage()));
+      var userType=prefs.getString(UT.appType);
+      if(userType=="GC"){
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => const GCComplaintList()));
+      }else if(userType=="JCO"){
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => const JCOComplaintList()));
+      }else{
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => const MyComplaintListPage()));
+      }
+
     }
 
   }
