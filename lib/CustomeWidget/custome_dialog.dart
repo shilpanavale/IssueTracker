@@ -7,6 +7,8 @@ import 'package:untitled/App%20Theme/app_theme.dart';
 import 'package:untitled/App%20Theme/asset_files.dart';
 
 class CustomDialog extends StatelessWidget {
+  const CustomDialog({super.key});
+
 
 
   @override
@@ -26,7 +28,7 @@ dialogContent(BuildContext context) {
   return Stack(
       children: <Widget>[
         Container(
-          padding: EdgeInsets.only(
+          padding: const EdgeInsets.only(
             top: Consts.avatarRadius + Consts.padding,
             bottom: Consts.padding,
             left: Consts.padding,
@@ -49,7 +51,7 @@ dialogContent(BuildContext context) {
             mainAxisSize: MainAxisSize.min, // To make the card compact
             children: <Widget>[
               const Text(
-                "Are you sure you want to exit from untitled app?",
+                "Are you sure you want to exit from Samadhan app?",
                 style: TextStyle(
                   fontSize: 20.0,
                   fontWeight: FontWeight.normal,
