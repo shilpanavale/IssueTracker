@@ -9,6 +9,7 @@ import 'package:untitled/View/User%20Model/my_complaints.dart';
 import 'package:untitled/View/select_user_type.dart';
 
 import '../../App Theme/app_theme.dart';
+import '../User Model/api_constant.dart';
 
 
 class AdminDrawerPage extends StatefulWidget {
@@ -21,7 +22,22 @@ class AdminDrawerPage extends StatefulWidget {
 class AdminDrawerPageState extends State<AdminDrawerPage> {
 
 
+  var userType;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getData();
 
+  }
+  getData() async {
+    final prefs = await SharedPreferences.getInstance();
+    userType= prefs.getString(UT.appType);
+    print("userType-->$userType");
+    setState(() {
+
+    });
+  }
 
 
   @override
@@ -52,7 +68,12 @@ class AdminDrawerPageState extends State<AdminDrawerPage> {
 
                       child:  const Icon(Icons.settings,size: 20, color: Colors.white),
                     ),
-                    title: Text("Admin Setting",style: TextStyle(fontSize:18,color: ColorsForApp.whiteColor),),
+                    title: userType=="1"?
+                    Text("JCO/OR Admin Setting",style: StyleForApp.textStyle16dpBold.copyWith(color: Colors.white),)
+                        :userType=="2"?
+                    Text("GC Admin Setting",style: StyleForApp.appBarTextStyle,):
+                     userType=="0"? Text("Officer Admin Setting",style: StyleForApp.appBarTextStyle,)
+                         :Text("Admin Setting",style: StyleForApp.appBarTextStyle,)
                   ),
                 ),
               ),
@@ -94,7 +115,6 @@ class AdminDrawerPageState extends State<AdminDrawerPage> {
               title: Text("Manage Secret Key",style: StyleForApp.textStyle15dp),
             ),
             Divider(color: ColorsForApp.grayLabelColor,),
-
             ListTile(
               onTap: (){
                 Navigator.push(context, MaterialPageRoute(builder: (context)=>const HouseNumberListPage()));

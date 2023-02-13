@@ -10,7 +10,6 @@ import 'package:path_provider/path_provider.dart';
 import 'package:pie_chart/pie_chart.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:untitled/App%20Theme/app_theme.dart';
 import 'package:untitled/App%20Theme/asset_files.dart';
 import 'package:untitled/App%20Theme/text_fileds.dart';
@@ -18,43 +17,33 @@ import 'package:untitled/CustomeWidget/common_button.dart';
 import 'package:untitled/CustomeWidget/custome_widget.dart';
 import 'package:untitled/View/Admin%20Model/user_admin_dashboard.dart';
 import 'package:untitled/View/Admin%20Model/complaints_list.dart';
-import 'package:untitled/View/GC%20Model/gc_admin_complaints_list.dart';
-import 'package:untitled/View/JCO%20Model/jco_admin_complaints_list.dart';
 import 'package:untitled/View/User%20Model/my_complaints.dart';
 import 'package:http/http.dart' as http;
 import '../../CustomeWidget/custome_dialog.dart';
 import '../Admin Model/Model/IssueModel.dart';
 import '../User Model/api_constant.dart';
+import 'gc_admin_complaints_list.dart';
 
 
-class DetailsScreen extends StatefulWidget {
+class GCViewDetailsScreen extends StatefulWidget {
   final String statusFlag;
   final IssueModelClass issueModel;
-  const DetailsScreen({Key? key, required this.issueModel, required this.statusFlag}) : super(key: key);
+  const GCViewDetailsScreen({Key? key, required this.issueModel, required this.statusFlag}) : super(key: key);
 
 
   @override
-  State<DetailsScreen> createState() => _MyHomePageState();
+  State<GCViewDetailsScreen> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<DetailsScreen> {
+class _MyHomePageState extends State<GCViewDetailsScreen> {
   ScreenshotController fullPageScreenshot = ScreenshotController();
-  var userType;
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    getData();
     print(widget.issueModel.imageUrl2);
     print(widget.issueModel.imageUrl);
-  }
-  getData() async {
-    final prefs = await SharedPreferences.getInstance();
-    userType= prefs.getString(UT.appType);
-    print("userType-->$userType");
-    setState(() {
-
-    });
   }
 
   @override
@@ -66,24 +55,12 @@ class _MyHomePageState extends State<DetailsScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0.0,
         leading: BackLeadingButton(onPressed: () {
-          if(userType=="1"){
-            Navigator.push(context, MaterialPageRoute(builder: (context)=> JCOAdminComplaintListPage(statusFlag: widget.statusFlag,)));
-
-          }else if(userType=="2"){
-            Navigator.push(context, MaterialPageRoute(builder: (context)=> GCAdminComplaintListPage(statusFlag: widget.statusFlag,)));
-
-          }else{
-            Navigator.push(context, MaterialPageRoute(builder: (context)=> ComplaintListPage(statusFlag: widget.statusFlag,)));
-          }
+          Navigator.push(context, MaterialPageRoute(builder: (context)=> GCAdminComplaintListPage(statusFlag: widget.statusFlag,)));
         },),
         title: Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            userType=="1"?
-            Text("JCO/OR Admin Dashboard",style: StyleForApp.appBarTextStyle,)
-            :userType=="2"?
-             Text("GC Admin Dashboard",style: StyleForApp.appBarTextStyle,)
-            :Text("Officer Admin Dashboard",style: StyleForApp.appBarTextStyle,),
+            Text("GC Admin Dashboard",style: StyleForApp.appBarTextStyle,),
           ],
         ),
       ),
@@ -118,10 +95,8 @@ class _MyHomePageState extends State<DetailsScreen> {
                           const SizedBox(height: 20,),
                           Text("${widget.issueModel.houseComplaintId}",style: StyleForApp.textStyle15dp,),
                           const SizedBox(height: 10,),
-                          userType=="1"||userType=="2"?Container():
                           Text("${widget.issueModel.issue}",style: StyleForApp.textStyle15dp,),
                           const SizedBox(height: 10,),
-                          userType=="1"||userType=="2"?Container():
                           Text("${widget.issueModel.subIssue}",style: StyleForApp.textStyle15dp,),
                           const SizedBox(height: 10,),
                           Text(widget.issueModel.mobileNo ?? "",textAlign:TextAlign.start,style: StyleForApp.textStyle15dp,),

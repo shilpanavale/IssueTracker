@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pie_chart/pie_chart.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:untitled/App%20Theme/app_theme.dart';
 import 'package:untitled/App%20Theme/asset_files.dart';
 import 'package:untitled/App%20Theme/text_fileds.dart';
@@ -11,8 +12,11 @@ import 'package:untitled/CustomeWidget/common_button.dart';
 import 'package:untitled/CustomeWidget/custome_widget.dart';
 import 'package:untitled/View/Admin%20Model/Model/VendorModel.dart';
 import 'package:untitled/View/Admin%20Model/add_vendor.dart';
+import 'package:untitled/View/Admin%20Model/setting_page.dart';
 import 'package:untitled/View/Admin%20Model/user_admin_dashboard.dart';
 import 'package:http/http.dart' as http;
+import 'package:untitled/View/GC%20Model/GC_admin_dashboard.dart';
+import 'package:untitled/View/JCO%20Model/JCO_admin_dashboard.dart';
 import 'package:untitled/View/User%20Model/api_constant.dart';
 
 class VendorListPage extends StatefulWidget {
@@ -28,16 +32,12 @@ class _MyHomePageState extends State<VendorListPage> {
   var vendorID;
   List<VendorModelClass> vendorList=[];
 
-
+ var userType;
   Future<List<VendorModelClass>>? _vendorApi;
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    _vendorApi=getVendorList();
-  }
+
+
   Future<bool> willPopScopeBack() async{
-    Navigator.push(context, MaterialPageRoute(builder: (context)=>const UserAdminDashboardPage()));
+    Navigator.push(context, MaterialPageRoute(builder: (context)=>const SettingPage()));
     return true;
   }
   @override
@@ -50,12 +50,14 @@ class _MyHomePageState extends State<VendorListPage> {
           backgroundColor: Colors.transparent,
           elevation: 0.0,
           leading: BackLeadingButton(onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context)=>const UserAdminDashboardPage()));
-          },),
+
+              Navigator.push(context, MaterialPageRoute(builder: (context)=>const SettingPage()));
+              },),
           title: Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              Text("Admin Dashboard",style: StyleForApp.appBarTextStyle,),
+                  Text("Setting",style: StyleForApp.appBarTextStyle,),
+              //Text("Admin Dashboard",style: StyleForApp.appBarTextStyle,),
             ],
           ),
         ),
@@ -200,7 +202,7 @@ class _MyHomePageState extends State<VendorListPage> {
     if (response.statusCode == 200) {
      var decodeRes=json.decode(response.body) as List;
      List<VendorModelClass> vendors = decodeRes.map((tagJson) => VendorModelClass.fromJson(tagJson)).toList();
-      print("vendors-->$vendors");
+
       return vendors;
     } else {
       throw Exception('Failed to load house list');

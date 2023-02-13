@@ -7,6 +7,7 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pie_chart/pie_chart.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:untitled/App%20Theme/app_theme.dart';
 import 'package:untitled/App%20Theme/asset_files.dart';
 import 'package:untitled/App%20Theme/text_fileds.dart';
@@ -17,6 +18,8 @@ import 'package:untitled/View/User%20Model/my_complaints.dart';
 import 'package:http/http.dart' as http;
 import '../../CustomeWidget/custome_dialog.dart';
 import '../Admin Model/Model/IssueModel.dart';
+import '../GC Model/GC_complaints_list.dart';
+import '../JCO Model/JCO_complaints_list.dart';
 import 'api_constant.dart';
 
 class FeedBackPage extends StatefulWidget {
@@ -37,13 +40,24 @@ class _MyHomePageState extends State<FeedBackPage> {
    double rating =3;
 
   File? image;
-
+  var userType;
   bool showAddPhotoUI=false;
   String status="";
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    getData();
+    print(widget.issueModel.imageUrl2);
+    print(widget.issueModel.imageUrl);
+  }
+  getData() async {
+    final prefs = await SharedPreferences.getInstance();
+    userType= prefs.getString(UT.appType);
+    print("userType-->$userType");
+    setState(() {
+
+    });
   }
 
   @override
@@ -54,12 +68,24 @@ class _MyHomePageState extends State<FeedBackPage> {
         backgroundColor: Colors.transparent,
         elevation: 0.0,
         leading: BackLeadingButton(onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (context)=>const MyComplaintListPage()));
+          if(userType=="1"){
+            Navigator.push(context, MaterialPageRoute(builder: (context)=> JCOComplaintList()));
+
+          }else if(userType=="2"){
+            Navigator.push(context, MaterialPageRoute(builder: (context)=> GCComplaintList()));
+
+          }else{
+            Navigator.push(context, MaterialPageRoute(builder: (context)=> MyComplaintListPage()));
+          }
         },),
         title: Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            Text("User Dashboard",style: StyleForApp.appBarTextStyle,),
+            userType=="1"?
+            Text("JCO/OR Dashboard",style: StyleForApp.appBarTextStyle,)
+                :userType=="2"?
+            Text("GC Dashboard",style: StyleForApp.appBarTextStyle,)
+                :Text("Officer Admin Dashboard",style: StyleForApp.appBarTextStyle,),
           ],
         ),
       ),
@@ -84,25 +110,24 @@ class _MyHomePageState extends State<FeedBackPage> {
                         borderRadius: BorderRadius.circular(10.0)
                     ),
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const SizedBox(height: 20,),
                         Padding(
-                          padding: const EdgeInsets.only(top: 3, bottom: 3, right: 30, left: 30),
+                          padding: const EdgeInsets.only(top: 3, bottom: 2, right: 30, left: 30),
                           child: Text("${widget.issueModel.houseComplaintId}",style: StyleForApp.textStyle15dp,),
                         ),
-                        const SizedBox(height: 10,),
-                        Padding(
+                       // const SizedBox(height: 10,),
+                        userType=="1"||userType=="2"?Container():  Padding(
                           padding: const EdgeInsets.only(top: 3, bottom: 3, right: 30, left: 30),
                           child: Text("${widget.issueModel.issue}",style: StyleForApp.textStyle15dp,),
                         ),
-                        const SizedBox(height: 10,),
-                        Padding(
+                       // const SizedBox(height: 10,),
+                        userType=="1"||userType=="2"?Container(padding: EdgeInsets.zero,): Padding(
                           padding: const EdgeInsets.only(top: 3, bottom: 3, right: 30, left: 30),
                           child: Text("${widget.issueModel.subIssue}",style: StyleForApp.textStyle15dp,),
                         ),
-                        const SizedBox(height: 10,),
                         const SizedBox(height: 10,),
                         if(showAddPhotoUI==true)
                         CommonTextField.commonTextField(null, "Comment", describeComplaintTxt, TextInputType.text)

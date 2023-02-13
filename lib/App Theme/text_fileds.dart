@@ -262,7 +262,7 @@ class CommonTextField{
       child: Column(
         children: [
           Container(
-            height: 37,
+           // height: 37,
             // width: MediaQuery.of(context).size.width,
             //padding: const EdgeInsets.only(left: 10.0, right: 10.0),
             decoration: BoxDecoration(

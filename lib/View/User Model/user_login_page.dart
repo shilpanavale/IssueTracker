@@ -177,24 +177,25 @@ class _MyHomePageState extends State<UserLoginPage> {
     //var status=decodeRes['status'];
    // var status1=status['status'];
     var status1=true;
-    var userId=33;
+    var userId=30;
     //var userId=status['user_id'];
 
     if(status1==false){
       Fluttertoast.showToast(msg: "Error Occurred");
     }else{
-     /* final prefs = await SharedPreferences.getInstance();
+
+      final prefs = await SharedPreferences.getInstance();
       prefs.setString(UT.mobileNo, mobile);
       prefs.setInt(UT.userId, userId);
-      Fluttertoast.showToast(msg: "OTP sent to your mobile number");*/
+      Fluttertoast.showToast(msg: "OTP sent to your mobile number");
      // Navigator.push(context, MaterialPageRoute(builder: (context)=>OtpPage()));
-      final prefs = await SharedPreferences.getInstance();
+    //  final prefs = await SharedPreferences.getInstance();
       prefs.setString(UT.loginStatus, "True");
       var userType=prefs.getString(UT.appType);
-      if(userType=="GC"){
+      if(userType=="User-GC"){
         Navigator.push(context,
             MaterialPageRoute(builder: (context) => const GCComplaintList()));
-      }else if(userType=="JCO"){
+      }else if(userType=="User-JCO"){
         Navigator.push(context,
             MaterialPageRoute(builder: (context) => const JCOComplaintList()));
       }else{

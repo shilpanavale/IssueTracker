@@ -69,7 +69,7 @@ class _MyHomePageState extends State<SelectUserTypePage> {
                           ),
                         ),
                         const SizedBox(height: 10,),
-                        Text("User",style: StyleForApp.subHeadline,)
+                        Text("Officer",style: StyleForApp.subHeadline,)
                       ],
                     ),
                   ),
@@ -116,7 +116,7 @@ class _MyHomePageState extends State<SelectUserTypePage> {
                   InkWell(
                     onTap: () async {
                       final prefs = await SharedPreferences.getInstance();
-                      prefs.setString(UT.appType, "GC");
+                      prefs.setString(UT.appType, "User-GC");
                       Navigator.push(context, MaterialPageRoute(builder: (context)=>const ClientCodePage()));
                     },
                     child: Column(
@@ -148,7 +148,7 @@ class _MyHomePageState extends State<SelectUserTypePage> {
                   InkWell(
                     onTap: () async {
                       final prefs = await SharedPreferences.getInstance();
-                      prefs.setString(UT.appType, "JCO");
+                      prefs.setString(UT.appType, "User-JCO");
                       Navigator.push(context, MaterialPageRoute(builder: (context)=>const ClientCodePage()));
                     },
                     child: Column(
@@ -169,11 +169,11 @@ class _MyHomePageState extends State<SelectUserTypePage> {
                           ),
                           child: Padding(
                             padding: const EdgeInsets.all(15.0),
-                            child: Image.asset(AssetFiles.admin,fit:BoxFit.contain,color: ColorsForApp.whiteColor,),
+                            child: Image.asset(AssetFiles.user,fit:BoxFit.contain,color: ColorsForApp.whiteColor,),
                           ),
                         ),
                         const SizedBox(height: 10,),
-                        Text("JCO",style: StyleForApp.subHeadline,)
+                        Text("JCO/OR",style: StyleForApp.subHeadline,)
                       ],
                     ),
                   ),

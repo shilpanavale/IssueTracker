@@ -29,17 +29,19 @@ import 'dart:io';
 
 import '../Admin Model/important_issue_list.dart';
 import '../Admin Model/new_admin_dashboard.dart';
+import 'Model/BattalionListModel.dart';
+import 'gc_admin_complaints_list.dart';
 
-class JCOAdminDashboardPage extends StatefulWidget {
-  const JCOAdminDashboardPage({Key? key}) : super(key: key);
+class GCAdminDashboardPage extends StatefulWidget {
+  const GCAdminDashboardPage({Key? key}) : super(key: key);
 
 
   @override
-  State<JCOAdminDashboardPage> createState() => _MyHomePageState();
+  State<GCAdminDashboardPage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<JCOAdminDashboardPage> {
-   GlobalKey previewContainer =  GlobalKey();
+class _MyHomePageState extends State<GCAdminDashboardPage> {
+  static  GlobalKey previewContainer =  GlobalKey();
   Map<String, double> dataMap ={};
   Map<String, double> subIssueMap ={};
   List subIssue=[];
@@ -56,6 +58,10 @@ class _MyHomePageState extends State<JCOAdminDashboardPage> {
   dynamic assigned,resolved,not_resolved,not_assigned;
   dynamic totalIssueRegisteredToday;
   bool clickOnShare=false;
+  int escaltionCount1=0;
+  int escaltionCount2=0;
+  int escaltionCount3=0;
+  List<Message> battalionList=[];
   @override
   void initState() {
     // TODO: implement initState
@@ -85,7 +91,10 @@ class _MyHomePageState extends State<JCOAdminDashboardPage> {
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0.0,
-          leading: Builder(
+          iconTheme: IconThemeData(
+              color: Colors.black
+          ),
+         /* leading: Builder(
             builder: (context) => IconButton(
               icon: Container(
                 height: 25,width: 25,
@@ -98,33 +107,30 @@ class _MyHomePageState extends State<JCOAdminDashboardPage> {
               ),
               onPressed: () => Scaffold.of(context).openDrawer(),
             ),
-          ),
+          ),*/
 
           title: Column(
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  Text("JCO Dashboard",style: StyleForApp.appBarTextStyle,),
+                  Text("GC Admin Dashboard",style: StyleForApp.appBarTextStyle,),
                 ],
               ),
             ],
           ),
         ),
-        drawer: const AdminDrawerPage(),
+       // drawer: const AdminDrawerPage(),
         body: SizedBox(
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height,
           child: SingleChildScrollView(
             controller: ScrollController(),
             child: Column(
-             // mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: <Widget>[
 
                 selectDateRange(context),
                 const SizedBox(height: 10,),
-               // subIssue.isNotEmpty?  subIssuePieChart(context):Container(),
-               // const SizedBox(height: 10,),
                 statusWiseComplaintUI(context)
               ],
             ),
@@ -147,56 +153,6 @@ class _MyHomePageState extends State<JCOAdminDashboardPage> {
         child: Column(
           children: [
             const SizedBox(height: 10,),
-
-          /*  Padding(
-              padding: const EdgeInsets.all(15.0),
-              child: Container(
-                width: double.infinity,
-                height: 40,
-                decoration: BoxDecoration(
-                    color: ColorsForApp.grayColor.withOpacity(0.3),
-                    borderRadius: BorderRadius.circular(10.0)
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    SizedBox(
-                      width: 200,
-                      child: Row(
-                        children: [
-                          const SizedBox(width: 8,),
-                          Container(
-                            height: 25,width: 25,
-                            decoration:  const BoxDecoration(
-                              color: Colors.transparent,
-                              image:  DecorationImage(
-                                fit: BoxFit.contain,
-                                image: AssetImage(
-                                  AssetFiles.calendar,
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 5,),
-                          Text("Select Date Range",style: StyleForApp.extraSmaller12dp,),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text("Today",style: TextStyle(
-                        // fontFamily: fontName,
-                        fontWeight: FontWeight.w700,
-                        fontSize: 12,
-                        letterSpacing: 0.27,
-                        color: ColorsForApp.blackColor,
-                      ),),
-                    )
-
-                  ],
-                ),
-              ),
-            ),*/
             dataMap.isNotEmpty? RepaintBoundary(
               key: previewContainer,
               child: Padding(
@@ -314,43 +270,6 @@ class _MyHomePageState extends State<JCOAdminDashboardPage> {
       ),
     );
   }
-   Widget subIssuePieChart(BuildContext context){
-     return  Container(
-       // height: 250,
-       //width: double.infinity,
-       decoration:   BoxDecoration(
-         color: HexColor("#F2F2F2"),
-       ),
-       child: Column(
-         crossAxisAlignment: CrossAxisAlignment.start,
-         children: [
-           const SizedBox(height: 10,),
-           const Padding(
-             padding: EdgeInsets.only(left: 20.0),
-             child: Text("SubIssue Wise Data"),
-           ),
-           ListView.builder(
-             shrinkWrap: true,
-             padding: EdgeInsets.zero,
-             physics: const NeverScrollableScrollPhysics(),
-             itemCount: subIssue.length,
-               itemBuilder:(context,index){
-               return ListTile(
-                 title:Text(subIssue[index]["subIssue"],style: StyleForApp.textStyle14dp) ,
-                 leading: Icon(Icons.circle_sharp,color: ColorsForApp.appButtonColor,) ,
-                 trailing: Text(subIssue[index]["count"],style: StyleForApp.textStyle15dpBold),
-
-               );
-
-           } ),
-           const SizedBox(height: 20,),
-         ],
-       ),
-     );
-   }
-
-
-
   Widget statusWiseComplaintUI(BuildContext context){
     return Container(
       //width: double.infinity,
@@ -360,6 +279,7 @@ class _MyHomePageState extends State<JCOAdminDashboardPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          battalionUI(context),
           totalIssueRegisteredToday!=null? Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text("Total Issue Registered Today : $totalIssueRegisteredToday",textAlign:TextAlign.start,style: StyleForApp.subHeadline,),
@@ -480,12 +400,12 @@ class _MyHomePageState extends State<JCOAdminDashboardPage> {
                   letterSpacing: 0.27,
                   color: ColorsForApp.whiteColor,
                 ),),
-                Text("",style:  TextStyle(
+                Text(escaltionCount1.toString(),style:  TextStyle(
                   // fontFamily: fontName,
                   fontWeight: FontWeight.w700,
                   fontSize: 28,
                   letterSpacing: 0.27,
-                  color: ColorsForApp.blackColor,
+                  color: ColorsForApp.whiteColor,
                 ),),
               ],
             ),
@@ -520,7 +440,7 @@ class _MyHomePageState extends State<JCOAdminDashboardPage> {
                   letterSpacing: 0.27,
                   color: ColorsForApp.whiteColor,
                 ),),
-                Text("",style:  TextStyle(
+                Text(escaltionCount2.toString(),style:  TextStyle(
                   // fontFamily: fontName,
                   fontWeight: FontWeight.w700,
                   fontSize: 28,
@@ -560,7 +480,7 @@ class _MyHomePageState extends State<JCOAdminDashboardPage> {
                   letterSpacing: 0.27,
                   color: ColorsForApp.whiteColor,
                 ),),
-                Text("",style:  TextStyle(
+                Text(escaltionCount3.toString(),style:  TextStyle(
                   // fontFamily: fontName,
                   fontWeight: FontWeight.w700,
                   fontSize: 28,
@@ -579,7 +499,7 @@ class _MyHomePageState extends State<JCOAdminDashboardPage> {
     return  InkWell(
       onTap: (){
         Navigator.push(context, MaterialPageRoute(builder: (context)=>
-        const ComplaintListPage(statusFlag: "not resolved",)));
+        const GCAdminComplaintListPage(statusFlag: "not resolved",)));
       },
       child: Padding(
         padding: const EdgeInsets.all(15.0),
@@ -619,7 +539,7 @@ class _MyHomePageState extends State<JCOAdminDashboardPage> {
     return  InkWell(
       onTap: (){
         Navigator.push(context, MaterialPageRoute(builder: (context)=>
-        const ComplaintListPage(statusFlag: "Not Assigned",)));
+        const GCAdminComplaintListPage(statusFlag: "Not Assigned",)));
         },
       child: Padding(
         padding: const EdgeInsets.all(15.0),
@@ -659,7 +579,7 @@ class _MyHomePageState extends State<JCOAdminDashboardPage> {
     return  InkWell(
       onTap: (){
         Navigator.push(context, MaterialPageRoute(builder: (context)=>
-        const ComplaintListPage(statusFlag: 'Assigned',)));
+        const GCAdminComplaintListPage(statusFlag: 'Assigned',)));
         },
       child: Padding(
         padding: const EdgeInsets.all(15.0),
@@ -698,7 +618,7 @@ class _MyHomePageState extends State<JCOAdminDashboardPage> {
   Widget resolvedUI(BuildContext context){
     return  InkWell(
       onTap: (){
-        Navigator.push(context, MaterialPageRoute(builder: (context)=>const ComplaintListPage(statusFlag: "Resolved",)));
+        Navigator.push(context, MaterialPageRoute(builder: (context)=>const GCAdminComplaintListPage(statusFlag: "Resolved",)));
         },
       child: Padding(
         padding: const EdgeInsets.all(15.0),
@@ -734,7 +654,38 @@ class _MyHomePageState extends State<JCOAdminDashboardPage> {
       ),
     );
   }
-
+  Widget battalionUI(BuildContext context){
+    return  Container(
+      // height: 250,
+      //width: double.infinity,
+      decoration:   BoxDecoration(
+        color: HexColor("#F2F2F2"),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 10,),
+          /* const Padding(
+            padding: EdgeInsets.only(left: 20.0),
+            child: Text("SubIssue Wise Data"),
+          ),*/
+          ListView.builder(
+              shrinkWrap: true,
+              padding: EdgeInsets.zero,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: battalionList.length,
+              itemBuilder:(context,index){
+                return ListTile(
+                  title:Text(battalionList[index].battalion ?? "",style: StyleForApp.textStyle14dp) ,
+                  leading: Icon(Icons.circle_sharp,color: ColorsForApp.appButtonColor,) ,
+                  trailing: Text(battalionList[index].pending.toString()??"",style: StyleForApp.textStyle15dpBold),
+                );
+              } ),
+          const SizedBox(height: 20,),
+        ],
+      ),
+    );
+  }
   Future<void> _captureSocialPng(String flag) {
     String imagePaths ;
     final RenderBox box = context.findRenderObject() as RenderBox;
@@ -768,18 +719,37 @@ class _MyHomePageState extends State<JCOAdminDashboardPage> {
       });
     });
   }
+  getBatalionList() async {
+    //DialogBuilder(context).showLoadingIndicator();
+    var response= await http.get(Uri.parse("${APIConstant.APIURL}/gc-option/?secret=d146d69ec7f6635f3f05f2bf4a51b318&user_type=2"));
+    var decodeRes=json.decode(response.body);
+    if (response.statusCode == 200) {
+      print("decodeRes-->$decodeRes");
+      var messagelist=decodeRes["message"] as List;
+      battalionList = messagelist.map((tagJson) => Message.fromJson(tagJson)).toList();
 
+     // setState(() {});
+
+    } else {
+
+      throw Exception('Failed to Location house list');
+    }
+
+  }
   getData() async {
     //https://api.creshsolutions.com/admin-home/?secret=d146d69ec7f6635f3f05f2bf4a51b318
-    var url =Uri.parse("${APIConstant.APIURL}/admin-home/?secret=d146d69ec7f6635f3f05f2bf4a51b318");
+    var url =Uri.parse("${APIConstant.APIURL}/admin-home/?secret=d146d69ec7f6635f3f05f2bf4a51b318&user_type=2");
     print("url-->$url");
     var response= await http.get(url);
     print(response.body);
     var decodeRes=json.decode(response.body);
-    totalIssueRegisteredToday=decodeRes["totalIssueRegisteredToday"];
+    totalIssueRegisteredToday=decodeRes["totalIssueRegisteredToday"]["count"];
     var statusCount=decodeRes["statusWiseCount"];
     var totalCount=decodeRes["totalCount"];
     var resolvedCount=decodeRes["resolvedCount"];
+    escaltionCount1=decodeRes["escalationOneCount"];
+    escaltionCount2=decodeRes["escalationTwoCount"];
+    escaltionCount3=decodeRes["escalationThreeCount"];
     if(resolvedCount==null||statusCount==null||totalCount==null){
       resolvedCount=0;
       totalCount=0;
@@ -797,8 +767,8 @@ class _MyHomePageState extends State<JCOAdminDashboardPage> {
     resolved=statusCount["resolved"];
     not_resolved=statusCount["not_resolved"];
     not_assigned=statusCount["not_assigned"];
-    subIssue=decodeRes["subIssueWiseData"];
 
+    await getBatalionList();
     setState(() {
 
     });
@@ -826,6 +796,9 @@ class _MyHomePageState extends State<JCOAdminDashboardPage> {
      var statusCount=decodeRes["statusWiseCount"];
      var totalCount=decodeRes["totalCount"];
      var resolvedCount=decodeRes["resolvedCount"];
+     escaltionCount1=decodeRes["escalationOneCount"];
+     escaltionCount2=decodeRes["escalationTwoCount"];
+     escaltionCount3=decodeRes["escalationThreeCount"];
      if(resolvedCount==null||statusCount==null||totalCount==null){
        resolvedCount=0;
        totalCount=0;

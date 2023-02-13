@@ -35,12 +35,16 @@ class _MyHomePageState extends State<GCRegisterComplaint> {
   final TextEditingController describeComplaintTxt=TextEditingController();
   final TextEditingController addPhotosTxt=TextEditingController();
 
-  dynamic selectedBattalion;
-  dynamic selecteCompany;
-  dynamic selecteHouseId;
-  List<BattalionData> batalionList=[];
-  List<CompanyData> companyList=[];
-
+  dynamic selectIssueType;
+  dynamic selectSubIssueType;
+  dynamic selectedArea;
+  dynamic selectedHouseType;
+  dynamic selectCompany;
+  dynamic selectedBatallion;
+  dynamic selectHouseNo;
+  List<HouseNumberModel> companyList=[];
+  List<LocationModelClass> locationList=[];
+  List<AccommodationModel> batallionList=[];
   File? image1;
   File? image2;
   File? image3;
@@ -98,7 +102,6 @@ class _MyHomePageState extends State<GCRegisterComplaint> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           const SizedBox(height: 10,),
-                          //CommonTextField.commonTextField(null, "Location", stationTxt, TextInputType.text),
                           Padding(
                             padding: const EdgeInsets.only(top: 3, bottom: 3, right: 30, left: 30),
                             child: Container(
@@ -110,11 +113,11 @@ class _MyHomePageState extends State<GCRegisterComplaint> {
                               ),
                               child: DropdownButtonHideUnderline(
                                 child: DropdownButton(
-                                  hint:  const Text(" Select Battalion",
+                                  hint:  const Text(" Select Area",
                                       style: TextStyle(fontWeight: FontWeight.w400,
                                           fontSize: 15.0, color: Colors.black38)
                                   ),
-                                  value: selectedBattalion,
+                                  value: selectedArea,
                                   icon: const Padding(
                                     padding: EdgeInsets.only(right: 16.0),
                                     child: Icon(
@@ -126,16 +129,17 @@ class _MyHomePageState extends State<GCRegisterComplaint> {
                                   isDense: true,
                                   onChanged: (newValue) {
                                     setState(() {
-                                      selecteCompany=null;
-                                      selectedBattalion=newValue;
-                                      print('selectedLocation--->$selectedBattalion');
-                                      getCompanyList(selectedBattalion);
+                                      selectedBatallion=null;
+                                      selectCompany=null;
+                                      selectedArea=newValue;
+                                      print('selectedLocation--->$selectedArea');
+                                      getAccommodationList(selectedArea);
                                     });
                                   },
-                                  items: batalionList.map((value) {
+                                  items: locationList.map((value) {
                                     return DropdownMenuItem<String>(
-                                      value: value.battalion,
-                                      child: Text(value.battalion!),
+                                      value: value.houseLocation,
+                                      child: Text(value.houseLocation!),
                                     );
                                   }).toList(),
                                 ),
@@ -143,7 +147,6 @@ class _MyHomePageState extends State<GCRegisterComplaint> {
                             ),
                           ),
                           const SizedBox(height: 10,),
-                          // CommonTextField.commonTextField(null, "Type of accommodation", colonyTxt, TextInputType.text),
                           Padding(
                             padding: const EdgeInsets.only(top: 3, bottom: 3, right: 30, left: 30),
                             child: Container(
@@ -154,13 +157,13 @@ class _MyHomePageState extends State<GCRegisterComplaint> {
                                 borderRadius: BorderRadius.circular(10.0),
                               ),
                               child: DropdownButtonHideUnderline(
-                                child: DropdownButton<CompanyData>(
-                                  hint:  const Text(" Select Company",
+                                child: DropdownButton(
+                                  hint:  const Text(" Select Batallion",
                                       style:  TextStyle(fontWeight: FontWeight.w400,
                                           fontSize: 15.0, color: Colors.black38)
                                   ),
 
-                                  value: selecteCompany,
+                                  value: selectedBatallion,
                                   icon: const Padding(
                                     padding: EdgeInsets.only(right: 16.0),
                                     child: Icon(
@@ -171,19 +174,62 @@ class _MyHomePageState extends State<GCRegisterComplaint> {
                                   isExpanded: true,
                                   isDense: true,
                                   onChanged: (newValue) {
-                                    if(selectedBattalion!=null){
+                                    if(selectedArea!=null){
                                       setState(() {
-                                        selecteCompany=newValue;
-                                        selecteHouseId=newValue!.houseId;
+                                        selectCompany=null;
+                                        selectedBatallion=newValue;
+                                        getHouseList(selectedBatallion);
 
                                       });
                                     }else{
-                                      Fluttertoast.showToast(msg: "Please first select location");
+                                      Fluttertoast.showToast(msg: "Please first area");
                                     }
                                   },
-                                  items: companyList.map((CompanyData value) {
-                                    return DropdownMenuItem<CompanyData>(
-                                      value: value,
+                                  items: batallionList.map((value) {
+                                    return DropdownMenuItem<String>(
+                                      value: value.houseType,
+                                      child: Text(value.houseType!),
+                                    );
+                                  }).toList(),
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 10,),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 3, bottom: 3, right: 30, left: 30),
+                            child: Container(
+                              height: 40,
+                              padding: const EdgeInsets.all(8.0),
+                              decoration: BoxDecoration(
+                                color: ColorsForApp.whiteColor,
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                              child: DropdownButtonHideUnderline(
+                                child: DropdownButton(
+                                  hint: const Text(" Select Company",style: TextStyle(
+                                      fontSize: 15.0, fontWeight: FontWeight.w400,
+                                      color: Colors.black38)),
+                                  value: selectCompany,
+                                  isExpanded: true,
+                                  icon: const Padding(
+                                    padding: EdgeInsets.only(right: 16.0),
+                                    child: Icon(
+                                      Icons.arrow_drop_down_circle,
+                                      size: 20,color: Colors.grey,
+                                    ),
+                                  ),
+                                  isDense: true,
+                                  onChanged: (newValue) {
+
+                                    setState(() {
+                                      selectCompany=newValue;
+                                      print('selectHouseNo-->$selectCompany');
+                                    });
+                                  },
+                                  items: companyList.map((value) {
+                                    return DropdownMenuItem<String>(
+                                      value: value.houseId,
                                       child: Text(value.houseNo!),
                                     );
                                   }).toList(),
@@ -192,7 +238,6 @@ class _MyHomePageState extends State<GCRegisterComplaint> {
                             ),
                           ),
                           const SizedBox(height: 10,),
-                          // CommonTextField.commonTextField(null, "Description", describeComplaintTxt, TextInputType.text),
                           Padding(
                             padding: const EdgeInsets.only(top: 3, bottom: 3, right: 30, left: 30),
                             child: Container(
@@ -228,7 +273,6 @@ class _MyHomePageState extends State<GCRegisterComplaint> {
                               ),
                             ),
                           ),
-                          const SizedBox(height: 10,),
                            Padding(
                             padding: const EdgeInsets.only(left: 30.0,right: 20.0,bottom: 10),
                             child: Row(
@@ -238,6 +282,7 @@ class _MyHomePageState extends State<GCRegisterComplaint> {
                               ],
                             ),
                           ),
+                          const SizedBox(height: 10,),
                           Padding(
                             padding: const EdgeInsets.only(left: 30.0,right: 20.0),
                             child: Row(
@@ -337,9 +382,11 @@ class _MyHomePageState extends State<GCRegisterComplaint> {
                           const SizedBox(height: 40,),
                           CommonButtonForAllApp(
                               onPressed: (){
-                                if(selectedBattalion.toString().isEmpty || selectedBattalion==null||selectedBattalion==""){
+                                if(selectedArea.toString().isEmpty || selectedArea==null||selectedArea==""){
+                                  Fluttertoast.showToast(msg: "Please select area");
+                                }else if(selectedBatallion.toString().isEmpty || selectedBatallion==null||selectedBatallion==""){
                                   Fluttertoast.showToast(msg: "Please select battalion");
-                                }else if(selecteCompany.toString().isEmpty || selecteCompany==null||selecteCompany==""){
+                                }else if(selectCompany.toString().isEmpty || selectCompany==null||selectCompany==""){
                                   Fluttertoast.showToast(msg: "Please select company");
                                 } else{
                                   DialogBuilder(context).showLoadingIndicator();
@@ -365,18 +412,14 @@ class _MyHomePageState extends State<GCRegisterComplaint> {
     );
   }
 
+
   getLocationList() async {
     //DialogBuilder(context).showLoadingIndicator();
-    //https://samadhantest.creshsolutions.com/drop-down/1?user_type=1&location=&secret=d146d69ec7f6635f3f05f2bf4a51b318
-    var url=Uri.parse("${APIConstant.gcLocationList}&secret=d146d69ec7f6635f3f05f2bf4a51b318");
-    print(url);
-    var response= await http.get(url);
-    var decodeRes=json.decode(response.body);
+    var response= await http.get(Uri.parse("${APIConstant.locationList}/?secret=d146d69ec7f6635f3f05f2bf4a51b318&user_type=2"));
+    var decodeRes=json.decode(response.body) as List;
     if (response.statusCode == 200) {
       print("decodeRes-->$decodeRes");
-      var data=decodeRes["data"] as List;
-
-      batalionList = data.map((tagJson) => BattalionData.fromJson(tagJson)).toList();
+      locationList = decodeRes.map((tagJson) => LocationModelClass.fromJson(tagJson)).toList();
 
       setState(() {});
       //DialogBuilder(context).hideOpenDialog();
@@ -386,23 +429,43 @@ class _MyHomePageState extends State<GCRegisterComplaint> {
     }
 
   }
-  getCompanyList(String selectedLocation) async {
-    DialogBuilder(context).showLoadingIndicator('');
+  getAccommodationList(String selectedLocation) async {
+    DialogBuilder(context).showLoadingIndicator();
 
-    var url=Uri.parse("${APIConstant.gcLocationList}$selectedLocation&secret=d146d69ec7f6635f3f05f2bf4a51b318");
+    var url=Uri.parse("${APIConstant.accommodation}/?location=$selectedLocation&secret=d146d69ec7f6635f3f05f2bf4a51b318&user_type=2");
     var response= await http.get(url);
-
+    print("Accomadation-->$url");
     if (response.statusCode == 200) {
-      var decodeRes=json.decode(response.body);
+      var decodeRes=json.decode(response.body) as List;
       print("accommodationList-->$decodeRes");
-      var data=decodeRes["data"] as List;
-      companyList = data.map((tagJson) => CompanyData.fromJson(tagJson)).toList();
+      batallionList = decodeRes.map((tagJson) => AccommodationModel.fromJson(tagJson)).toList();
       setState(() {});
       DialogBuilder(context).hideOpenDialog();
     } else {
       DialogBuilder(context).hideOpenDialog();
       throw Exception('Failed to load Accomadation list');
     }
+  }
+  getHouseList(String selectedAccom ) async {
+    DialogBuilder(context).showLoadingIndicator();
+    var url=Uri.parse("${APIConstant.houseNo}/?accomType=$selectedAccom&location=$selectedArea&secret=d146d69ec7f6635f3f05f2bf4a51b318&user_type=2");
+    print("House URL-->$url");
+    var response= await http.get(url);
+
+    if (response.statusCode == 200) {
+      var decodeRes=json.decode(response.body) as List;
+      print("House No-->$decodeRes");
+      companyList = decodeRes.map((tagJson) => HouseNumberModel.fromJson(tagJson)).toList();
+      print("House No-->$companyList");
+      setState(() {
+
+      });
+      DialogBuilder(context).hideOpenDialog();
+    } else {
+      DialogBuilder(context).hideOpenDialog();
+      throw Exception('Failed to load house list');
+    }
+
   }
 
 
@@ -414,9 +477,9 @@ class _MyHomePageState extends State<GCRegisterComplaint> {
 
     var url=Uri.parse("${APIConstant.APIURL}/gc-complaint/?secret=d146d69ec7f6635f3f05f2bf4a51b318");
     var request = http.MultipartRequest("POST", url);
-    request.fields['user_id'] = "33";
+    request.fields['user_id'] = userId.toString();
     request.fields['user_type'] = "2";
-    request.fields['house_id'] = selecteHouseId;
+    request.fields['house_id'] = selectCompany;
     request.fields['description'] =describeComplaintTxt.text.isNotEmpty? describeComplaintTxt.text:"";
     print(request.fields);
     if(image1?.path!=null){

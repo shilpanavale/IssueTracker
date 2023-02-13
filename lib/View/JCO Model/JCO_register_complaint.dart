@@ -34,16 +34,12 @@ class _MyHomePageState extends State<JCORegisterComplaint> {
   final TextEditingController describeComplaintTxt=TextEditingController();
   final TextEditingController addPhotosTxt=TextEditingController();
 
-  dynamic selectIssueType;
-  dynamic selectSubIssueType;
-  dynamic selectedLocation;
-  dynamic selectedHouseType;
-  dynamic selectHouseNo;
-  List<HouseNumberModel> houseList=[];
-  List<JCOLocationData> locationList=[];
-  List<IssueTypeModel> issueTypeList=[];
-  List<SubIssueTypeModel> subIssueTypeList=[];
 
+  dynamic selectedLocation;
+  dynamic selectHouseNo;
+  dynamic selectedAccom;
+  List<HouseNumberModel> houseList=[];
+  List<LocationModelClass> locationList=[];
   List<AccommodationModel> accommodationList=[];
 
   File? image1;
@@ -75,7 +71,7 @@ class _MyHomePageState extends State<JCORegisterComplaint> {
           title: Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              Text("JCO Dashboard",style: StyleForApp.appBarTextStyle,),
+              Text("JCO/OR Dashboard",style: StyleForApp.appBarTextStyle,),
             ],
           ),
         ),
@@ -103,7 +99,6 @@ class _MyHomePageState extends State<JCORegisterComplaint> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           const SizedBox(height: 10,),
-                          //CommonTextField.commonTextField(null, "Location", stationTxt, TextInputType.text),
                           Padding(
                             padding: const EdgeInsets.only(top: 3, bottom: 3, right: 30, left: 30),
                             child: Container(
@@ -131,11 +126,11 @@ class _MyHomePageState extends State<JCORegisterComplaint> {
                                   isDense: true,
                                   onChanged: (newValue) {
                                     setState(() {
-                                      selectedHouseType=null;
+                                      selectedAccom=null;
                                       selectHouseNo=null;
                                       selectedLocation=newValue;
                                       print('selectedLocation--->$selectedLocation');
-                                      getHouseList(selectedLocation);
+                                      getAccommodationList(selectedLocation);
                                     });
                                   },
                                   items: locationList.map((value) {
@@ -149,7 +144,6 @@ class _MyHomePageState extends State<JCORegisterComplaint> {
                             ),
                           ),
                           const SizedBox(height: 10,),
-                          // CommonTextField.commonTextField(null, "Type of accommodation", colonyTxt, TextInputType.text),
                           Padding(
                             padding: const EdgeInsets.only(top: 3, bottom: 3, right: 30, left: 30),
                             child: Container(
@@ -160,13 +154,13 @@ class _MyHomePageState extends State<JCORegisterComplaint> {
                                 borderRadius: BorderRadius.circular(10.0),
                               ),
                               child: DropdownButtonHideUnderline(
-                                child: DropdownButton<AccommodationModel>(
-                                  hint:  const Text(" Select House Type",
+                                child: DropdownButton(
+                                  hint:  const Text(" Select Accommodation Type",
                                       style:  TextStyle(fontWeight: FontWeight.w400,
                                           fontSize: 15.0, color: Colors.black38)
                                   ),
 
-                                  value: selectedHouseType,
+                                  value: selectedAccom,
                                   icon: const Padding(
                                     padding: EdgeInsets.only(right: 16.0),
                                     child: Icon(
@@ -179,16 +173,60 @@ class _MyHomePageState extends State<JCORegisterComplaint> {
                                   onChanged: (newValue) {
                                     if(selectedLocation!=null){
                                       setState(() {
-                                        selectHouseNo=newValue!.houseId;
-                                        selectedHouseType=newValue;
+                                        selectHouseNo=null;
+                                        selectedAccom=newValue;
+                                        getHouseList(selectedAccom);
+
                                       });
                                     }else{
                                       Fluttertoast.showToast(msg: "Please first select location");
                                     }
                                   },
-                                  items: accommodationList.map((AccommodationModel value) {
-                                    return DropdownMenuItem<AccommodationModel>(
-                                      value: value,
+                                  items: accommodationList.map((value) {
+                                    return DropdownMenuItem<String>(
+                                      value: value.houseType,
+                                      child: Text(value.houseType!),
+                                    );
+                                  }).toList(),
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 10,),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 3, bottom: 3, right: 30, left: 30),
+                            child: Container(
+                              height: 40,
+                              padding: const EdgeInsets.all(8.0),
+                              decoration: BoxDecoration(
+                                color: ColorsForApp.whiteColor,
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                              child: DropdownButtonHideUnderline(
+                                child: DropdownButton(
+                                  hint: const Text(" Select House number",style: TextStyle(
+                                      fontSize: 15.0, fontWeight: FontWeight.w400,
+                                      color: Colors.black38)),
+                                  value: selectHouseNo,
+                                  isExpanded: true,
+                                  icon: const Padding(
+                                    padding: EdgeInsets.only(right: 16.0),
+                                    child: Icon(
+                                      Icons.arrow_drop_down_circle,
+                                      size: 20,color: Colors.grey,
+                                    ),
+                                  ),
+                                  isDense: true,
+                                  onChanged: (newValue) {
+
+                                    setState(() {
+                                      selectHouseNo=newValue;
+                                      print('selectHouseNo-->$selectHouseNo');
+                                    });
+                                  },
+                                  items: houseList.map((value) {
+                                    return DropdownMenuItem<String>(
+                                      value: value.houseId,
                                       child: Text(value.houseNo!),
                                     );
                                   }).toList(),
@@ -197,7 +235,6 @@ class _MyHomePageState extends State<JCORegisterComplaint> {
                             ),
                           ),
                           const SizedBox(height: 10,),
-                          // CommonTextField.commonTextField(null, "Description", describeComplaintTxt, TextInputType.text),
                           Padding(
                             padding: const EdgeInsets.only(top: 3, bottom: 3, right: 30, left: 30),
                             child: Container(
@@ -344,7 +381,9 @@ class _MyHomePageState extends State<JCORegisterComplaint> {
                               onPressed: (){
                                 if(selectedLocation.toString().isEmpty || selectedLocation==null||selectedLocation==""){
                                   Fluttertoast.showToast(msg: "Please select location");
-                                }else if(selectedHouseType.toString().isEmpty || selectedHouseType==null||selectedHouseType==""){
+                                }else if(selectedAccom.toString().isEmpty || selectedAccom==null||selectedAccom==""){
+                                  Fluttertoast.showToast(msg: "Please select accommodation ");
+                                }else if(selectHouseNo.toString().isEmpty || selectHouseNo==null||selectHouseNo==""){
                                   Fluttertoast.showToast(msg: "Please select house type");
                                 } else{
                                   DialogBuilder(context).showLoadingIndicator();
@@ -370,18 +409,15 @@ class _MyHomePageState extends State<JCORegisterComplaint> {
     );
   }
 
+
+
   getLocationList() async {
     //DialogBuilder(context).showLoadingIndicator();
-    //https://samadhantest.creshsolutions.com/drop-down/1?user_type=1&location=&secret=d146d69ec7f6635f3f05f2bf4a51b318
-    var url=Uri.parse("${APIConstant.jcoLocationList}&secret=d146d69ec7f6635f3f05f2bf4a51b318");
-    print(url);
-    var response= await http.get(url);
-    var decodeRes=json.decode(response.body);
+    var response= await http.get(Uri.parse("${APIConstant.locationList}/?secret=d146d69ec7f6635f3f05f2bf4a51b318&user_type=1"));
+    var decodeRes=json.decode(response.body) as List;
     if (response.statusCode == 200) {
       print("decodeRes-->$decodeRes");
-      var data=decodeRes["data"] as List;
-
-      locationList = data.map((tagJson) => JCOLocationData.fromJson(tagJson)).toList();
+      locationList = decodeRes.map((tagJson) => LocationModelClass.fromJson(tagJson)).toList();
 
       setState(() {});
       //DialogBuilder(context).hideOpenDialog();
@@ -391,17 +427,16 @@ class _MyHomePageState extends State<JCORegisterComplaint> {
     }
 
   }
-  getHouseList(String selectedLocation) async {
+  getAccommodationList(String selectedLocation) async {
     DialogBuilder(context).showLoadingIndicator();
 
-    var url=Uri.parse("${APIConstant.jcoLocationList}$selectedLocation&secret=d146d69ec7f6635f3f05f2bf4a51b318");
+    var url=Uri.parse("${APIConstant.accommodation}/?location=$selectedLocation&secret=d146d69ec7f6635f3f05f2bf4a51b318&user_type=1");
     var response= await http.get(url);
     print("Accomadation-->$url");
     if (response.statusCode == 200) {
-      var decodeRes=json.decode(response.body);
+      var decodeRes=json.decode(response.body) as List;
       print("accommodationList-->$decodeRes");
-      var data=decodeRes["data"] as List;
-      accommodationList = data.map((tagJson) => AccommodationModel.fromJson(tagJson)).toList();
+      accommodationList = decodeRes.map((tagJson) => AccommodationModel.fromJson(tagJson)).toList();
       setState(() {});
       DialogBuilder(context).hideOpenDialog();
     } else {
@@ -409,8 +444,27 @@ class _MyHomePageState extends State<JCORegisterComplaint> {
       throw Exception('Failed to load Accomadation list');
     }
   }
+  getHouseList(String selectedAccom ) async {
+    DialogBuilder(context).showLoadingIndicator();
+    var url=Uri.parse("${APIConstant.houseNo}/?accomType=$selectedAccom&location=$selectedLocation&secret=d146d69ec7f6635f3f05f2bf4a51b318&user_type=1");
+    print("House URL-->$url");
+    var response= await http.get(url);
 
+    if (response.statusCode == 200) {
+      var decodeRes=json.decode(response.body) as List;
+      print("House No-->$decodeRes");
+      houseList = decodeRes.map((tagJson) => HouseNumberModel.fromJson(tagJson)).toList();
+      print("House No-->$houseList");
+      setState(() {
 
+      });
+      DialogBuilder(context).hideOpenDialog();
+    } else {
+      DialogBuilder(context).hideOpenDialog();
+      throw Exception('Failed to load house list');
+    }
+
+  }
 
   postComplaint() async{
 
@@ -418,10 +472,10 @@ class _MyHomePageState extends State<JCORegisterComplaint> {
     int? userId=preferences.getInt(UT.userId);
 
 
-    var url=Uri.parse("${APIConstant.APIURL}/gc-complaint/?secret=d146d69ec7f6635f3f05f2bf4a51b318");
+    var url=Uri.parse("${APIConstant.APIURL}/register-complaint/?secret=d146d69ec7f6635f3f05f2bf4a51b318");
     var request = http.MultipartRequest("POST", url);
-    request.fields['user_id'] = "33";
-    request.fields['user_type'] = "2";
+    request.fields['user_id'] = userId.toString();
+    request.fields['user_type'] = "1";
     request.fields['house_id'] = selectHouseNo;
     request.fields['description'] =describeComplaintTxt.text.isNotEmpty? describeComplaintTxt.text:"";
     print(request.fields);

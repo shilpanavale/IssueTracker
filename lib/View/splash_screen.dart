@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:untitled/App%20Theme/app_theme.dart';
 import 'package:untitled/App%20Theme/asset_files.dart';
+import 'package:untitled/View/Admin%20Model/new_admin_dashboard.dart';
 import 'package:untitled/View/Admin%20Model/user_admin_dashboard.dart';
 import 'package:untitled/View/GC%20Model/GC_complaints_list.dart';
 import 'package:untitled/View/JCO%20Model/JCO_complaints_list.dart';
@@ -38,13 +39,13 @@ class SplashPageState extends State<SplashPage> {
     print("loginStatus-->$appType");
    if(loginStatus=="True"&&appType=="User"){
      Navigator.push(context, MaterialPageRoute(builder: (BuildContext context)=>MyComplaintListPage()));
-   }else if(loginStatus=="True"&&appType=="GC"){
+   }else if(loginStatus=="True"&&appType=="User-GC"){
      Navigator.push(context, MaterialPageRoute(builder: (BuildContext context)=>GCComplaintList()));
-   }else if(loginStatus=="True"&&appType=="JCO"){
+   }else if(loginStatus=="True"&&appType=="User-JCO"){
      Navigator.push(context, MaterialPageRoute(builder: (BuildContext context)=>JCOComplaintList()));
    }
-   else if(loginStatus=="True"&&appType=="Admin"){
-     Navigator.push(context, MaterialPageRoute(builder: (BuildContext context)=>UserAdminDashboardPage()));
+   else if(loginStatus=="True"&&appType=="0"||appType=="1"||appType=="2"){
+     Navigator.push(context, MaterialPageRoute(builder: (BuildContext context)=>NewAdminDashboard()));
    }
    else{
      Navigator.pushAndRemoveUntil(

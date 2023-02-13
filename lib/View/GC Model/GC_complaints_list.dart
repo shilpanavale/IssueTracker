@@ -399,7 +399,7 @@ class _MyHomePageState extends State<GCComplaintList> {
     List<IssueModelClass> vendors=[];
     SharedPreferences preferences = await SharedPreferences.getInstance();
     String? mobileNo=preferences.getString(UT.mobileNo);
-    var url=Uri.parse("${APIConstant.APIURL}/register-complaint/?number=$mobileNo&secret=d146d69ec7f6635f3f05f2bf4a51b318");
+    var url=Uri.parse("${APIConstant.APIURL}/register-complaint/?number=$mobileNo&secret=d146d69ec7f6635f3f05f2bf4a51b318&user_type=2");
     print("url-->$url");
     var response= await http.get(url);
     print(response.body);

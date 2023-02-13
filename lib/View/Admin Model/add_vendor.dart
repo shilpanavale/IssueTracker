@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pie_chart/pie_chart.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:untitled/App%20Theme/app_theme.dart';
 import 'package:untitled/App%20Theme/asset_files.dart';
 import 'package:untitled/App%20Theme/text_fileds.dart';
@@ -48,10 +49,12 @@ class _MyHomePageState extends State<AddVendor> {
     },
   ];
 
+
   Future<bool> willPopScopeBack() async{
      Navigator.push(context, MaterialPageRoute(builder: (context)=>const VendorListPage()));
     return true;
   }
+
   @override
   Widget build(BuildContext context) {
 
@@ -67,7 +70,7 @@ class _MyHomePageState extends State<AddVendor> {
           title: Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              Text("Admin Dashboard",style: StyleForApp.appBarTextStyle,),
+              Text("Add Vendor",style: StyleForApp.appBarTextStyle,),
             ],
           ),
         ),

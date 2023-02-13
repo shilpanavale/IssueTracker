@@ -54,6 +54,9 @@ class _MyHomePageState extends State<UserAdminDashboardPage> {
   double pending=100;
   dynamic assigned,resolved,not_resolved,not_assigned;
   dynamic totalIssueRegisteredToday;
+  int escaltionCount1=0;
+  int escaltionCount2=0;
+  int escaltionCount3=0;
   bool clickOnShare=false;
   @override
   void initState() {
@@ -84,7 +87,11 @@ class _MyHomePageState extends State<UserAdminDashboardPage> {
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0.0,
-          leading: Builder(
+          iconTheme: IconThemeData(
+              color: Colors.black
+          ),
+
+         /* leading: Builder(
             builder: (context) => IconButton(
               icon: Container(
                 height: 25,width: 25,
@@ -97,20 +104,19 @@ class _MyHomePageState extends State<UserAdminDashboardPage> {
               ),
               onPressed: () => Scaffold.of(context).openDrawer(),
             ),
-          ),
-
+          ),*/
           title: Column(
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  Text("Admin Dashboard",style: StyleForApp.appBarTextStyle,),
+                  Text("Officers Admin Dashboard",style: StyleForApp.appBarTextStyle,),
                 ],
               ),
             ],
           ),
         ),
-        drawer: const AdminDrawerPage(),
+       // drawer: const AdminDrawerPage(),
         body: SizedBox(
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height,
@@ -335,9 +341,9 @@ class _MyHomePageState extends State<UserAdminDashboardPage> {
              itemCount: subIssue.length,
                itemBuilder:(context,index){
                return ListTile(
-                 title:Text(subIssue[index]["subIssue"],style: StyleForApp.textStyle14dp) ,
+                 title:Text(subIssue[index]["subIssue"] ?? "",style: StyleForApp.textStyle14dp) ,
                  leading: Icon(Icons.circle_sharp,color: ColorsForApp.appButtonColor,) ,
-                 trailing: Text(subIssue[index]["count"],style: StyleForApp.textStyle15dpBold),
+                 trailing: Text(subIssue[index]["count"].toString()??"",style: StyleForApp.textStyle15dpBold),
 
                );
 
@@ -377,13 +383,7 @@ class _MyHomePageState extends State<UserAdminDashboardPage> {
           escalation1(context),
           escalation2(context),
           escalation3(context),
-         // notAssignedUI(context),
-
-
-
-
           const SizedBox(height: 10,),
-
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Row(
@@ -479,12 +479,12 @@ class _MyHomePageState extends State<UserAdminDashboardPage> {
                   letterSpacing: 0.27,
                   color: ColorsForApp.whiteColor,
                 ),),
-                Text("",style:  TextStyle(
+                Text(escaltionCount1.toString()??"",style:  TextStyle(
                   // fontFamily: fontName,
                   fontWeight: FontWeight.w700,
                   fontSize: 28,
                   letterSpacing: 0.27,
-                  color: ColorsForApp.blackColor,
+                  color: ColorsForApp.whiteColor,
                 ),),
               ],
             ),
@@ -519,7 +519,7 @@ class _MyHomePageState extends State<UserAdminDashboardPage> {
                   letterSpacing: 0.27,
                   color: ColorsForApp.whiteColor,
                 ),),
-                Text("",style:  TextStyle(
+                Text(escaltionCount2.toString()??"",style:  TextStyle(
                   // fontFamily: fontName,
                   fontWeight: FontWeight.w700,
                   fontSize: 28,
@@ -559,7 +559,7 @@ class _MyHomePageState extends State<UserAdminDashboardPage> {
                   letterSpacing: 0.27,
                   color: ColorsForApp.whiteColor,
                 ),),
-                Text("",style:  TextStyle(
+                Text(escaltionCount3.toString()??"",style:  TextStyle(
                   // fontFamily: fontName,
                   fontWeight: FontWeight.w700,
                   fontSize: 28,
@@ -770,15 +770,21 @@ class _MyHomePageState extends State<UserAdminDashboardPage> {
 
   getData() async {
     //https://api.creshsolutions.com/admin-home/?secret=d146d69ec7f6635f3f05f2bf4a51b318
-    var url =Uri.parse("${APIConstant.APIURL}/admin-home/?secret=d146d69ec7f6635f3f05f2bf4a51b318");
+    var url =Uri.parse("${APIConstant.APIURL}/admin-home/?secret=d146d69ec7f6635f3f05f2bf4a51b318&user_type=0");
     print("url-->$url");
     var response= await http.get(url);
     print(response.body);
     var decodeRes=json.decode(response.body);
-    totalIssueRegisteredToday=decodeRes["totalIssueRegisteredToday"];
+    totalIssueRegisteredToday=decodeRes["totalIssueRegisteredToday"]["count"];
     var statusCount=decodeRes["statusWiseCount"];
     var totalCount=decodeRes["totalCount"];
     var resolvedCount=decodeRes["resolvedCount"];
+     escaltionCount1=decodeRes["escalationOneCount"];
+    escaltionCount2=decodeRes["escalationTwoCount"];
+    escaltionCount3=decodeRes["escalationThreeCount"];
+
+
+
     if(resolvedCount==null||statusCount==null||totalCount==null){
       resolvedCount=0;
       totalCount=0;
@@ -825,6 +831,9 @@ class _MyHomePageState extends State<UserAdminDashboardPage> {
      var statusCount=decodeRes["statusWiseCount"];
      var totalCount=decodeRes["totalCount"];
      var resolvedCount=decodeRes["resolvedCount"];
+     escaltionCount1=decodeRes["escalationOneCount"];
+     escaltionCount2=decodeRes["escalationTwoCount"];
+     escaltionCount3=decodeRes["escalationThreeCount"];
      if(resolvedCount==null||statusCount==null||totalCount==null){
        resolvedCount=0;
        totalCount=0;

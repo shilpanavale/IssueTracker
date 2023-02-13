@@ -29,16 +29,17 @@ import 'dart:io';
 
 import '../Admin Model/important_issue_list.dart';
 import '../Admin Model/new_admin_dashboard.dart';
+import 'jco_admin_complaints_list.dart';
 
-class GCAdminDashboardPage extends StatefulWidget {
-  const GCAdminDashboardPage({Key? key}) : super(key: key);
+class JCOAdminDashboardPage extends StatefulWidget {
+  const JCOAdminDashboardPage({Key? key}) : super(key: key);
 
 
   @override
-  State<GCAdminDashboardPage> createState() => _MyHomePageState();
+  State<JCOAdminDashboardPage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<GCAdminDashboardPage> {
+class _MyHomePageState extends State<JCOAdminDashboardPage> {
    GlobalKey previewContainer =  GlobalKey();
   Map<String, double> dataMap ={};
   Map<String, double> subIssueMap ={};
@@ -55,6 +56,9 @@ class _MyHomePageState extends State<GCAdminDashboardPage> {
   double pending=100;
   dynamic assigned,resolved,not_resolved,not_assigned;
   dynamic totalIssueRegisteredToday;
+   int escaltionCount1=0;
+   int escaltionCount2=0;
+   int escaltionCount3=0;
   bool clickOnShare=false;
   @override
   void initState() {
@@ -85,7 +89,10 @@ class _MyHomePageState extends State<GCAdminDashboardPage> {
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0.0,
-          leading: Builder(
+          iconTheme: IconThemeData(
+              color: Colors.black
+          ),
+         /* leading: Builder(
             builder: (context) => IconButton(
               icon: Container(
                 height: 25,width: 25,
@@ -98,20 +105,20 @@ class _MyHomePageState extends State<GCAdminDashboardPage> {
               ),
               onPressed: () => Scaffold.of(context).openDrawer(),
             ),
-          ),
+          ),*/
 
           title: Column(
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  Text("GC Dashboard",style: StyleForApp.appBarTextStyle,),
+                  Text("JCO/OR Admin Dashboard",style: StyleForApp.appBarTextStyle,),
                 ],
               ),
             ],
           ),
         ),
-        drawer: const AdminDrawerPage(),
+       // drawer: const AdminDrawerPage(),
         body: SizedBox(
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height,
@@ -480,12 +487,12 @@ class _MyHomePageState extends State<GCAdminDashboardPage> {
                   letterSpacing: 0.27,
                   color: ColorsForApp.whiteColor,
                 ),),
-                Text("",style:  TextStyle(
+                Text(escaltionCount1.toString(),style:  TextStyle(
                   // fontFamily: fontName,
                   fontWeight: FontWeight.w700,
                   fontSize: 28,
                   letterSpacing: 0.27,
-                  color: ColorsForApp.blackColor,
+                  color: ColorsForApp.whiteColor,
                 ),),
               ],
             ),
@@ -520,7 +527,7 @@ class _MyHomePageState extends State<GCAdminDashboardPage> {
                   letterSpacing: 0.27,
                   color: ColorsForApp.whiteColor,
                 ),),
-                Text("",style:  TextStyle(
+                Text(escaltionCount2.toString(),style:  TextStyle(
                   // fontFamily: fontName,
                   fontWeight: FontWeight.w700,
                   fontSize: 28,
@@ -560,7 +567,7 @@ class _MyHomePageState extends State<GCAdminDashboardPage> {
                   letterSpacing: 0.27,
                   color: ColorsForApp.whiteColor,
                 ),),
-                Text("",style:  TextStyle(
+                Text(escaltionCount3.toString(),style:  TextStyle(
                   // fontFamily: fontName,
                   fontWeight: FontWeight.w700,
                   fontSize: 28,
@@ -579,7 +586,7 @@ class _MyHomePageState extends State<GCAdminDashboardPage> {
     return  InkWell(
       onTap: (){
         Navigator.push(context, MaterialPageRoute(builder: (context)=>
-        const ComplaintListPage(statusFlag: "not resolved",)));
+        const JCOAdminComplaintListPage(statusFlag: "not resolved",)));
       },
       child: Padding(
         padding: const EdgeInsets.all(15.0),
@@ -619,7 +626,7 @@ class _MyHomePageState extends State<GCAdminDashboardPage> {
     return  InkWell(
       onTap: (){
         Navigator.push(context, MaterialPageRoute(builder: (context)=>
-        const ComplaintListPage(statusFlag: "Not Assigned",)));
+        const JCOAdminComplaintListPage(statusFlag: "Not Assigned",)));
         },
       child: Padding(
         padding: const EdgeInsets.all(15.0),
@@ -659,7 +666,7 @@ class _MyHomePageState extends State<GCAdminDashboardPage> {
     return  InkWell(
       onTap: (){
         Navigator.push(context, MaterialPageRoute(builder: (context)=>
-        const ComplaintListPage(statusFlag: 'Assigned',)));
+        const JCOAdminComplaintListPage(statusFlag: 'Assigned',)));
         },
       child: Padding(
         padding: const EdgeInsets.all(15.0),
@@ -698,7 +705,7 @@ class _MyHomePageState extends State<GCAdminDashboardPage> {
   Widget resolvedUI(BuildContext context){
     return  InkWell(
       onTap: (){
-        Navigator.push(context, MaterialPageRoute(builder: (context)=>const ComplaintListPage(statusFlag: "Resolved",)));
+        Navigator.push(context, MaterialPageRoute(builder: (context)=>const JCOAdminComplaintListPage(statusFlag: "Resolved",)));
         },
       child: Padding(
         padding: const EdgeInsets.all(15.0),
@@ -770,17 +777,20 @@ class _MyHomePageState extends State<GCAdminDashboardPage> {
   }
 
   getData() async {
-    //https://api.creshsolutions.com/admin-home/?secret=d146d69ec7f6635f3f05f2bf4a51b318
-    var url =Uri.parse("${APIConstant.APIURL}/admin-home/?secret=d146d69ec7f6635f3f05f2bf4a51b318");
+    var url =Uri.parse("${APIConstant.APIURL}/admin-home/?secret=d146d69ec7f6635f3f05f2bf4a51b318&user_type=1");
     print("url-->$url");
     var response= await http.get(url);
     print(response.body);
     var decodeRes=json.decode(response.body);
-    totalIssueRegisteredToday=decodeRes["totalIssueRegisteredToday"];
+    totalIssueRegisteredToday=decodeRes["totalIssueRegisteredToday"]["count"];
     var statusCount=decodeRes["statusWiseCount"];
     var totalCount=decodeRes["totalCount"];
     var resolvedCount=decodeRes["resolvedCount"];
+    escaltionCount1=decodeRes["escalationOneCount"];
+    escaltionCount2=decodeRes["escalationTwoCount"];
+    escaltionCount3=decodeRes["escalationThreeCount"];
     if(resolvedCount==null||statusCount==null||totalCount==null){
+      print("h");
       resolvedCount=0;
       totalCount=0;
       resolvedCount=0;
@@ -797,7 +807,7 @@ class _MyHomePageState extends State<GCAdminDashboardPage> {
     resolved=statusCount["resolved"];
     not_resolved=statusCount["not_resolved"];
     not_assigned=statusCount["not_assigned"];
-    subIssue=decodeRes["subIssueWiseData"];
+   // subIssue=decodeRes["subIssueWiseData"];
 
     setState(() {
 
@@ -826,6 +836,9 @@ class _MyHomePageState extends State<GCAdminDashboardPage> {
      var statusCount=decodeRes["statusWiseCount"];
      var totalCount=decodeRes["totalCount"];
      var resolvedCount=decodeRes["resolvedCount"];
+     escaltionCount1=decodeRes["escalationOneCount"];
+     escaltionCount2=decodeRes["escalationTwoCount"];
+     escaltionCount3=decodeRes["escalationThreeCount"];
      if(resolvedCount==null||statusCount==null||totalCount==null){
        resolvedCount=0;
        totalCount=0;

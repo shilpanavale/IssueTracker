@@ -61,7 +61,7 @@ class _MyHomePageState extends State<GiveRating> {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            Text("User Dashboard",style: StyleForApp.appBarTextStyle,),
+            Text("Officer Dashboard",style: StyleForApp.appBarTextStyle,),
           ],
         ),
       ),

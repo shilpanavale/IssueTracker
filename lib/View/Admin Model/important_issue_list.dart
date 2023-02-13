@@ -12,6 +12,7 @@ import 'package:open_filex/open_filex.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pie_chart/pie_chart.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
 import 'package:untitled/App%20Theme/app_theme.dart';
 import 'package:untitled/App%20Theme/asset_files.dart';
@@ -22,6 +23,8 @@ import 'package:untitled/CustomeWidget/custome_widget.dart';
 import 'package:untitled/View/Admin%20Model/Model/ImportantModelclass.dart';
 import 'package:untitled/View/Admin%20Model/Model/IssueModel.dart';
 import 'package:untitled/View/Admin%20Model/user_admin_dashboard.dart';
+import 'package:untitled/View/GC%20Model/GC_admin_dashboard.dart';
+import 'package:untitled/View/JCO%20Model/JCO_admin_dashboard.dart';
 import '../User Model/api_constant.dart';
 import 'package:http/http.dart' as http;
 
@@ -36,7 +39,7 @@ class ImportantIssuePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<ImportantIssuePage> {
-  static GlobalKey previewContainerKey = new GlobalKey();
+  static GlobalKey previewContainerKey = GlobalKey();
   final colorList = <Color>[
     Colors.greenAccent,
   ];
@@ -46,18 +49,43 @@ class _MyHomePageState extends State<ImportantIssuePage> {
   String displayFromDate="";
   String displayToDate="";
   Future<List<ImportantIssueModel>>? importantComplaints;
+  var userType;
   @override
   void initState() {
     // TODO: implement initState
     displayFromDate=UT.displayDateConverter(fromDate);
     displayToDate=UT.displayDateConverter(toDate);
+    getData();
     super.initState();
+
+  }
+  getData() async {
+    final prefs = await SharedPreferences.getInstance();
+    userType= prefs.getString(UT.appType);
+    print("userType-->$userType");
     importantComplaints=getRegisterComplaints();
+    setState(() {
+
+    });
   }
   List<int> bytes=[];
   Future<bool> willPopScopeBack() async{
-    Navigator.push(context, MaterialPageRoute(builder: (context)=>const UserAdminDashboardPage()));
+    if(userType=="1"){
+      Navigator.push(context, MaterialPageRoute(builder: (context)=> const JCOAdminDashboardPage()));
+
+    }else if(userType=="2"){
+      Navigator.push(context, MaterialPageRoute(builder: (context)=> const GCAdminDashboardPage()));
+
+    }else{
+      Navigator.push(context, MaterialPageRoute(builder: (context)=>const UserAdminDashboardPage()));
+    }
     return true;
+  }
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    previewContainerKey;
   }
   @override
   Widget build(BuildContext context) {
@@ -69,12 +97,24 @@ class _MyHomePageState extends State<ImportantIssuePage> {
           backgroundColor: Colors.transparent,
           elevation: 0.0,
           leading: BackLeadingButton(onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context)=>const UserAdminDashboardPage()));
-          },),
+            if(userType=="1"){
+              Navigator.push(context, MaterialPageRoute(builder: (context)=> const JCOAdminDashboardPage()));
+
+            }else if(userType=="2"){
+              Navigator.push(context, MaterialPageRoute(builder: (context)=> const GCAdminDashboardPage()));
+
+            }else{
+              Navigator.push(context, MaterialPageRoute(builder: (context)=>const UserAdminDashboardPage()));
+            }
+            },),
           title: Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              Text("Admin Dashboard",style: StyleForApp.appBarTextStyle,),
+              userType=="1"?
+              Text("JCO/OR Admin Dashboard",style: StyleForApp.appBarTextStyle,)
+                  :userType=="2"?
+              Text("GC Admin Dashboard",style: StyleForApp.appBarTextStyle,)
+                  :Text("Officer Admin Dashboard",style: StyleForApp.appBarTextStyle,),
             ],
           ),
         ),
@@ -178,10 +218,16 @@ class _MyHomePageState extends State<ImportantIssuePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text("House No : ${issueModelClass.houseNo.toString()}",textAlign:TextAlign.start,style: StyleForApp.textStyle16dpBold,),
-              const SizedBox(height: 8,),
-              Text(issueModelClass.issue!=null?issueModelClass.issue!:"",textAlign:TextAlign.start,style: StyleForApp.textStyle15dp,),
-              const SizedBox(height: 5,),
-              Text(issueModelClass.subIssue!=null?issueModelClass.subIssue!:"",textAlign:TextAlign.start,style: StyleForApp.textStyle15dp,),
+             // const SizedBox(height: 8,),
+              userType=="1"||userType=="2"||issueModelClass.issue==null?Container():  Padding(
+                padding: const EdgeInsets.only(top: 8.0),
+                child: Text(issueModelClass.issue!=null?issueModelClass.issue!:"",textAlign:TextAlign.start,style: StyleForApp.textStyle15dp,),
+              ),
+             // const SizedBox(height: 5,),
+              userType=="1"||userType=="2"?Container(): Padding(
+                padding: const EdgeInsets.only(top: 5.0),
+                child: Text(issueModelClass.subIssue!=null?issueModelClass.subIssue!:"",textAlign:TextAlign.start,style: StyleForApp.textStyle15dp,),
+              ),
               const SizedBox(height: 5,),
               // Text(issue['issueDetails'],textAlign:TextAlign.start,style: StyleForApp.textStyle16dpBold,),
               Row(
@@ -348,7 +394,7 @@ class _MyHomePageState extends State<ImportantIssuePage> {
   Future<List<ImportantIssueModel>> getRegisterComplaints() async {
     List<ImportantIssueModel> impComplaintsList=[];
     //https://api.creshsolutions.com/important-issue/?escalation=1,2%20or%203&secret=d146d69ec7f6635f3f05f2bf4a51b318
-    var url=Uri.parse("${APIConstant.APIURL}/important-issue/?escalation=${widget.escalationNo}&secret=d146d69ec7f6635f3f05f2bf4a51b318");
+    var url=Uri.parse("${APIConstant.APIURL}/important-issue/?escalation=${widget.escalationNo}&secret=d146d69ec7f6635f3f05f2bf4a51b318&usert_type=$userType");
 
     print("url-->$url");
     var response= await http.get(url);

@@ -25,22 +25,25 @@ import 'package:untitled/View/Admin%20Model/Model/IssueModel.dart';
 import 'package:untitled/View/Admin%20Model/user_admin_dashboard.dart';
 import 'package:untitled/View/Admin%20Model/enter_feedback.dart';
 import 'package:untitled/View/Admin%20Model/view_details.dart';
+import '../JCO Model/JCO_admin_dashboard.dart';
 import '../User Model/api_constant.dart';
 import 'package:http/http.dart' as http;
 
 import '../User Model/enter_feedback.dart';
+import 'GC_admin_dashboard.dart';
 
 
-class ComplaintListPage extends StatefulWidget {
+
+class GCAdminComplaintListPage extends StatefulWidget {
   final statusFlag;
-  const ComplaintListPage({Key? key, this.statusFlag}) : super(key: key);
+  const GCAdminComplaintListPage({Key? key, this.statusFlag}) : super(key: key);
 
 
   @override
-  State<ComplaintListPage> createState() => _MyHomePageState();
+  State<GCAdminComplaintListPage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<ComplaintListPage> {
+class _MyHomePageState extends State<GCAdminComplaintListPage> {
 
   final colorList = <Color>[
     Colors.greenAccent,
@@ -64,7 +67,7 @@ class _MyHomePageState extends State<ComplaintListPage> {
 
 
   Future<bool> willPopScopeBack() async{
-    Navigator.push(context, MaterialPageRoute(builder: (context)=>const UserAdminDashboardPage()));
+    Navigator.push(context, MaterialPageRoute(builder: (context)=>const GCAdminDashboardPage()));
     return true;
   }
   @override
@@ -83,12 +86,12 @@ class _MyHomePageState extends State<ComplaintListPage> {
           backgroundColor: Colors.transparent,
           elevation: 0.0,
           leading: BackLeadingButton(onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context)=>const UserAdminDashboardPage()));
+            Navigator.push(context, MaterialPageRoute(builder: (context)=>const GCAdminDashboardPage()));
           },),
           title: Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              Text("Officers Admin Dashboard",style: StyleForApp.appBarTextStyle,),
+              Text("GC Admin Dashboard",style: StyleForApp.appBarTextStyle,),
             ],
           ),
         ),
@@ -256,12 +259,7 @@ class _MyHomePageState extends State<ComplaintListPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text("House No : ${issueModelClass.houseNo.toString()}",textAlign:TextAlign.start,style: StyleForApp.textStyle16dpBold,),
-                    const SizedBox(height: 8,),
-                    Text(issueModelClass.issue!=null?issueModelClass.issue!:"",textAlign:TextAlign.start,style: StyleForApp.textStyle15dp,),
                     const SizedBox(height: 5,),
-                    Text(issueModelClass.subIssue!=null?issueModelClass.subIssue!:"",textAlign:TextAlign.start,style: StyleForApp.textStyle15dp,),
-                    const SizedBox(height: 5,),
-                    // Text(issue['issueDetails'],textAlign:TextAlign.start,style: StyleForApp.textStyle16dpBold,),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -424,12 +422,12 @@ class _MyHomePageState extends State<ComplaintListPage> {
       toDate = DateFormat('yyyy-MM-dd').format(DateTime.parse(toDate));
       frmDt="$fromDate 000:00:00";
       toDt="$toDate 23:59:59";
-      url=Uri.parse("${APIConstant.APIURL}/register-complaint/?from=$frmDt&to=$toDt&secret=d146d69ec7f6635f3f05f2bf4a51b318&user_type=0");
+      url=Uri.parse("${APIConstant.APIURL}/register-complaint/?from=$frmDt&to=$toDt&secret=d146d69ec7f6635f3f05f2bf4a51b318&user_type=2");
 
     }else{
       fromDate='';
       toDate='';
-      url=Uri.parse("${APIConstant.APIURL}/register-complaint/?from=${fromDate.toString()}&to=${toDate.toString()}&secret=d146d69ec7f6635f3f05f2bf4a51b318&user_type=0");
+      url=Uri.parse("${APIConstant.APIURL}/register-complaint/?from=${fromDate.toString()}&to=${toDate.toString()}&secret=d146d69ec7f6635f3f05f2bf4a51b318&user_type=2");
 
       //https://api.creshsolutions.com/register-complaint/?from=&to=&secret=d146d69ec7f6635f3f05f2bf4a51b318
     }

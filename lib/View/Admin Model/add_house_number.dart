@@ -54,7 +54,7 @@ class _MyHomePageState extends State<AddHouseNumber> {
           title: Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              Text("Admin Dashboard",style: StyleForApp.appBarTextStyle,),
+              Text("Setting",style: StyleForApp.appBarTextStyle,),
             ],
           ),
         ),

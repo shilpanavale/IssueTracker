@@ -2,13 +2,17 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:untitled/App%20Theme/app_theme.dart';
 import 'package:untitled/App%20Theme/asset_files.dart';
 import 'package:untitled/App%20Theme/text_fileds.dart';
 import 'package:untitled/CustomeWidget/common_button.dart';
+import 'package:untitled/View/Admin%20Model/setting_page.dart';
 import 'package:untitled/View/Admin%20Model/user_admin_dashboard.dart';
 import 'package:http/http.dart' as http;
 
+import '../GC Model/GC_admin_dashboard.dart';
+import '../JCO Model/JCO_admin_dashboard.dart';
 import '../User Model/api_constant.dart';
 
 class AddSecreteKeyPage extends StatefulWidget {
@@ -30,6 +34,8 @@ class _MyHomePageState extends State<AddSecreteKeyPage> {
     super.initState();
     getSecreteKey();
   }
+
+
   @override
   Widget build(BuildContext context) {
 
@@ -41,20 +47,6 @@ class _MyHomePageState extends State<AddSecreteKeyPage> {
             const SizedBox(height: 30,),
             Text("Update Secret Key ",style: StyleForApp.headline,),
             const SizedBox(height: 35,),
-           /* Container(
-              height: 150,
-              //width: double.infinity,
-              decoration:  const BoxDecoration(
-                color: Colors.transparent,
-                image:  DecorationImage(
-                  fit: BoxFit.contain,
-                  image: AssetImage(
-                    AssetFiles.login1,
-                  ),
-                ),
-
-              ),
-            ),*/
           //const SizedBox(height: 70,),
            CommonTextField.userNameTextField(null, "Secret Key", secreteKey, TextInputType.name),
 
@@ -103,7 +95,8 @@ class _MyHomePageState extends State<AddSecreteKeyPage> {
       Fluttertoast.showToast(msg: "Something went wrong please try again!");
     }else{
       Fluttertoast.showToast(msg: "Update Successfully");
-      Navigator.push(context, MaterialPageRoute(builder: (context)=>UserAdminDashboardPage()));
+      Navigator.push(context, MaterialPageRoute(builder: (context)=>SettingPage()));
+
     }
 
 

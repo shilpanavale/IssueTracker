@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pie_chart/pie_chart.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:untitled/App%20Theme/app_theme.dart';
 import 'package:untitled/App%20Theme/asset_files.dart';
 import 'package:untitled/App%20Theme/text_fileds.dart';
@@ -13,11 +14,14 @@ import 'package:untitled/View/Admin%20Model/Model/HouseNumberModel.dart';
 import 'package:untitled/View/Admin%20Model/Model/VendorModel.dart';
 import 'package:untitled/View/Admin%20Model/add_house_number.dart';
 import 'package:untitled/View/Admin%20Model/add_vendor.dart';
+import 'package:untitled/View/Admin%20Model/setting_page.dart';
 import 'package:untitled/View/Admin%20Model/user_admin_dashboard.dart';
 import 'package:http/http.dart' as http;
 import 'package:untitled/View/User%20Model/api_constant.dart';
 
 import '../../CustomeWidget/custome_dialog.dart';
+import '../GC Model/GC_admin_dashboard.dart';
+import '../JCO Model/JCO_admin_dashboard.dart';
 
 class HouseNumberListPage extends StatefulWidget {
   const HouseNumberListPage({Key? key}) : super(key: key);
@@ -31,17 +35,13 @@ class _MyHomePageState extends State<HouseNumberListPage> {
 
   var vendorID;
   List<HouseNumberModelClass> houseNumberList=[];
-
-
   Future<List<HouseNumberModelClass>>? _houseNumberApi;
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    _houseNumberApi=getHouseNumberList();
-  }
+
+
   Future<bool> willPopScopeBack() async{
-    Navigator.push(context, MaterialPageRoute(builder: (context)=>const UserAdminDashboardPage()));
+
+      Navigator.push(context, MaterialPageRoute(builder: (context)=>SettingPage()));
+
     return true;
   }
   @override
@@ -54,12 +54,13 @@ class _MyHomePageState extends State<HouseNumberListPage> {
           backgroundColor: Colors.transparent,
           elevation: 0.0,
           leading: BackLeadingButton(onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context)=>const UserAdminDashboardPage()));
+            Navigator.push(context, MaterialPageRoute(builder: (context)=>SettingPage()));
+
           },),
           title: Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              Text("Admin Dashboard",style: StyleForApp.appBarTextStyle,),
+              Text("Setting",style: StyleForApp.appBarTextStyle,),
             ],
           ),
         ),

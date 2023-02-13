@@ -7,6 +7,7 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pie_chart/pie_chart.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:untitled/App%20Theme/app_theme.dart';
 import 'package:untitled/App%20Theme/asset_files.dart';
 import 'package:untitled/App%20Theme/text_fileds.dart';
@@ -18,6 +19,8 @@ import 'package:untitled/View/User%20Model/my_complaints.dart';
 import 'package:http/http.dart' as http;
 import '../../CustomeWidget/custome_dialog.dart';
 import '../Admin Model/Model/IssueModel.dart';
+import '../GC Model/gc_admin_complaints_list.dart';
+import '../JCO Model/jco_admin_complaints_list.dart';
 import '../User Model/api_constant.dart';
 
 
@@ -40,6 +43,7 @@ class _MyHomePageState extends State<AdminFeedBackPage> {
    double rating =3;
 
   File? image;
+  var userType;
 
   bool showAddPhotoUI=false;
   String status="";
@@ -47,6 +51,17 @@ class _MyHomePageState extends State<AdminFeedBackPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    getData();
+    print(widget.issueModel.imageUrl2);
+    print(widget.issueModel.imageUrl);
+  }
+  getData() async {
+    final prefs = await SharedPreferences.getInstance();
+    userType= prefs.getString(UT.appType);
+    print("userType-->$userType");
+    setState(() {
+
+    });
   }
 
   @override
@@ -57,12 +72,24 @@ class _MyHomePageState extends State<AdminFeedBackPage> {
         backgroundColor: Colors.transparent,
         elevation: 0.0,
         leading: BackLeadingButton(onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (context)=> ComplaintListPage(statusFlag: widget.statusFlag,)));
+          if(userType=="1"){
+            Navigator.push(context, MaterialPageRoute(builder: (context)=> JCOAdminComplaintListPage(statusFlag: widget.statusFlag,)));
+
+          }else if(userType=="2"){
+            Navigator.push(context, MaterialPageRoute(builder: (context)=> GCAdminComplaintListPage(statusFlag: widget.statusFlag,)));
+
+          }else{
+            Navigator.push(context, MaterialPageRoute(builder: (context)=> ComplaintListPage(statusFlag: widget.statusFlag,)));
+          }
         },),
         title: Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            Text("Admin Dashboard",style: StyleForApp.appBarTextStyle,),
+            userType=="1"?
+            Text("JCO/OR Admin Dashboard",style: StyleForApp.appBarTextStyle,)
+                :userType=="2"?
+            Text("GC Admin Dashboard",style: StyleForApp.appBarTextStyle,)
+                :Text("Officer Admin Dashboard",style: StyleForApp.appBarTextStyle,),
           ],
         ),
       ),
@@ -96,12 +123,12 @@ class _MyHomePageState extends State<AdminFeedBackPage> {
                           child: Text("${widget.issueModel.houseComplaintId}",style: StyleForApp.textStyle15dp,),
                         ),
                         const SizedBox(height: 10,),
-                        Padding(
+                        userType=="1"||userType=="2"?Container(): Padding(
                           padding: const EdgeInsets.only(top: 3, bottom: 3, right: 30, left: 30),
                           child: Text("${widget.issueModel.issue}",style: StyleForApp.textStyle15dp,),
                         ),
                         const SizedBox(height: 10,),
-                        Padding(
+                        userType=="1"||userType=="2"?Container(): Padding(
                           padding: const EdgeInsets.only(top: 3, bottom: 3, right: 30, left: 30),
                           child: Text("${widget.issueModel.subIssue}",style: StyleForApp.textStyle15dp,),
                         ),
@@ -315,18 +342,11 @@ class _MyHomePageState extends State<AdminFeedBackPage> {
       if(response.statusCode==200){
         DialogBuilder(context).hideOpenDialog();
         Fluttertoast.showToast(msg: "Save successfully");
-        Navigator.push(context, MaterialPageRoute(builder: (context)=>MyComplaintListPage()));
+        Navigator.push(context, MaterialPageRoute(builder: (context)=>const MyComplaintListPage()));
       }else{
         DialogBuilder(context).hideOpenDialog();
         Fluttertoast.showToast(msg: "Something went wrong please try again!");
       }
-      /* if(decode["message"].toString().contains("updated")){
-        DialogBuilder(context).hideOpenDialog();
-        Fluttertoast.showToast(msg: "Update mark successfully");
-      }else{
-        DialogBuilder(context).hideOpenDialog();
-        Fluttertoast.showToast(msg: "Something went wrong please try again!");
-      }*/
     });
 
   }

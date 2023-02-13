@@ -100,7 +100,7 @@ class _MyHomePageState extends State<RegisterComplaint> {
           title: Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              Text("User Dashboard",style: StyleForApp.appBarTextStyle,),
+              Text("Officer Dashboard",style: StyleForApp.appBarTextStyle,),
             ],
           ),
         ),
@@ -467,7 +467,7 @@ class _MyHomePageState extends State<RegisterComplaint> {
 
   getLocationList() async {
     //DialogBuilder(context).showLoadingIndicator();
-    var response= await http.get(Uri.parse("${APIConstant.locationList}/?secret=d146d69ec7f6635f3f05f2bf4a51b318"));
+    var response= await http.get(Uri.parse("${APIConstant.locationList}/?secret=d146d69ec7f6635f3f05f2bf4a51b318&user_type=0"));
     var decodeRes=json.decode(response.body) as List;
     if (response.statusCode == 200) {
       print("decodeRes-->$decodeRes");
@@ -484,7 +484,7 @@ class _MyHomePageState extends State<RegisterComplaint> {
   getAccommodationList(String selectedLocation) async {
     DialogBuilder(context).showLoadingIndicator();
 
-    var url=Uri.parse("${APIConstant.accommodation}/?location=$selectedLocation&secret=d146d69ec7f6635f3f05f2bf4a51b318");
+    var url=Uri.parse("${APIConstant.accommodation}/?location=$selectedLocation&secret=d146d69ec7f6635f3f05f2bf4a51b318&user_type=0");
     var response= await http.get(url);
     print("Accomadation-->$url");
     if (response.statusCode == 200) {
@@ -498,11 +498,9 @@ class _MyHomePageState extends State<RegisterComplaint> {
       throw Exception('Failed to load Accomadation list');
     }
   }
-
-
   getHouseList(String selectedAccom ) async {
     DialogBuilder(context).showLoadingIndicator();
-    var url=Uri.parse("${APIConstant.houseNo}/?accomType=$selectedAccom&location=$selectedLocation&secret=d146d69ec7f6635f3f05f2bf4a51b318");
+    var url=Uri.parse("${APIConstant.houseNo}/?accomType=$selectedAccom&location=$selectedLocation&secret=d146d69ec7f6635f3f05f2bf4a51b318&user_type=0");
     print("House URL-->$url");
     var response= await http.get(url);
 
@@ -524,7 +522,7 @@ class _MyHomePageState extends State<RegisterComplaint> {
 
   getIssueType() async {
     //DialogBuilder(context).showLoadingIndicator();
-    var url=Uri.parse("${APIConstant.APIURL}/issue-category/?secret=d146d69ec7f6635f3f05f2bf4a51b318");
+    var url=Uri.parse("${APIConstant.APIURL}/issue-category/?secret=d146d69ec7f6635f3f05f2bf4a51b318&user_type=0");
     print("Issue-category URL-->$url");
     var response= await http.get(url);
     print("Issue-category URL-->${response.body}");
@@ -546,7 +544,7 @@ class _MyHomePageState extends State<RegisterComplaint> {
 
   getSubIssueType(String selecteIssueId) async {
     DialogBuilder(context).showLoadingIndicator();
-    var url=Uri.parse("${APIConstant.APIURL}/issue-category/?id=$selectIssueType&secret=d146d69ec7f6635f3f05f2bf4a51b318");
+    var url=Uri.parse("${APIConstant.APIURL}/issue-category/?id=$selectIssueType&secret=d146d69ec7f6635f3f05f2bf4a51b318&user_type=0");
     print("House URL-->$url");
     var response= await http.get(url);
     print("sub Issue-category URL-->${response.body}");
@@ -573,7 +571,7 @@ class _MyHomePageState extends State<RegisterComplaint> {
     int? userId=preferences.getInt(UT.userId);
 
 
-    var url=Uri.parse("${APIConstant.APIURL}/register-complaint/?secret=d146d69ec7f6635f3f05f2bf4a51b318");
+    var url=Uri.parse("${APIConstant.APIURL}/register-complaint/?secret=d146d69ec7f6635f3f05f2bf4a51b318&user_type=0");
     var request = http.MultipartRequest("POST", url);
     request.fields['cat_issue_id'] = selectIssueType;
     request.fields['sub_issue_id'] = selectSubIssueType;

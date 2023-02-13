@@ -79,7 +79,7 @@ class _MyHomePageState extends State<JCOComplaintList> {
           title: Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              Text("JCO Dashboard",style: StyleForApp.appBarTextStyle,),
+              Text("JCO/OR Dashboard",style: StyleForApp.appBarTextStyle,),
             ],
           ),
         ),
@@ -238,9 +238,9 @@ class _MyHomePageState extends State<JCOComplaintList> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(issueModelClass.issue!=null?issueModelClass.issue!:"",textAlign:TextAlign.start,style: StyleForApp.textStyle16dpBold,),
+             // Text(issueModelClass.issue!=null?issueModelClass.issue!:"",textAlign:TextAlign.start,style: StyleForApp.textStyle16dpBold,),
               const SizedBox(height: 15,),
-              Text(issueModelClass.subIssue!=null?issueModelClass.subIssue!:"",textAlign:TextAlign.start,style: StyleForApp.textStyle16dpBold,),
+              //Text(issueModelClass.subIssue!=null?issueModelClass.subIssue!:"",textAlign:TextAlign.start,style: StyleForApp.textStyle16dpBold,),
               const SizedBox(height: 5,),
               //Text(issue['issueDetails'],textAlign:TextAlign.start,style: StyleForApp.textStyle16dpBold,),
               Row(
@@ -265,57 +265,8 @@ class _MyHomePageState extends State<JCOComplaintList> {
                   Expanded(child: Text(issueModelClass.description!=null?issueModelClass.description!:"",textAlign:TextAlign.start,style: StyleForApp.textStyle16dpBold,)),
 
                   issueModelClass.status=="Assigned"?
-             /* SizedBox(
-                height: 35,
-                child: ToggleButtons(
-                  disabledBorderColor: ColorsForApp.grayColor,
-                  disabledColor: ColorsForApp.grayColor,
-                  //color: Colors.black,
-                  //borderColor: Colors.black,
-                  fillColor: ColorsForApp.appButtonColor,
-                  borderWidth: 2,
-                  selectedBorderColor: ColorsForApp.appButtonColor,
-                  selectedColor: ColorsForApp.appButtonColor,
-                  borderRadius: BorderRadius.circular(0),
-                  onPressed: (int index) {
-                    setState(() {
-                      for (int i = 1; i < isSelected.length; i++) {
-                        isSelected[i] = i == index;
-                        print("isSelected[i]-->${isSelected[i]}");
-                        if(isSelected[i]==false){
-                         // updateComplaintStatus(issueModelClass.userComplaintId,"1");
-                          Navigator.push(context, MaterialPageRoute(builder: (context)=> GiveRating(issueModel:issueModelClass)));
 
-                        }else{
-                          Navigator.push(context, MaterialPageRoute(builder: (context)=> FeedBackPage(issueModel:issueModelClass)));
-                         // updateComplaintStatus(issueModelClass.userComplaintId,"2");
-
-                        }
-                        print("index-->${index}");
-                      }
-                    });
-                  },
-                  isSelected: isSelected,
-                  children: const <Widget>[
-                    Padding(
-                      padding:  EdgeInsets.all(3.0),
-                      child: Text(
-                        'Resolved',
-                        style: TextStyle(fontSize: 16,color: Colors.white),
-                      ),
-                    ),
-                    Padding(
-                      padding:  EdgeInsets.all(3.0),
-                      child: Text(
-                        'Not Resolved',
-                        style: TextStyle(fontSize: 16,color: Colors.white),
-                      ),
-                    ),
-                  ],
-                ),
-              )*/
-
-                InkWell(
+                  InkWell(
                   onTap: (){
                     Navigator.push(context, MaterialPageRoute(builder: (context)=>FeedBackPage(issueModel:issueModelClass)));
                   },

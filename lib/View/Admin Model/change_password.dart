@@ -2,13 +2,18 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:untitled/App%20Theme/app_theme.dart';
 import 'package:untitled/App%20Theme/asset_files.dart';
 import 'package:untitled/App%20Theme/text_fileds.dart';
 import 'package:untitled/CustomeWidget/common_button.dart';
+import 'package:untitled/View/Admin%20Model/new_admin_dashboard.dart';
 import 'package:untitled/View/Admin%20Model/user_admin_dashboard.dart';
 import 'package:http/http.dart' as http;
 
+import '../../CustomeWidget/custome_dialog.dart';
+import '../GC Model/GC_admin_dashboard.dart';
+import '../JCO Model/JCO_admin_dashboard.dart';
 import '../User Model/api_constant.dart';
 
 class ChangePassPage extends StatefulWidget {
@@ -23,6 +28,7 @@ class _MyHomePageState extends State<ChangePassPage> {
   final TextEditingController userNameTxt=TextEditingController();
   final TextEditingController oldPasswordTxt=TextEditingController();
   final TextEditingController newPasswordTxt=TextEditingController();
+
 
   @override
   Widget build(BuildContext context) {
@@ -66,7 +72,8 @@ class _MyHomePageState extends State<ChangePassPage> {
                 }else if(newPasswordTxt.text.length<8){
                   Fluttertoast.showToast(msg: "Password must be minimum 8 character");
                 }else{
-                  changePassword(userNameTxt.text,oldPasswordTxt.text,newPasswordTxt.text);
+                  DialogBuilder(context).showLoadingIndicator('');
+                  changePassword(userNameTxt.text,oldPasswordTxt.text,newPasswordTxt.text,context);
                 }
                 },),
               const SizedBox(height: 10,),
@@ -85,7 +92,7 @@ class _MyHomePageState extends State<ChangePassPage> {
       ),
     );
   }
-  changePassword(String userName,String oldPass,String newPassword) async {
+  changePassword(String userName,String oldPass,String newPassword,BuildContext context) async {
     Map<String,dynamic> obj={
       "user_name":userName,
       "old_passcode": oldPass,
@@ -96,10 +103,15 @@ class _MyHomePageState extends State<ChangePassPage> {
     var decodeRes=json.decode(response.body);
     print("decodeRes-->$decodeRes");
     if(decodeRes['message']==false){
+      DialogBuilder(context).hideOpenDialog();
       Fluttertoast.showToast(msg: "Invalid username or password");
     }else{
+      DialogBuilder(context).hideOpenDialog();
       Fluttertoast.showToast(msg: "Password Changed Successfully");
-      Navigator.push(context, MaterialPageRoute(builder: (context)=>UserAdminDashboardPage()));
+
+        Navigator.push(context, MaterialPageRoute(builder: (context)=>const NewAdminDashboard()));
+
+
     }
 
 
