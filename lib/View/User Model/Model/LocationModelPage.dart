@@ -36,8 +36,8 @@ class AccommodationModel {
 }
 class HouseNumberModel {
 
-  String? houseId;
-  String? houseNo;
+  dynamic houseId;
+  dynamic houseNo;
 
   HouseNumberModel({this.houseNo,this.houseId});
 
@@ -47,7 +47,7 @@ class HouseNumberModel {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+    final Map<String, dynamic> data = Map<String, dynamic>();
     data['house_id'] = this.houseId;
     data['house_no'] = this.houseNo;
     return data;

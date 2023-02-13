@@ -1,5 +1,5 @@
 class IssueTypeModel {
-  String? issueId;
+  dynamic issueId;
   String? issue;
 
   IssueTypeModel({this.issueId, this.issue});

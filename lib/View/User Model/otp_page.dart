@@ -190,17 +190,9 @@ class _OtpPageState extends State<OtpPage> {
     }else{
       final prefs = await SharedPreferences.getInstance();
       prefs.setString(UT.loginStatus, "True");
-      var userType=prefs.getString(UT.appType);
-      if(userType=="GC"){
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => const GCComplaintList()));
-      }else if(userType=="JCO"){
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => const JCOComplaintList()));
-      }else{
-        Navigator.push(context,
+      Navigator.push(context,
             MaterialPageRoute(builder: (context) => const MyComplaintListPage()));
-      }
+
 
     }
 

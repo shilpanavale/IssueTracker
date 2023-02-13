@@ -3,20 +3,20 @@ class IssueModelClass {
   dynamic rating;
   dynamic mobileNo;
   dynamic imageUrl2;
-  String? houseComplaintId;
-  String? catIssueId;
-  String? subIssueId;
-  String? houseId;
-  String? issueCreatedOn;
+  dynamic houseComplaintId;
+  dynamic catIssueId;
+  dynamic subIssueId;
+  dynamic houseId;
+  dynamic issueCreatedOn;
   dynamic imageUrl;
   dynamic description;
   dynamic userComplaintId;
   dynamic status;
   dynamic vendorId;
   dynamic createdOn;
-  String? issue;
-  String? subIssue;
-  String? houseNo;
+  dynamic issue;
+  dynamic subIssue;
+  dynamic houseNo;
   dynamic escalation;
 
   IssueModelClass(

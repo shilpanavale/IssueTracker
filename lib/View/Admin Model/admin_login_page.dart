@@ -86,8 +86,11 @@ class _MyHomePageState extends State<AdminLoginPage> {
       "passcode":pass
     };
     var url=Uri.parse("${APIConstant.APIURL}/admin-log-up/?secret=d146d69ec7f6635f3f05f2bf4a51b318");
+    print("url-->$url");
     var response= await http.post(url, body: jsonEncode(obj));
+    print("decode-->${response.body}");
     var decodeRes=json.decode(response.body);
+
     print("decode-->${decodeRes['message']}");
     if(decodeRes['message']==false){
       Fluttertoast.showToast(msg: "Invalid username & password");
@@ -95,9 +98,7 @@ class _MyHomePageState extends State<AdminLoginPage> {
       final prefs = await SharedPreferences.getInstance();
       prefs.setString(UT.loginStatus, "True");
       Fluttertoast.showToast(msg: "Login Successfully done");
-      Navigator.push(context, MaterialPageRoute(builder: (context)=>NewAdminDashboard()));
+      Navigator.push(context, MaterialPageRoute(builder: (context)=>UserAdminDashboardPage()));
     }
-
-
   }
 }

@@ -2,9 +2,9 @@ class APIConstant{
 
 
   ///Live url change befor production date-5 feb 23
-  //static const String APIURL="https://api.creshsolutions.com";
+  static const String APIURL="https://api.creshsolutions.com";
   ///Test url
-  static const String APIURL="https://samadhantest.creshsolutions.com";
+  //static const String APIURL="https://samadhantest.creshsolutions.com";
   static const String houseList="$APIURL/house";
   static const String houseNo="$APIURL/house-no";
   static const String locationList="$APIURL/location";

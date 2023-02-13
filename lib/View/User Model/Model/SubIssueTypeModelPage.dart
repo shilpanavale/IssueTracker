@@ -1,7 +1,7 @@
 class SubIssueTypeModel {
-  String? subIssueId;
-  String? subIssue;
-  String? categoryIssueId;
+  dynamic subIssueId;
+  dynamic subIssue;
+  dynamic categoryIssueId;
 
   SubIssueTypeModel({this.subIssueId, this.subIssue, this.categoryIssueId});
 

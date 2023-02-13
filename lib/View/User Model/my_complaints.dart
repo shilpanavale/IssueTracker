@@ -79,7 +79,7 @@ class _MyHomePageState extends State<MyComplaintListPage> {
           title: Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              Text("Officer Dashboard",style: StyleForApp.appBarTextStyle,),
+              Text("User Dashboard",style: StyleForApp.appBarTextStyle,),
             ],
           ),
         ),
@@ -100,57 +100,6 @@ class _MyHomePageState extends State<MyComplaintListPage> {
                   children: <Widget>[
                     Text("My Complaints",style: StyleForApp.subHeadline,),
                     const SizedBox(height: 10,),
-                  /*  InkWell(
-                      onTap: (){
-                        pickDateDialog(context);
-                      },
-                      child: Container(
-                        width: double.infinity,
-                        height: 40,
-                        decoration: BoxDecoration(
-                            color: ColorsForApp.grayColor.withOpacity(0.3),
-                            borderRadius: BorderRadius.circular(10.0)
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            SizedBox(
-                              width: 200,
-                              child: Row(
-                                children: [
-                                  const SizedBox(width: 8,),
-                                  Container(
-                                    height: 25,width: 25,
-                                    decoration:  const BoxDecoration(
-                                      color: Colors.transparent,
-                                      image:  DecorationImage(
-                                        fit: BoxFit.contain,
-                                        image: AssetImage(
-                                          AssetFiles.calendar,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 5,),
-                                  Text("Select Date Range",style: StyleForApp.extraSmaller12dp,),
-                                ],
-                              ),
-                            ),
-                            *//*Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text("Today",style: TextStyle(
-                                // fontFamily: fontName,
-                                fontWeight: FontWeight.w700,
-                                fontSize: 12,
-                                letterSpacing: 0.27,
-                                color: ColorsForApp.blackColor,
-                              ),),
-                            )*//*
-
-                          ],
-                        ),
-                      ),
-                    ),*/
                     const SizedBox(height: 10,),
                     issueListView(context),
                     //downloadAndShare()

@@ -91,7 +91,7 @@ class _MyHomePageState extends State<UserAdminDashboardPage> {
               color: Colors.black
           ),
 
-         /* leading: Builder(
+          leading: Builder(
             builder: (context) => IconButton(
               icon: Container(
                 height: 25,width: 25,
@@ -104,7 +104,7 @@ class _MyHomePageState extends State<UserAdminDashboardPage> {
               ),
               onPressed: () => Scaffold.of(context).openDrawer(),
             ),
-          ),*/
+          ),
           title: Column(
             children: [
               Row(
