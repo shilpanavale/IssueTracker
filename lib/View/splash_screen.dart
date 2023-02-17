@@ -39,8 +39,12 @@ class SplashPageState extends State<SplashPage> {
     print("loginStatus-->$appType");
    if(loginStatus=="True"&&appType=="User"){
      Navigator.push(context, MaterialPageRoute(builder: (BuildContext context)=>MyComplaintListPage()));
+   }else if(loginStatus=="True"&&appType=="User-GC"){
+     Navigator.push(context, MaterialPageRoute(builder: (BuildContext context)=>GCComplaintList()));
+   }else if(loginStatus=="True"&&appType=="User-JCO"){
+     Navigator.push(context, MaterialPageRoute(builder: (BuildContext context)=>JCOComplaintList()));
    }
-   else if(loginStatus=="True"&&appType=="Admin"){
+   else if(loginStatus=="True"&&appType=="0"||appType=="1"||appType=="2"){
      Navigator.push(context, MaterialPageRoute(builder: (BuildContext context)=>NewAdminDashboard()));
    }
    else{

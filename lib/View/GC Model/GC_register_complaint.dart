@@ -42,18 +42,27 @@ class _MyHomePageState extends State<GCRegisterComplaint> {
   dynamic selectCompany;
   dynamic selectedBatallion;
   dynamic selectHouseNo;
+  dynamic selectCabin;
   List<HouseNumberModel> companyList=[];
   List<LocationModelClass> locationList=[];
   List<AccommodationModel> batallionList=[];
   File? image1;
   File? image2;
   File? image3;
+  List<Cabin> cabinList =[];
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    generateCabin();
     getLocationList();
 
+  }
+  generateCabin(){
+    for(int i =1;i<=125;i++){
+     var a= Cabin("P/$i");
+      cabinList.add(a);
+    }
   }
   Future<bool> willPopScopeBack() async{
     Navigator.push(context, MaterialPageRoute(builder: (context)=>const GCComplaintList()));
@@ -237,6 +246,47 @@ class _MyHomePageState extends State<GCRegisterComplaint> {
                               ),
                             ),
                           ),
+                          const SizedBox(height: 10,), Padding(
+                            padding: const EdgeInsets.only(top: 3, bottom: 3, right: 30, left: 30),
+                            child: Container(
+                              height: 40,
+                              padding: const EdgeInsets.all(8.0),
+                              decoration: BoxDecoration(
+                                color: ColorsForApp.whiteColor,
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                              child: DropdownButtonHideUnderline(
+                                child: DropdownButton(
+                                  hint: const Text(" Select Cabin",style: TextStyle(
+                                      fontSize: 15.0, fontWeight: FontWeight.w400,
+                                      color: Colors.black38)),
+                                  value: selectCabin,
+                                  isExpanded: true,
+                                  icon: const Padding(
+                                    padding: EdgeInsets.only(right: 16.0),
+                                    child: Icon(
+                                      Icons.arrow_drop_down_circle,
+                                      size: 20,color: Colors.grey,
+                                    ),
+                                  ),
+                                  isDense: true,
+                                  onChanged: (newValue) {
+
+                                    setState(() {
+                                      selectCabin=newValue;
+                                      print('selectCabin-->$selectCabin');
+                                    });
+                                  },
+                                  items: cabinList.map((value) {
+                                    return DropdownMenuItem<String>(
+                                      value: value.name,
+                                      child: Text(value.name),
+                                    );
+                                  }).toList(),
+                                ),
+                              ),
+                            ),
+                          ),
                           const SizedBox(height: 10,),
                           Padding(
                             padding: const EdgeInsets.only(top: 3, bottom: 3, right: 30, left: 30),
@@ -273,6 +323,7 @@ class _MyHomePageState extends State<GCRegisterComplaint> {
                               ),
                             ),
                           ),
+                          const SizedBox(height: 10,),
                            Padding(
                             padding: const EdgeInsets.only(left: 30.0,right: 20.0,bottom: 10),
                             child: Row(
@@ -563,4 +614,8 @@ class _MyHomePageState extends State<GCRegisterComplaint> {
       print('Failed to pick image: $e');
     }
   }
+}
+class Cabin{
+  String name;
+  Cabin(this.name);
 }

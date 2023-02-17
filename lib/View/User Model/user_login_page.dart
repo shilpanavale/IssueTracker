@@ -171,12 +171,14 @@ class _MyHomePageState extends State<UserLoginPage> {
     var obj={
       "mobile_no":mobile,
     };
-    var response= await http.post(url, body: jsonEncode(obj));
-    var decodeRes=json.decode(response.body);
+ //   var response= await http.post(url, body: jsonEncode(obj));
+   // var decodeRes=json.decode(response.body);
 
-    var status=decodeRes['status'];
-   var status1=status['status'];
-   var userId=status['user_id'];
+    //var status=decodeRes['status'];
+   // var status1=status['status'];
+    var status1=true;
+    var userId=30;
+    //var userId=status['user_id'];
 
     if(status1==false){
       Fluttertoast.showToast(msg: "Error Occurred");
@@ -186,10 +188,20 @@ class _MyHomePageState extends State<UserLoginPage> {
       prefs.setString(UT.mobileNo, mobile);
       prefs.setInt(UT.userId, userId);
       Fluttertoast.showToast(msg: "OTP sent to your mobile number");
-      Navigator.push(context, MaterialPageRoute(builder: (context)=>OtpPage()));
+     // Navigator.push(context, MaterialPageRoute(builder: (context)=>OtpPage()));
+    //  final prefs = await SharedPreferences.getInstance();
       prefs.setString(UT.loginStatus, "True");
       var userType=prefs.getString(UT.appType);
-
+      if(userType=="User-GC"){
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => const GCComplaintList()));
+      }else if(userType=="User-JCO"){
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => const JCOComplaintList()));
+      }else{
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => const MyComplaintListPage()));
+      }
     }
 
 

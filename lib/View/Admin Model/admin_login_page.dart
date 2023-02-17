@@ -98,7 +98,7 @@ class _MyHomePageState extends State<AdminLoginPage> {
       final prefs = await SharedPreferences.getInstance();
       prefs.setString(UT.loginStatus, "True");
       Fluttertoast.showToast(msg: "Login Successfully done");
-      Navigator.push(context, MaterialPageRoute(builder: (context)=>UserAdminDashboardPage()));
+      Navigator.push(context, MaterialPageRoute(builder: (context)=>NewAdminDashboard()));
     }
   }
 }
