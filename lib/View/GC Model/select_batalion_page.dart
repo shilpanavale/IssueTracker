@@ -33,12 +33,18 @@ class BatalionListPage extends StatefulWidget {
 class _MyHomePageState extends State<BatalionListPage> {
 
 
-  Future<List<Message>>? _vendorApi;
+  Future<List<BattalionListModel>>? _vendorApi;
 
 
   Future<bool> willPopScopeBack() async{
     Navigator.push(context, MaterialPageRoute(builder: (context)=>const NewAdminDashboard()));
     return true;
+  }
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _vendorApi=getMessage();
   }
   @override
   Widget build(BuildContext context) {
@@ -56,7 +62,7 @@ class _MyHomePageState extends State<BatalionListPage> {
           title: Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              Text("Select Batalion",style: StyleForApp.appBarTextStyle,),
+              Text("Select Battalion",style: StyleForApp.appBarTextStyle,),
               //Text("Admin Dashboard",style: StyleForApp.appBarTextStyle,),
             ],
           ),
@@ -85,7 +91,7 @@ class _MyHomePageState extends State<BatalionListPage> {
     );
   }
   Widget issueListView(BuildContext context){
-    return FutureBuilder<List<Message>>(
+    return FutureBuilder<List<BattalionListModel>>(
       future: _vendorApi,
       builder: (context,snapshot){
         // Checking if future is resolved
@@ -102,7 +108,7 @@ class _MyHomePageState extends State<BatalionListPage> {
             // if we got our data
           } else if (snapshot.hasData) {
             // Extracting data from snapshot object
-            List<Message>? vendor = snapshot.data;
+            List<BattalionListModel>? vendor = snapshot.data;
             return  _buildListView(vendor!);
           }
         }
@@ -111,7 +117,7 @@ class _MyHomePageState extends State<BatalionListPage> {
       },
     );
   }
-  Widget _buildListView(List<Message> vendors) {
+  Widget _buildListView(List<BattalionListModel> vendors) {
     return ListView.builder(
       shrinkWrap: true,
       physics: const ScrollPhysics(),
@@ -122,35 +128,46 @@ class _MyHomePageState extends State<BatalionListPage> {
       itemCount: vendors.length,
     );
   }
-  Widget issueListItem(Message vendor){
-    return  Padding(
-      padding: const EdgeInsets.only(top: 8.0),
-      child: Container(
-          width: double.infinity,
-          decoration:   BoxDecoration(
-              color: Colors.grey.shade200,
-              borderRadius: BorderRadius.circular(10.0)
-          ),
-          child:ListTile(
-            title:Text(vendor.battalion ?? "",style: StyleForApp.textStyle14dp) ,
-            leading: Icon(Icons.circle_sharp,color: ColorsForApp.appButtonColor,) ,
-            trailing: Text(vendor.pending.toString()??"",style: StyleForApp.textStyle15dpBold),
-          )
+  Widget issueListItem(BattalionListModel vendor){
+    return  GestureDetector(
+      onTap: () async {
+        final prefs = await SharedPreferences.getInstance();
+       await prefs.setString(UT.appType,"2");
+        prefs.setString(UT.battalion,vendor.houseType!);
+        var a=  prefs.getString(UT.battalion);
+        var v=  prefs.getString(UT.appType);
+        print(a);
+        print("appType-->$v");
+        Navigator.push(context, MaterialPageRoute(builder: (context)=>const GCAdminDashboardPage()));
+      },
+      child: Padding(
+        padding: const EdgeInsets.only(top: 8.0),
+        child: Container(
+            width: double.infinity,
+            decoration:   BoxDecoration(
+                color: Colors.grey.shade200,
+                borderRadius: BorderRadius.circular(10.0)
+            ),
+            child:ListTile(
+              title:Text(vendor.houseType ?? "",style: StyleForApp.textStyle14dp) ,
+              leading: Icon(Icons.circle_sharp,color: ColorsForApp.appButtonColor,) ,
+              trailing: Text(vendor.cCount.toString()??"",style: StyleForApp.textStyle15dpBold),
+            )
+        ),
       ),
     );
   }
 
-  Future<List<Message>> getMessage() async {
-    var url=Uri.parse("${APIConstant.APIURL}/gc-option/?secret=d146d69ec7f6635f3f05f2bf4a51b318&user_type=2");
-    print("vendor URL-->$url");
+  Future<List<BattalionListModel>> getMessage() async {
+    var url=Uri.parse("${APIConstant.APIURL}/gc-option/?secret=d146d69ec7f6635f3f05f2bf4a51b318");
     var response= await http.get(url);
-    var decodeRes=json.decode(response.body);
+    List<BattalionListModel> message=[];
+    var decodeRes=json.decode(response.body) as List;
     if (response.statusCode == 200) {
-      var messagelist=decodeRes["message"] as List;
-      List<Message> message = decodeRes.map((tagJson) => Message.fromJson(tagJson)).toList();
+       message = decodeRes.map((tagJson) => BattalionListModel.fromJson(tagJson)).toList();
       return message;
     } else {
-      throw Exception('Failed to load house list');
+     return message=[];
     }
 
   }

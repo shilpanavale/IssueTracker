@@ -10,11 +10,13 @@ import 'package:open_filex/open_filex.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pie_chart/pie_chart.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
 import 'package:untitled/App%20Theme/app_theme.dart';
 import 'package:untitled/App%20Theme/asset_files.dart';
 import 'package:untitled/View/Admin%20Model/admin_drawer.dart';
 import 'package:untitled/View/Admin%20Model/complaints_list.dart';
+import 'package:untitled/View/GC%20Model/select_batalion_page.dart';
 import 'package:untitled/View/User%20Model/api_constant.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
@@ -27,6 +29,7 @@ import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 
+import '../../CustomeWidget/custome_widget.dart';
 import '../Admin Model/important_issue_list.dart';
 import '../Admin Model/new_admin_dashboard.dart';
 import 'Model/BattalionListModel.dart';
@@ -61,7 +64,7 @@ class _MyHomePageState extends State<GCAdminDashboardPage> {
   int escaltionCount1=0;
   int escaltionCount2=0;
   int escaltionCount3=0;
-  List<Message> battalionList=[];
+
   @override
   void initState() {
     // TODO: implement initState
@@ -79,7 +82,7 @@ class _MyHomePageState extends State<GCAdminDashboardPage> {
     previewContainer;
   }
    Future<bool> willPopScopeBack() async{
-     Navigator.push(context, MaterialPageRoute(builder: (context)=>const NewAdminDashboard()));
+     Navigator.push(context, MaterialPageRoute(builder: (context)=>const BatalionListPage()));
      return true;
    }
   @override
@@ -91,23 +94,13 @@ class _MyHomePageState extends State<GCAdminDashboardPage> {
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0.0,
-          iconTheme: IconThemeData(
+          iconTheme: const IconThemeData(
               color: Colors.black
           ),
-         /* leading: Builder(
-            builder: (context) => IconButton(
-              icon: Container(
-                height: 25,width: 25,
-                decoration:  const BoxDecoration(
-                  color: Colors.transparent,
-                ),
-                child: Image.asset(
-                  AssetFiles.menu,
-                ),
-              ),
-              onPressed: () => Scaffold.of(context).openDrawer(),
-            ),
-          ),*/
+          leading: BackLeadingButton(onPressed: () {
+
+            Navigator.push(context, MaterialPageRoute(builder: (context)=>const BatalionListPage()));
+          },),
 
           title: Column(
             children: [
@@ -279,7 +272,6 @@ class _MyHomePageState extends State<GCAdminDashboardPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          battalionUI(context),
           totalIssueRegisteredToday!=null? Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text("Total Issue Registered Today : $totalIssueRegisteredToday",textAlign:TextAlign.start,style: StyleForApp.subHeadline,),
@@ -654,38 +646,7 @@ class _MyHomePageState extends State<GCAdminDashboardPage> {
       ),
     );
   }
-  Widget battalionUI(BuildContext context){
-    return  Container(
-      // height: 250,
-      //width: double.infinity,
-      decoration:   BoxDecoration(
-        color: HexColor("#F2F2F2"),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(height: 10,),
-          /* const Padding(
-            padding: EdgeInsets.only(left: 20.0),
-            child: Text("SubIssue Wise Data"),
-          ),*/
-          ListView.builder(
-              shrinkWrap: true,
-              padding: EdgeInsets.zero,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: battalionList.length,
-              itemBuilder:(context,index){
-                return ListTile(
-                  title:Text(battalionList[index].battalion ?? "",style: StyleForApp.textStyle14dp) ,
-                  leading: Icon(Icons.circle_sharp,color: ColorsForApp.appButtonColor,) ,
-                  trailing: Text(battalionList[index].pending.toString()??"",style: StyleForApp.textStyle15dpBold),
-                );
-              } ),
-          const SizedBox(height: 20,),
-        ],
-      ),
-    );
-  }
+
   Future<void> _captureSocialPng(String flag) {
     String imagePaths ;
     final RenderBox box = context.findRenderObject() as RenderBox;
@@ -719,26 +680,12 @@ class _MyHomePageState extends State<GCAdminDashboardPage> {
       });
     });
   }
-  getBatalionList() async {
-    //DialogBuilder(context).showLoadingIndicator();
-    var response= await http.get(Uri.parse("${APIConstant.APIURL}/gc-option/?secret=d146d69ec7f6635f3f05f2bf4a51b318&user_type=2"));
-    var decodeRes=json.decode(response.body);
-    if (response.statusCode == 200) {
-      print("decodeRes-->$decodeRes");
-      var messagelist=decodeRes["message"] as List;
-      battalionList = messagelist.map((tagJson) => Message.fromJson(tagJson)).toList();
 
-     // setState(() {});
-
-    } else {
-
-      throw Exception('Failed to Location house list');
-    }
-
-  }
   getData() async {
-    //https://api.creshsolutions.com/admin-home/?secret=d146d69ec7f6635f3f05f2bf4a51b318
-    var url =Uri.parse("${APIConstant.APIURL}/admin-home/?secret=d146d69ec7f6635f3f05f2bf4a51b318&user_type=2");
+    final prefs = await SharedPreferences.getInstance();
+   var battalionType= prefs.getString(UT.battalion);
+   //https://localhost/admin-home/?secret=d146d69ec7f6635f3f05f2bf4a51b318&user_type=0&battalion=[battalion name]
+    var url =Uri.parse("${APIConstant.APIURL}/admin-home/?secret=d146d69ec7f6635f3f05f2bf4a51b318&user_type=2&battalion=$battalionType");
     print("url-->$url");
     var response= await http.get(url);
     print(response.body);
@@ -768,7 +715,6 @@ class _MyHomePageState extends State<GCAdminDashboardPage> {
     not_resolved=statusCount["not_resolved"];
     not_assigned=statusCount["not_assigned"];
 
-    await getBatalionList();
     setState(() {
 
     });

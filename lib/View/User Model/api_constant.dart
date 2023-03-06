@@ -18,7 +18,8 @@ class UT{
   static String loginStatus="False";
   static String mobileNo="Mobile";
   static String userId="UserID";
-  static String appType="";
+  static String appType="appType";
+  static String battalion="battalion";
   static displayDateConverter(DateTime? selectedDate){
     String sendDateToApi = "${selectedDate!.day.toString().padLeft(2,"0")}-${selectedDate.month.toString().padLeft(2,'0')}-${selectedDate.year.toString().padLeft(2,'0')}";
     return sendDateToApi;

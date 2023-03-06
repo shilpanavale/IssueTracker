@@ -62,7 +62,9 @@ class _MyHomePageState extends State<ImportantIssuePage> {
   getData() async {
     final prefs = await SharedPreferences.getInstance();
     userType= prefs.getString(UT.appType);
-    print("userType-->$userType");
+    print("Important issue userType-->$userType");
+   var battalionType= prefs.getString(UT.battalion);
+    print("Important issue battalionType-->$battalionType");
     importantComplaints=getRegisterComplaints();
     setState(() {
 

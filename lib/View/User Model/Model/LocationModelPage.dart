@@ -14,9 +14,9 @@ class LocationModelClass {
   }
 }
 class AccommodationModel {
-  String? houseId;
-  String? houseType;
-  String? houseNo;
+  dynamic houseId;
+  dynamic houseType;
+  dynamic houseNo;
 
   AccommodationModel({this.houseId, this.houseType, this.houseNo});
 

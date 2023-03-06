@@ -226,8 +226,8 @@ class _MyHomePageState extends State<JCORegisterComplaint> {
                                   },
                                   items: houseList.map((value) {
                                     return DropdownMenuItem<String>(
-                                      value: value.houseId,
-                                      child: Text(value.houseNo!),
+                                      value: value.houseId.toString(),
+                                      child: Text(value.houseNo.toString()),
                                     );
                                   }).toList(),
                                 ),

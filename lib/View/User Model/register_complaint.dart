@@ -40,37 +40,6 @@ class _MyHomePageState extends State<RegisterComplaint> {
   List<IssueTypeModel> issueTypeList=[];
   List<SubIssueTypeModel> subIssueTypeList=[];
 
-  /*List<dynamic> issueTypeList=[
-    {
-      "id":"1",
-      "value":"blockage related issuses",
-    },
-    {
-      "id":"2",
-      "value":"E/M regular complaints",
-    },
-    {
-      "id":"3",
-      "value":"seepage concerns",
-    },{
-      "id":"4",
-      "value":"additional intra(addn/altn) work",
-    },
-  ];
-  List<dynamic> subIssueTypeList=[
-    {
-      "id":"1",
-      "value":"sewage",
-    },
-    {
-      "id":"2",
-      "value":"plumbing",
-    },
-    {
-      "id":"3",
-      "value":"Carpentry",
-    },
-  ];*/
   List<dynamic> accommodationList=[];
 
   File? image;
@@ -257,8 +226,8 @@ class _MyHomePageState extends State<RegisterComplaint> {
                                   },
                                   items: houseList.map((value) {
                                     return DropdownMenuItem<String>(
-                                      value: value.houseId,
-                                      child: Text(value.houseNo!),
+                                      value: value.houseId.toString(),
+                                      child: Text(value.houseNo!.toString()),
                                     );
                                   }).toList(),
                                 ),
@@ -303,7 +272,7 @@ class _MyHomePageState extends State<RegisterComplaint> {
                                   },
                                   items: issueTypeList.map((value) {
                                     return DropdownMenuItem<String>(
-                                      value: value.issueId,
+                                      value: value.issueId.toString(),
                                       child: Text(value.issue.toString()),
                                     );
                                   }).toList(),
@@ -347,7 +316,7 @@ class _MyHomePageState extends State<RegisterComplaint> {
                                   },
                                   items: subIssueTypeList.map((value) {
                                     return DropdownMenuItem<String>(
-                                      value: value.subIssueId,
+                                      value: value.subIssueId.toString(),
                                       child: Text(value.subIssue.toString()),
                                     );
                                   }).toList(),
@@ -571,14 +540,20 @@ class _MyHomePageState extends State<RegisterComplaint> {
     int? userId=preferences.getInt(UT.userId);
 
 
-    var url=Uri.parse("${APIConstant.APIURL}/register-complaint/?secret=d146d69ec7f6635f3f05f2bf4a51b318&user_type=0");
+    var url=Uri.parse("${APIConstant.APIURL}/register-complaint/?secret=d146d69ec7f6635f3f05f2bf4a51b318");
     var request = http.MultipartRequest("POST", url);
-    request.fields['cat_issue_id'] = selectIssueType;
-    request.fields['sub_issue_id'] = selectSubIssueType;
-    request.fields['house_id'] = selectHouseNo;
-    request.fields['user_id'] = userId.toString();
+    var h={
+      "Content-Type":"multipart/form-data"
+    };
+    request.headers.addAll(h);
+    request.fields['cat_issue_id']=selectIssueType;
+    request.fields['sub_issue_id']=selectSubIssueType;
+    request.fields['house_id']=selectHouseNo;
+    request.fields['user_id']=userId.toString();
+    request.fields['user_type'] ="0";
     request.fields['description'] =describeComplaintTxt.text.isNotEmpty? describeComplaintTxt.text:"";
     print(request.fields);
+
     if(image?.path!=null){
       request.files.add(
           http.MultipartFile.fromBytes(
@@ -587,12 +562,10 @@ class _MyHomePageState extends State<RegisterComplaint> {
               filename: image!.path.split("/").last
           )
       );
-    }/*else{
-      request.fields['fileToUpload'] = "";
-    }*/
+    }
 
 
-    print("url of register complaint-->${url}");
+    print("url of register complaint-->$url");
     request.send().then((response) {
       print(response.statusCode);
       print(response.reasonPhrase);
@@ -600,9 +573,7 @@ class _MyHomePageState extends State<RegisterComplaint> {
         DialogBuilder(context).hideOpenDialog();
         Fluttertoast.showToast(msg: "Complaint Registered successfully");
         Navigator.push(context, MaterialPageRoute(builder: (context)=>MyComplaintListPage()));
-       // var decodeRes=json.decode(response.reasonPhrase!);
-       // print("decodeRes of register complaint-->${response.stream}");
-        //print("decodeRes of register complaint-->${response.reasonPhrase}");
+
       }else{
         DialogBuilder(context).hideOpenDialog();
         Fluttertoast.showToast(msg: "Something went wrong please try again!");

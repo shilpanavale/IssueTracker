@@ -101,8 +101,6 @@ class _MyHomePageState extends State<NewAdminDashboard> {
                           child: makeDashboardItem("GC", Icons.person)),
                       InkWell(
                         onTap: () async {
-                          final prefs = await SharedPreferences.getInstance();
-                          prefs.setString(UT.appType, "2");
                           Navigator.push(context, MaterialPageRoute(builder: (context)=>const SettingPage()));
                         },
                           child: makeDashboardItem("Setting", Icons.settings)),

@@ -19,6 +19,7 @@ import 'package:http/http.dart' as http;
 import '../JCO Model/Model/JCOLocationModel.dart';
 import '../User Model/api_constant.dart';
 import 'GC_complaints_list.dart';
+import 'Model/CabinModel.dart';
 import 'Model/GCBattalionModel.dart';
 import 'Model/GC_CompanyModel.dart';
 
@@ -44,26 +45,22 @@ class _MyHomePageState extends State<GCRegisterComplaint> {
   dynamic selectHouseNo;
   dynamic selectCabin;
   List<HouseNumberModel> companyList=[];
+  List<CabinModel> cabinList=[];
   List<LocationModelClass> locationList=[];
   List<AccommodationModel> batallionList=[];
   File? image1;
   File? image2;
   File? image3;
-  List<Cabin> cabinList =[];
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    generateCabin();
     getLocationList();
 
+
   }
-  generateCabin(){
-    for(int i =1;i<=125;i++){
-     var a= Cabin("P/$i");
-      cabinList.add(a);
-    }
-  }
+
   Future<bool> willPopScopeBack() async{
     Navigator.push(context, MaterialPageRoute(builder: (context)=>const GCComplaintList()));
     return true;
@@ -140,6 +137,7 @@ class _MyHomePageState extends State<GCRegisterComplaint> {
                                     setState(() {
                                       selectedBatallion=null;
                                       selectCompany=null;
+                                      selectCabin=null;
                                       selectedArea=newValue;
                                       print('selectedLocation--->$selectedArea');
                                       getAccommodationList(selectedArea);
@@ -186,6 +184,7 @@ class _MyHomePageState extends State<GCRegisterComplaint> {
                                     if(selectedArea!=null){
                                       setState(() {
                                         selectCompany=null;
+                                        selectCabin=null;
                                         selectedBatallion=newValue;
                                         getHouseList(selectedBatallion);
 
@@ -232,14 +231,16 @@ class _MyHomePageState extends State<GCRegisterComplaint> {
                                   onChanged: (newValue) {
 
                                     setState(() {
+                                      selectCabin=null;
                                       selectCompany=newValue;
                                       print('selectHouseNo-->$selectCompany');
                                     });
+                                    getCabinList(selectedArea,selectedBatallion,selectCompany);
                                   },
                                   items: companyList.map((value) {
                                     return DropdownMenuItem<String>(
-                                      value: value.houseId,
-                                      child: Text(value.houseNo!),
+                                      value: value.houseNo.toString(),
+                                      child: Text(value.houseNo.toString()),
                                     );
                                   }).toList(),
                                 ),
@@ -279,8 +280,8 @@ class _MyHomePageState extends State<GCRegisterComplaint> {
                                   },
                                   items: cabinList.map((value) {
                                     return DropdownMenuItem<String>(
-                                      value: value.name,
-                                      child: Text(value.name),
+                                      value: value.houseId.toString(),
+                                      child: Text(value.cabinNo.toString()),
                                     );
                                   }).toList(),
                                 ),
@@ -506,7 +507,38 @@ class _MyHomePageState extends State<GCRegisterComplaint> {
     if (response.statusCode == 200) {
       var decodeRes=json.decode(response.body) as List;
       print("House No-->$decodeRes");
-      companyList = decodeRes.map((tagJson) => HouseNumberModel.fromJson(tagJson)).toList();
+
+      companyList = decodeRes.map((tagJson) => HouseNumberModel.fromJson(tagJson)).toSet().toList();
+
+      print("House No-->$companyList");
+      setState(() {
+
+      });
+
+      DialogBuilder(context).hideOpenDialog();
+    } else {
+      DialogBuilder(context).hideOpenDialog();
+      throw Exception('Failed to load house list');
+    }
+
+  }
+
+  getCabinList(String location,String battalion,String company ) async {
+    DialogBuilder(context).showLoadingIndicator();
+    //https://samadhantest.creshsolutions.com/gc-cabin/?secret=d146d69ec7f6635f3f05f2bf4a51b318
+    // &location=IMA%20Campus&user_type=2&battalion=Thimayaa%20Bn&company=Sangro
+
+    https://samadhantest.creshsolutions.com/gc-cabin/?secret=d146d69ec7f6635f3f05f2bf4a51b318&location=IMA%20Campus
+    // &user_type=2&battalion=Thimayaa%20Bn&company=Sangro
+    var url=Uri.parse("${APIConstant.APIURL}/gc-cabin/?secret=d146d69ec7f6635f3f05f2bf4a51b318"
+        "&location=$location&user_type=2&battalion=$battalion&company=$company");
+    print("cabin List $url");
+    var response= await http.get(url);
+
+    if (response.statusCode == 200) {
+      var decodeRes=json.decode(response.body) as List;
+      print("House No-->$decodeRes");
+      cabinList = decodeRes.map((tagJson) => CabinModel.fromJson(tagJson)).toList();
       print("House No-->$companyList");
       setState(() {
 
@@ -526,11 +558,11 @@ class _MyHomePageState extends State<GCRegisterComplaint> {
     int? userId=preferences.getInt(UT.userId);
 
 
-    var url=Uri.parse("${APIConstant.APIURL}/gc-complaint/?secret=d146d69ec7f6635f3f05f2bf4a51b318");
+    var url=Uri.parse("${APIConstant.APIURL}/register-complaint/?secret=d146d69ec7f6635f3f05f2bf4a51b318");
     var request = http.MultipartRequest("POST", url);
     request.fields['user_id'] = userId.toString();
     request.fields['user_type'] = "2";
-    request.fields['house_id'] = selectCompany;
+    request.fields['house_id'] = selectCabin;
     request.fields['description'] =describeComplaintTxt.text.isNotEmpty? describeComplaintTxt.text:"";
     print(request.fields);
     if(image1?.path!=null){
