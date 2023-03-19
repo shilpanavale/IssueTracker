@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -6,16 +5,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:pie_chart/pie_chart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:untitled/App%20Theme/app_theme.dart';
-import 'package:untitled/App%20Theme/asset_files.dart';
 import 'package:untitled/App%20Theme/text_fileds.dart';
 import 'package:untitled/CustomeWidget/common_button.dart';
 import 'package:untitled/CustomeWidget/custome_widget.dart';
-import 'package:untitled/View/Admin%20Model/user_admin_dashboard.dart';
 import 'package:untitled/View/Admin%20Model/complaints_list.dart';
-import 'package:untitled/View/User%20Model/my_complaints.dart';
 import 'package:http/http.dart' as http;
 import '../../CustomeWidget/custome_dialog.dart';
 import '../Admin Model/Model/IssueModel.dart';
@@ -39,11 +34,11 @@ class _MyHomePageState extends State<AdminFeedBackPage> {
   final TextEditingController issueIDTxt=TextEditingController();
   final TextEditingController describeComplaintTxt=TextEditingController();
   final TextEditingController addPhotosTxt=TextEditingController();
-   List<bool> isSelected=[true, false];
+   List<bool> isSelected=[false, false];
    double rating =3;
 
   File? image;
-  var userType;
+  dynamic userType;
 
   bool showAddPhotoUI=false;
   String status="";
@@ -79,7 +74,7 @@ class _MyHomePageState extends State<AdminFeedBackPage> {
             Navigator.push(context, MaterialPageRoute(builder: (context)=> GCAdminComplaintListPage(statusFlag: widget.statusFlag,)));
 
           }else{
-            Navigator.push(context, MaterialPageRoute(builder: (context)=> ComplaintListPage(statusFlag: widget.statusFlag,)));
+            Navigator.push(context, MaterialPageRoute(builder: (context)=> AdminComplaintList(statusFlag: widget.statusFlag,)));
           }
         },),
         title: Row(
@@ -342,7 +337,7 @@ class _MyHomePageState extends State<AdminFeedBackPage> {
       if(response.statusCode==200){
         DialogBuilder(context).hideOpenDialog();
         Fluttertoast.showToast(msg: "Save successfully");
-        Navigator.push(context, MaterialPageRoute(builder: (context)=>const MyComplaintListPage()));
+        Navigator.push(context, MaterialPageRoute(builder: (context)=> AdminComplaintList(statusFlag: widget.statusFlag)));
       }else{
         DialogBuilder(context).hideOpenDialog();
         Fluttertoast.showToast(msg: "Something went wrong please try again!");
@@ -378,7 +373,7 @@ class _MyHomePageState extends State<AdminFeedBackPage> {
       if(response.statusCode==200){
         DialogBuilder(context).hideOpenDialog();
         Fluttertoast.showToast(msg: "Save successfully");
-        Navigator.push(context, MaterialPageRoute(builder: (context)=>ComplaintListPage(statusFlag: widget.statusFlag,)));
+        Navigator.push(context, MaterialPageRoute(builder: (context)=>AdminComplaintList(statusFlag: widget.statusFlag,)));
 
       }else{
         DialogBuilder(context).hideOpenDialog();

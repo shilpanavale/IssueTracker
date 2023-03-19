@@ -21,12 +21,12 @@ class VendorModelClass {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['vendor_id'] = this.vendorId;
-    data['vendor_name'] = this.vendorName;
-    data['vendor_email'] = this.vendorEmail;
-    data['vendore_contact'] = this.vendoreContact;
-    data['created_on'] = this.createdOn;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['vendor_id'] = vendorId;
+    data['vendor_name'] = vendorName;
+    data['vendor_email'] = vendorEmail;
+    data['vendore_contact'] = vendoreContact;
+    data['created_on'] = createdOn;
     return data;
   }
 }

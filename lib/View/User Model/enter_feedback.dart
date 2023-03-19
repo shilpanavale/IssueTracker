@@ -36,7 +36,7 @@ class _MyHomePageState extends State<FeedBackPage> {
   final TextEditingController issueIDTxt=TextEditingController();
   final TextEditingController describeComplaintTxt=TextEditingController();
   final TextEditingController addPhotosTxt=TextEditingController();
-   List<bool> isSelected=[true, false];
+   List<bool> isSelected=[false, false];
    double rating =3;
 
   File? image;
@@ -59,241 +59,255 @@ class _MyHomePageState extends State<FeedBackPage> {
 
     });
   }
+  Future<bool> willPopScopeBack() async{
+    if(userType=="User-JCO"){
+      Navigator.push(context, MaterialPageRoute(builder: (context)=> const JCOComplaintList()));
 
+    }else if(userType=="User-GC"){
+      Navigator.push(context, MaterialPageRoute(builder: (context)=> const GCComplaintList()));
+
+    }else{
+      Navigator.push(context, MaterialPageRoute(builder: (context)=> const MyComplaintListPage()));
+    }
+    return true;
+  }
   @override
   Widget build(BuildContext context) {
 
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0.0,
-        leading: BackLeadingButton(onPressed: () {
-          if(userType=="1"){
-            Navigator.push(context, MaterialPageRoute(builder: (context)=> JCOComplaintList()));
+    return WillPopScope(
+      onWillPop:willPopScopeBack,
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0.0,
+          leading: BackLeadingButton(onPressed: () {
+            if(userType=="User-JCO"){
+              Navigator.push(context, MaterialPageRoute(builder: (context)=> const JCOComplaintList()));
 
-          }else if(userType=="2"){
-            Navigator.push(context, MaterialPageRoute(builder: (context)=> GCComplaintList()));
+            }else if(userType=="User-GC"){
+              Navigator.push(context, MaterialPageRoute(builder: (context)=> const GCComplaintList()));
 
-          }else{
-            Navigator.push(context, MaterialPageRoute(builder: (context)=> MyComplaintListPage()));
-          }
-        },),
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            userType=="1"?
-            Text("JCO/OR Dashboard",style: StyleForApp.appBarTextStyle,)
-                :userType=="2"?
-            Text("GC Dashboard",style: StyleForApp.appBarTextStyle,)
-                :Text("Officer Admin Dashboard",style: StyleForApp.appBarTextStyle,),
-          ],
+            }else{
+              Navigator.push(context, MaterialPageRoute(builder: (context)=> const MyComplaintListPage()));
+            }
+          },),
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              userType=="User-JCO"?
+              Text("JCO/OR Dashboard",style: StyleForApp.appBarTextStyle,)
+                  :userType=="User-GC"?
+              Text("GC Dashboard",style: StyleForApp.appBarTextStyle,)
+                  :Text("Officer  Dashboard",style: StyleForApp.appBarTextStyle,),
+            ],
+          ),
         ),
-      ),
-      body: SizedBox(
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height,
-        child: SingleChildScrollView(
-          controller: ScrollController(),
-          child: Padding(
-            padding: const EdgeInsets.all(15.0),
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text("Give Feedback",style: StyleForApp.subHeadline,),
-                  const SizedBox(height: 30,),
-                  Container(
-                    width: double.infinity,
-                   // height: 40,
-                    decoration: BoxDecoration(
-                        color: HexColor("#4A50C9").withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(10.0)
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(height: 20,),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 3, bottom: 2, right: 30, left: 30),
-                          child: Text("${widget.issueModel.houseComplaintId}",style: StyleForApp.textStyle15dp,),
-                        ),
-                       // const SizedBox(height: 10,),
-                        userType=="1"||userType=="2"?Container():  Padding(
-                          padding: const EdgeInsets.only(top: 3, bottom: 3, right: 30, left: 30),
-                          child: Text("${widget.issueModel.issue}",style: StyleForApp.textStyle15dp,),
-                        ),
-                       // const SizedBox(height: 10,),
-                        userType=="1"||userType=="2"?Container(padding: EdgeInsets.zero,): Padding(
-                          padding: const EdgeInsets.only(top: 3, bottom: 3, right: 30, left: 30),
-                          child: Text("${widget.issueModel.subIssue}",style: StyleForApp.textStyle15dp,),
-                        ),
-                        const SizedBox(height: 10,),
-                        if(showAddPhotoUI==true)
-                        CommonTextField.commonTextField(null, "Comment", describeComplaintTxt, TextInputType.text)
-                       else Padding(
-                          padding: const EdgeInsets.only(top: 3, bottom: 3, right: 30, left: 30),
-                          child: Text("Description :${widget.issueModel.description}",style: StyleForApp.textStyle15dp,),
-                        ),
-                        const SizedBox(height: 10,),
-                        Visibility(
-                          visible: showAddPhotoUI,
-                          child: Padding(
-                            padding: const EdgeInsets.only(top: 3, bottom: 3, right: 30, left: 30),
-                            child: Row(
-                              children: [
-                               // CommonTextField.commonTextField(null, "Add Photos", stationTxt, TextInputType.text),
-                                image!=null?
-                                Container(
-                                    height: 100,
-                                    width: 100,
-                                    decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(10.0),
-                                        color: ColorsForApp.grayColor,
-                                        border: Border.all()
-                                    ),
-                                    child: Image.file(image!)
-                                ):
-                                Container(
-                                  height: 47,
-                                  width: 240,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10.0),
-                                    color: ColorsForApp.whiteColor,
-                                    // border: Border.all()
-                                  ),
-                                  child: TextFormField(
-                                    controller: addPhotosTxt,
-                                    textInputAction: TextInputAction.done,
-                                    autofocus: false,
-                                    style: const TextStyle(fontSize: 13),
-                                    //keyboardType: type,
-                                    decoration: InputDecoration(
-                                      contentPadding: const EdgeInsets.all(8.0),
-                                      // prefixIcon: Icon(icon, color: SavangadiAppTheme.grey,),
-                                      counterText: "",
-                                      // iconColor: ColorsForApp.lightGrayColor,
-                                      isDense: true,
-                                      fillColor: Colors.black,
-                                      //border: OutlineInputBorder(),
-                                      labelText: "Add Photos",
-                                      labelStyle:  TextStyle(
-                                          fontWeight: FontWeight.w400,
-                                          fontSize: 15.0, color: ColorsForApp.grayLabelColor),
-
-                                      border: InputBorder.none,
-
-                                    ),
-                                    minLines: 1,
-                                    maxLines: 2,
-                                  ),
-                                ),
-                                Expanded(child: IconButton(onPressed: (){
-                                  pickImage();
-                                }, icon: const Icon(Icons.add_box)))
-                              ],
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 10,),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 3, bottom: 3, right: 30, left: 30),
-                          child: SizedBox(
-                            height: 40,
-                            child: ToggleButtons(
-                              disabledBorderColor: ColorsForApp.grayColor,
-                              disabledColor: ColorsForApp.grayColor,
-                              //color: Colors.black,
-                              //borderColor: Colors.black,
-                              fillColor: ColorsForApp.appButtonColor,
-                              borderWidth: 2,
-                              selectedBorderColor: ColorsForApp.appButtonColor,
-                              selectedColor: ColorsForApp.appButtonColor,
-                              borderRadius: BorderRadius.circular(0),
-                              onPressed: (int index) {
-                                setState(() {
-                                  for (int i = 0; i < isSelected.length; i++) {
-                                    isSelected[i] = i == index;
-                                    print("selected==>${isSelected[i]}");
-                                    if(isSelected[i]==false){
-                                      showAddPhotoUI=false;
-                                      status="1";
-                                      // updateComplaintStatus(issueModelClass.userComplaintId,"1");
-
-                                    }else{
-                                      showAddPhotoUI=true;
-                                      status="2";
-                                      // updateComplaintStatus(issueModelClass.userComplaintId,"2");
-
-                                    }
-                                  }
-                                });
-                              },
-                              isSelected: isSelected,
-                              children: const <Widget>[
-                                Padding(
-                                  padding:  EdgeInsets.all(8.0),
-                                  child: Text(
-                                    'Resolved',
-                                    style: TextStyle(fontSize: 16,color: Colors.white),
-                                  ),
-                                ),
-                                Padding(
-                                  padding:  EdgeInsets.all(8.0),
-                                  child: Text(
-                                    'Not Resolved',
-                                    style: TextStyle(fontSize: 16,color: Colors.white),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 20,),
-
-                      Padding(
-                        padding: const EdgeInsets.only(top: 3, bottom: 3, right: 30, left: 30),
-                        child: RatingBar.builder(
-                          initialRating: rating,
-                          minRating: 1,
-                          direction: Axis.horizontal,
-                          allowHalfRating: true,
-                          itemCount: 5,
-                          itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
-                          itemBuilder: (context, _) => const Icon(
-                            Icons.star,
-                            color: Colors.amber,
-                          ),
-                          onRatingUpdate: (rating1) {
-
-                            rating=rating1;
-                            print(rating);
-                          },
-                        ),
+        body: SizedBox(
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height,
+          child: SingleChildScrollView(
+            controller: ScrollController(),
+            child: Padding(
+              padding: const EdgeInsets.all(15.0),
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text("Give Feedback",style: StyleForApp.subHeadline,),
+                    const SizedBox(height: 30,),
+                    Container(
+                      width: double.infinity,
+                     // height: 40,
+                      decoration: BoxDecoration(
+                          color: HexColor("#4A50C9").withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(10.0)
                       ),
-                        const SizedBox(height: 30,),
-                        CommonButtonForAllApp(onPressed: (){
-                          if(status=="1"){
-                            print("Resolved");
-                            updateResolvedStatus(widget.issueModel.houseComplaintId.toString(),"1");
-                          }else{
-                            print("NOt Resolved");
-                            updateNotResolvedStatus(widget.issueModel.houseComplaintId.toString(), "2");
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 20,),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 3, bottom: 2, right: 30, left: 30),
+                            child: Text("${widget.issueModel.houseComplaintId}",style: StyleForApp.textStyle15dp,),
+                          ),
+                         // const SizedBox(height: 10,),
+                          userType=="1"||userType=="2"?Container():  Padding(
+                            padding: const EdgeInsets.only(top: 3, bottom: 3, right: 30, left: 30),
+                            child: Text("${widget.issueModel.issue}",style: StyleForApp.textStyle15dp,),
+                          ),
+                         // const SizedBox(height: 10,),
+                          userType=="1"||userType=="2"?Container(padding: EdgeInsets.zero,): Padding(
+                            padding: const EdgeInsets.only(top: 3, bottom: 3, right: 30, left: 30),
+                            child: Text("${widget.issueModel.subIssue}",style: StyleForApp.textStyle15dp,),
+                          ),
+                          const SizedBox(height: 10,),
+                          if(showAddPhotoUI==true)
+                          CommonTextField.commonTextField(null, "Comment", describeComplaintTxt, TextInputType.text)
+                         else Padding(
+                            padding: const EdgeInsets.only(top: 3, bottom: 3, right: 30, left: 30),
+                            child: Text("Description :${widget.issueModel.description}",style: StyleForApp.textStyle15dp,),
+                          ),
+                          const SizedBox(height: 10,),
+                          Visibility(
+                            visible: showAddPhotoUI,
+                            child: Padding(
+                              padding: const EdgeInsets.only(top: 3, bottom: 3, right: 30, left: 30),
+                              child: Row(
+                                children: [
+                                 // CommonTextField.commonTextField(null, "Add Photos", stationTxt, TextInputType.text),
+                                  image!=null?
+                                  Container(
+                                      height: 100,
+                                      width: 100,
+                                      decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(10.0),
+                                          color: ColorsForApp.grayColor,
+                                          border: Border.all()
+                                      ),
+                                      child: Image.file(image!)
+                                  ):
+                                  Container(
+                                    height: 47,
+                                    width: 240,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10.0),
+                                      color: ColorsForApp.whiteColor,
+                                      // border: Border.all()
+                                    ),
+                                    child: TextFormField(
+                                      controller: addPhotosTxt,
+                                      textInputAction: TextInputAction.done,
+                                      autofocus: false,
+                                      style: const TextStyle(fontSize: 13),
+                                      //keyboardType: type,
+                                      decoration: InputDecoration(
+                                        contentPadding: const EdgeInsets.all(8.0),
+                                        // prefixIcon: Icon(icon, color: SavangadiAppTheme.grey,),
+                                        counterText: "",
+                                        // iconColor: ColorsForApp.lightGrayColor,
+                                        isDense: true,
+                                        fillColor: Colors.black,
+                                        //border: OutlineInputBorder(),
+                                        labelText: "Add Photos",
+                                        labelStyle:  TextStyle(
+                                            fontWeight: FontWeight.w400,
+                                            fontSize: 15.0, color: ColorsForApp.grayLabelColor),
 
-                          }
+                                        border: InputBorder.none,
 
-                       //   Navigator.push(context, MaterialPageRoute(builder: (context)=>const MyComplaintListPage()));
+                                      ),
+                                      minLines: 1,
+                                      maxLines: 2,
+                                    ),
+                                  ),
+                                  Expanded(child: IconButton(onPressed: (){
+                                    pickImage();
+                                  }, icon: const Icon(Icons.add_box)))
+                                ],
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 10,),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 3, bottom: 3, right: 30, left: 30),
+                            child: SizedBox(
+                              height: 40,
+                              child: ToggleButtons(
+                                disabledBorderColor: ColorsForApp.grayColor,
+                                disabledColor: ColorsForApp.grayColor,
+                                //color: Colors.black,
+                                //borderColor: Colors.black,
+                                fillColor: ColorsForApp.appButtonColor,
+                                borderWidth: 2,
+                                selectedBorderColor: ColorsForApp.appButtonColor,
+                                selectedColor: ColorsForApp.appButtonColor,
+                                borderRadius: BorderRadius.circular(0),
+                                onPressed: (int index) {
+                                  setState(() {
+                                    for (int i = 0; i < isSelected.length; i++) {
+                                      isSelected[i] = i == index;
+                                      print("selected==>${isSelected[i]}");
+                                      if(isSelected[i]==false){
+                                        showAddPhotoUI=false;
+                                        status="1";
+                                        // updateComplaintStatus(issueModelClass.userComplaintId,"1");
 
-                        }, title: "Submit"),
-                        const SizedBox(height: 20,),
-                      ],
+                                      }else{
+                                        showAddPhotoUI=true;
+                                        status="2";
+                                        // updateComplaintStatus(issueModelClass.userComplaintId,"2");
+
+                                      }
+                                    }
+                                  });
+                                },
+                                isSelected: isSelected,
+                                children: const <Widget>[
+                                  Padding(
+                                    padding:  EdgeInsets.all(8.0),
+                                    child: Text(
+                                      'Resolved',
+                                      style: TextStyle(fontSize: 16,color: Colors.white),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding:  EdgeInsets.all(8.0),
+                                    child: Text(
+                                      'Not Resolved',
+                                      style: TextStyle(fontSize: 16,color: Colors.white),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 20,),
+
+                        Padding(
+                          padding: const EdgeInsets.only(top: 3, bottom: 3, right: 30, left: 30),
+                          child: RatingBar.builder(
+                            initialRating: rating,
+                            minRating: 1,
+                            direction: Axis.horizontal,
+                            allowHalfRating: true,
+                            itemCount: 5,
+                            itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
+                            itemBuilder: (context, _) => const Icon(
+                              Icons.star,
+                              color: Colors.amber,
+                            ),
+                            onRatingUpdate: (rating1) {
+
+                              rating=rating1;
+                              print(rating);
+                            },
+                          ),
+                        ),
+                          const SizedBox(height: 30,),
+                          CommonButtonForAllApp(onPressed: (){
+                            if(status=="1"){
+                              print("Resolved");
+                              updateResolvedStatus(widget.issueModel.houseComplaintId.toString(),"1");
+                            }else{
+                              print("NOt Resolved");
+                              updateNotResolvedStatus(widget.issueModel.houseComplaintId.toString(), "2");
+
+                            }
+
+                         //   Navigator.push(context, MaterialPageRoute(builder: (context)=>const MyComplaintListPage()));
+
+                          }, title: "Submit"),
+                          const SizedBox(height: 20,),
+                        ],
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 10,),
+                    const SizedBox(height: 10,),
 
-                  //downloadAndShare()
+                    //downloadAndShare()
 
-                ],
+                  ],
+                ),
               ),
             ),
           ),
@@ -337,7 +351,15 @@ class _MyHomePageState extends State<FeedBackPage> {
       if(response.statusCode==200){
         DialogBuilder(context).hideOpenDialog();
         Fluttertoast.showToast(msg: "Save successfully");
-        Navigator.push(context, MaterialPageRoute(builder: (context)=>MyComplaintListPage()));
+        if(userType=="User-JCO"){
+          Navigator.push(context, MaterialPageRoute(builder: (context)=> const JCOComplaintList()));
+
+        }else if(userType=="User-GC"){
+          Navigator.push(context, MaterialPageRoute(builder: (context)=> const GCComplaintList()));
+
+        }else{
+          Navigator.push(context, MaterialPageRoute(builder: (context)=> const MyComplaintListPage()));
+        }
       }else{
         DialogBuilder(context).hideOpenDialog();
         Fluttertoast.showToast(msg: "Something went wrong please try again!");
@@ -380,7 +402,15 @@ class _MyHomePageState extends State<FeedBackPage> {
       if(response.statusCode==200){
         DialogBuilder(context).hideOpenDialog();
         Fluttertoast.showToast(msg: "Save successfully");
-        Navigator.push(context, MaterialPageRoute(builder: (context)=>MyComplaintListPage()));
+        if(userType=="User-JCO"){
+          Navigator.push(context, MaterialPageRoute(builder: (context)=> const JCOComplaintList()));
+
+        }else if(userType=="User-GC"){
+          Navigator.push(context, MaterialPageRoute(builder: (context)=> const GCComplaintList()));
+
+        }else{
+          Navigator.push(context, MaterialPageRoute(builder: (context)=> const MyComplaintListPage()));
+        }
 
       }else{
         DialogBuilder(context).hideOpenDialog();

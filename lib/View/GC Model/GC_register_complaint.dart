@@ -4,24 +4,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:multi_select_flutter/dialog/multi_select_dialog_field.dart';
+import 'package:multi_select_flutter/util/multi_select_item.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:untitled/App%20Theme/app_theme.dart';
 import 'package:untitled/CustomeWidget/common_button.dart';
 import 'package:untitled/CustomeWidget/custome_dialog.dart';
 import 'package:untitled/CustomeWidget/custome_widget.dart';
-import 'package:untitled/View/User%20Model/Model/HouseModelPage.dart';
-import 'package:untitled/View/User%20Model/Model/IssueTypeModelPage.dart';
 import 'package:untitled/View/User%20Model/Model/LocationModelPage.dart';
-import 'package:untitled/View/User%20Model/Model/SubIssueTypeModelPage.dart';
-import 'package:untitled/View/User%20Model/my_complaints.dart';
 import 'package:http/http.dart' as http;
-
-import '../JCO Model/Model/JCOLocationModel.dart';
 import '../User Model/api_constant.dart';
 import 'GC_complaints_list.dart';
 import 'Model/CabinModel.dart';
-import 'Model/GCBattalionModel.dart';
-import 'Model/GC_CompanyModel.dart';
+
 
 class GCRegisterComplaint extends StatefulWidget {
   const GCRegisterComplaint({Key? key}) : super(key: key);
@@ -46,18 +41,29 @@ class _MyHomePageState extends State<GCRegisterComplaint> {
   dynamic selectCabin;
   List<HouseNumberModel> companyList=[];
   List<CabinModel> cabinList=[];
+  List<dynamic> selectedCabinList=[];
+  List<dynamic> sendCabinListToAPI=[];
   List<LocationModelClass> locationList=[];
   List<AccommodationModel> batallionList=[];
+  List<TextEditingController> _controllers = [];
+  final List<FocusNode>  focusNode = [];
+   Map<String, dynamic> cabinMap = {};
   File? image1;
   File? image2;
   File? image3;
+      List<MultiSelectItem<CabinModel?>> _items=[];
+
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+   //  _items=List<MultiSelectItem<CabinModel>>;
     getLocationList();
 
+
+  }
+  selectedList(List<String> a){
 
   }
 
@@ -119,17 +125,14 @@ class _MyHomePageState extends State<GCRegisterComplaint> {
                               ),
                               child: DropdownButtonHideUnderline(
                                 child: DropdownButton(
-                                  hint:  const Text(" Select Area",
+                                  hint:  const Text("Select Area",
                                       style: TextStyle(fontWeight: FontWeight.w400,
                                           fontSize: 15.0, color: Colors.black38)
                                   ),
                                   value: selectedArea,
-                                  icon: const Padding(
-                                    padding: EdgeInsets.only(right: 16.0),
-                                    child: Icon(
-                                      Icons.arrow_drop_down_circle,
-                                      size: 20,color: Colors.grey,
-                                    ),
+                                  icon: const Icon(
+                                    Icons.arrow_drop_down_circle,
+                                    size: 20,color: Colors.grey,
                                   ),
                                   isExpanded: true,
                                   isDense: true,
@@ -165,18 +168,15 @@ class _MyHomePageState extends State<GCRegisterComplaint> {
                               ),
                               child: DropdownButtonHideUnderline(
                                 child: DropdownButton(
-                                  hint:  const Text(" Select Batallion",
+                                  hint:  const Text("Select Batallion",
                                       style:  TextStyle(fontWeight: FontWeight.w400,
                                           fontSize: 15.0, color: Colors.black38)
                                   ),
 
                                   value: selectedBatallion,
-                                  icon: const Padding(
-                                    padding: EdgeInsets.only(right: 16.0),
-                                    child: Icon(
-                                      Icons.arrow_drop_down_circle,
-                                      size: 20,color: Colors.grey,
-                                    ),
+                                  icon: const Icon(
+                                    Icons.arrow_drop_down_circle,
+                                    size: 20,color: Colors.grey,
                                   ),
                                   isExpanded: true,
                                   isDense: true,
@@ -215,17 +215,14 @@ class _MyHomePageState extends State<GCRegisterComplaint> {
                               ),
                               child: DropdownButtonHideUnderline(
                                 child: DropdownButton(
-                                  hint: const Text(" Select Company",style: TextStyle(
+                                  hint: const Text("Select Company",style: TextStyle(
                                       fontSize: 15.0, fontWeight: FontWeight.w400,
                                       color: Colors.black38)),
                                   value: selectCompany,
                                   isExpanded: true,
-                                  icon: const Padding(
-                                    padding: EdgeInsets.only(right: 16.0),
-                                    child: Icon(
-                                      Icons.arrow_drop_down_circle,
-                                      size: 20,color: Colors.grey,
-                                    ),
+                                  icon: const Icon(
+                                    Icons.arrow_drop_down_circle,
+                                    size: 20,color: Colors.grey,
                                   ),
                                   isDense: true,
                                   onChanged: (newValue) {
@@ -249,47 +246,185 @@ class _MyHomePageState extends State<GCRegisterComplaint> {
                           ),
                           const SizedBox(height: 10,), Padding(
                             padding: const EdgeInsets.only(top: 3, bottom: 3, right: 30, left: 30),
-                            child: Container(
+                            child: _items.isNotEmpty?
+                            MultiSelectDialogField(
+                                items: _items,
+                                title: const Text("Select"),
+                                selectedColor: Colors.blue,
+                                decoration: BoxDecoration(
+                                  color: ColorsForApp.whiteColor,
+                                  borderRadius: const BorderRadius.all(Radius.circular(10)),
+                                 /* border: Border.all(
+                                    color: Colors.blue,
+                                    width: 2,
+                                  ),*/
+                                ),
+                                buttonIcon: const Icon(
+                                  Icons.arrow_drop_down_circle,
+                                  size: 20,color: Colors.grey,
+                                ),
+                                buttonText: const Text(
+                                  "Select Cabin",
+                                  style:  TextStyle(
+                                    fontSize: 15.0, fontWeight: FontWeight.w400,
+                                    color: Colors.black38)
+                                ),
+                                onConfirm: (results) {
+                                  selectedCabinList=results;
+                                  if(selectedCabinList.isEmpty){
+                                    selectedCabinList.clear();
+                                    _controllers.clear();
+                                    sendCabinListToAPI.clear();
+                                  }
+
+                                  setState(() {
+
+                                  });
+                                  print("confirm-->$selectedCabinList");
+                                }
+                            ):
+                            Container(
                               height: 40,
+                              width: MediaQuery.of(context).size.width,
                               padding: const EdgeInsets.all(8.0),
                               decoration: BoxDecoration(
                                 color: ColorsForApp.whiteColor,
                                 borderRadius: BorderRadius.circular(10.0),
                               ),
-                              child: DropdownButtonHideUnderline(
-                                child: DropdownButton(
-                                  hint: const Text(" Select Cabin",style: TextStyle(
+                              child:Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: const [
+                                  Text(" Select Cabin",style: TextStyle(
                                       fontSize: 15.0, fontWeight: FontWeight.w400,
                                       color: Colors.black38)),
-                                  value: selectCabin,
-                                  isExpanded: true,
-                                  icon: const Padding(
-                                    padding: EdgeInsets.only(right: 16.0),
-                                    child: Icon(
-                                      Icons.arrow_drop_down_circle,
-                                      size: 20,color: Colors.grey,
-                                    ),
+                                  Icon(
+                                    Icons.arrow_drop_down_circle,
+                                    size: 20,color: Colors.grey,
                                   ),
-                                  isDense: true,
-                                  onChanged: (newValue) {
-
-                                    setState(() {
-                                      selectCabin=newValue;
-                                      print('selectCabin-->$selectCabin');
-                                    });
-                                  },
-                                  items: cabinList.map((value) {
-                                    return DropdownMenuItem<String>(
-                                      value: value.houseId.toString(),
-                                      child: Text(value.cabinNo.toString()),
-                                    );
-                                  }).toList(),
-                                ),
+                                ],
                               ),
                             ),
                           ),
                           const SizedBox(height: 10,),
-                          Padding(
+                          selectedCabinList.isNotEmpty
+                          ?Padding(
+                            padding: const EdgeInsets.only(top: 3, bottom: 3, right: 30, left: 30),
+                            child: ListView.builder(
+                              itemCount: selectedCabinList.length,
+                                shrinkWrap: true,
+                                itemBuilder: (context,index){
+                                  _controllers.add(new TextEditingController());
+                                  focusNode.add(FocusNode());
+                                 return Padding(
+                                   padding: const EdgeInsets.only(bottom: 8.0),
+                                   child:
+                                   Column(
+                                     crossAxisAlignment: CrossAxisAlignment.start,
+                                     children: [
+                                       Text(selectedCabinList[index].cabinNo),
+                                       const SizedBox(height: 8,),
+                                       Row(
+                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                         children: [
+                                           Expanded(
+                                             child:/* FocusScope(
+                                               onFocusChange: (value) {
+                                                 if (!value) {
+                                                   //here checkAndUpdate();
+                                                   var cabinMap={
+                                                     "house_id":selectedCabinList[index].houseId,
+                                                     "description":_controllers[index].text,
+                                                   };
+                                                   sendCabinListToAPI.add(cabinMap);
+
+                                                   print("sendCabinListToAPI-->$sendCabinListToAPI");
+                                                 }
+                                               },*/
+                                                Container(
+                                                // height: 40,
+                                                 decoration: BoxDecoration(
+                                                   borderRadius: BorderRadius.circular(10.0),
+                                                   color: ColorsForApp.whiteColor,
+                                                   // border: Border.all()
+                                                 ),
+                                                 child: TextFormField(
+                                                   controller: _controllers[index],
+                                                   textInputAction:TextInputAction.done,
+                                                   focusNode: focusNode[index],
+                                                   autofocus: false,
+                                                   keyboardType: TextInputType.text,
+                                                   decoration: const InputDecoration(
+                                                     contentPadding: EdgeInsets.all(8.0),
+                                                     // prefixIcon: Icon(icon, color: SavangadiAppTheme.grey,),
+                                                     counterText: "",
+                                                     // iconColor: ColorsForApp.lightGrayColor,
+                                                     isDense: true,
+                                                     fillColor: Colors.black,
+                                                     //border: OutlineInputBorder(),
+                                                     labelText: "Description",
+                                                     labelStyle:  TextStyle(
+                                                         fontWeight: FontWeight.w400,
+                                                         fontSize: 15.0, color: Colors.black38),
+
+                                                     border: InputBorder.none,
+
+                                                   ),
+                                                   minLines: 1,
+                                                   maxLines: 4,
+                                                   onFieldSubmitted: (value){
+                                                     focusNode[index].unfocus();
+                                                     focusNode[index].nextFocus();
+
+                                                   },
+                                                 ),
+                                               ),
+                                            // ),
+                                           ),
+                                           const SizedBox(width: 8,),
+                                           ElevatedButton(
+                                               style: ElevatedButton.styleFrom(
+                                                 backgroundColor: ColorsForApp.appButtonColor,
+                                               ),
+                                               onPressed: (){
+                                                 print(selectedCabinList[index].houseId);
+                                                 print('Is the value "Maria" in the map:${cabinMap.containsValue(selectedCabinList[index].houseId)}');
+                                                 if (cabinMap.containsValue(selectedCabinList[index].houseId)==true) {
+                                                   print('inside update');
+                                                   print(selectedCabinList[index].houseId);
+                                                   // item exists: update it
+                                                   //cabinMap.update('house_id', (value) => selectedCabinList[index].houseId);
+                                                   //cabinMap.update('description', (value) => _controllers[index].text);
+                                                   cabinMap.update('house_id', (value) => selectedCabinList[index].houseId,
+                                                       ifAbsent: () => selectedCabinList[index].houseId);
+                                                   cabinMap.update('description', (value) => _controllers[index].text,
+                                                       ifAbsent: () => _controllers[index].text);
+                                                  // sendCabinListToAPI.add(cabinMap);
+                                                   print("update-->$sendCabinListToAPI");
+                                                   Fluttertoast.showToast(msg: "Update successfully");
+
+                                                   print("sendCabinListToAPI-->$sendCabinListToAPI");
+                                                 } else {
+                                                   print('inside add');
+                                                   // item does not exist: set it
+                                                   cabinMap={};
+                                                   cabinMap['house_id'] = selectedCabinList[index].houseId;
+                                                   cabinMap['description'] = _controllers[index].text;
+                                                   sendCabinListToAPI.add(cabinMap);
+                                                   Fluttertoast.showToast(msg: "Save successfully");
+                                                   print("sendCabinListToAPI-->$sendCabinListToAPI");
+                                                 }
+
+                                                 },
+
+                                               child: const Text('Save'))
+                                         ],
+                                       ),
+                                     ],
+                                   ),
+                                 );
+                            }),
+                          ):Container(),
+                          /*Padding(
                             padding: const EdgeInsets.only(top: 3, bottom: 3, right: 30, left: 30),
                             child: Container(
                               height: 90,
@@ -323,114 +458,9 @@ class _MyHomePageState extends State<GCRegisterComplaint> {
                                 maxLines: 4,
                               ),
                             ),
-                          ),
+                          ),*/
                           const SizedBox(height: 10,),
-                           Padding(
-                            padding: const EdgeInsets.only(left: 30.0,right: 20.0,bottom: 10),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: const [
-                                Text("Upload Images (upto 3)",textAlign: TextAlign.start,),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(height: 10,),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 30.0,right: 20.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                // CommonTextField.commonTextField(null, "Add Photos", stationTxt, TextInputType.text),
-                                Expanded(
-                                  child: InkWell(
-                                    onTap: (){
-                                      pickImage1();
-                                   },
-                                    child:image1!=null?
-                                    Container(
-                                        height: 100,
-                                        width: 100,
-                                        decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(10.0),
-                                            color: ColorsForApp.grayColor,
-                                            border: Border.all()
-                                        ),
-                                        child: Image.file(image1!)
-                                    )
-                                    :Container(
-                                        height: 100,
-                                        width: 100,
-                                        decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(10.0),
-                                            color: ColorsForApp.grayColor,
-                                            border: Border.all()
-                                        ),
-                                        child: const Icon(Icons.camera_alt)
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(width: 5,),
-                                Expanded(
-                                  child: InkWell(
-                                    onTap: (){
-                                      pickImage2();
-                                    },
-                                    child:image2!=null?
-                                    Container(
-                                        height: 100,
-                                        width: 100,
-                                        decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(10.0),
-                                            color: ColorsForApp.grayColor,
-                                            border: Border.all()
-                                        ),
-                                        child: Image.file(image2!)
-                                    )
-                                        :Container(
-                                        height: 100,
-                                        width: 100,
-                                        decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(10.0),
-                                            color: ColorsForApp.grayColor,
-                                            border: Border.all()
-                                        ),
-                                        child: const Icon(Icons.camera_alt)
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(width: 5,),
-                                Expanded(
-                                  child: InkWell(
-                                    onTap: (){
-                                      pickImage3();
-                                    },
-                                    child:image3!=null?
-                                    Container(
-                                        height: 100,
-                                        width: 100,
-                                        decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(10.0),
-                                            color: ColorsForApp.grayColor,
-                                            border: Border.all()
-                                        ),
-                                        child: Image.file(image3!)
-                                    )
-                                        :Container(
-                                        height: 100,
-                                        width: 100,
-                                        decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(10.0),
-                                            color: ColorsForApp.grayColor,
-                                            border: Border.all()
-                                        ),
-                                        child: const Icon(Icons.camera_alt)
-                                    ),
-                                  ),
-                                ),
 
-                              ],
-                            ),
-                          ),
                           const SizedBox(height: 40,),
                           CommonButtonForAllApp(
                               onPressed: (){
@@ -446,6 +476,21 @@ class _MyHomePageState extends State<GCRegisterComplaint> {
                                   //   Navigator.push(context, MaterialPageRoute(builder: (context)=>const MyComplaintListPage()));
                                 }
                               }, title: "Submit"),
+                          const SizedBox(height: 10,),
+                          CommonButtonForAllApp(
+                              onPressed: (){
+                                selectedArea=null;
+                                selectedBatallion=null;
+                                selectCompany=null;
+                                selectedCabinList.clear();
+                                sendCabinListToAPI.clear();
+                                _controllers.clear();
+                                focusNode.clear();
+                                setState(() {
+
+                                });
+
+                              }, title: "Reset"),
                           const SizedBox(height: 20,),
                         ],
                       ),
@@ -539,7 +584,10 @@ class _MyHomePageState extends State<GCRegisterComplaint> {
       var decodeRes=json.decode(response.body) as List;
       print("House No-->$decodeRes");
       cabinList = decodeRes.map((tagJson) => CabinModel.fromJson(tagJson)).toList();
-      print("House No-->$companyList");
+       _items = cabinList
+          .map((cabinRes) => MultiSelectItem<CabinModel>(cabinRes, cabinRes.cabinNo.toString()))
+          .toList();
+      print("_items-->$_items");
       setState(() {
 
       });
@@ -556,14 +604,48 @@ class _MyHomePageState extends State<GCRegisterComplaint> {
 
     SharedPreferences preferences = await SharedPreferences.getInstance();
     int? userId=preferences.getInt(UT.userId);
+    Map<String,dynamic> obj={
+      "user_id": userId,
+      "user_type": '2',
+      "cabinMap": sendCabinListToAPI
+    };
+
+    var url=Uri.parse("${APIConstant.APIURL}/register-complaint-1/?secret=d146d69ec7f6635f3f05f2bf4a51b318");
+    var response= await http.post(url, body: jsonEncode(obj));
+
+    var decodeRes=json.decode(response.body);
+    print("RES-->$decodeRes");
+    print(response.statusCode);
+    if(response.statusCode==200||response.statusCode==201){
+      print("RES-->${decodeRes['message']}");
+      if(decodeRes['message']=='Complaint Registered'){
+        DialogBuilder(context).hideOpenDialog();
+        Fluttertoast.showToast(msg: "Complaint Registered successfully");
+        Navigator.push(context, MaterialPageRoute(builder: (context)=>const GCComplaintList()));
+      }else{
+        DialogBuilder(context).hideOpenDialog();
+        Fluttertoast.showToast(msg: "Something went wrong please try again!");
+      }
+    }else{
+      DialogBuilder(context).hideOpenDialog();
+      Fluttertoast.showToast(msg: "Something went wrong please try again!");
+    }
+  }
+/*
+/// multipart request
+postGCComplaint() async{
+
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    int? userId=preferences.getInt(UT.userId);
 
 
     var url=Uri.parse("${APIConstant.APIURL}/register-complaint/?secret=d146d69ec7f6635f3f05f2bf4a51b318");
     var request = http.MultipartRequest("POST", url);
     request.fields['user_id'] = userId.toString();
     request.fields['user_type'] = "2";
-    request.fields['house_id'] = selectCabin;
-    request.fields['description'] =describeComplaintTxt.text.isNotEmpty? describeComplaintTxt.text:"";
+    request.fields['cabinMap'] = sendCabinListToAPI.toString();
+
+   // request.fields['description'] =describeComplaintTxt.text.isNotEmpty? describeComplaintTxt.text:"";
     print(request.fields);
     if(image1?.path!=null){
       request.files.add(
@@ -594,6 +676,8 @@ class _MyHomePageState extends State<GCRegisterComplaint> {
 
     print("url of register complaint-->${url}");
     request.send().then((response) {
+      print(response);
+
       print(response.statusCode);
       print(response.reasonPhrase);
       if (response.statusCode == 201){
@@ -606,7 +690,7 @@ class _MyHomePageState extends State<GCRegisterComplaint> {
         Fluttertoast.showToast(msg: "Something went wrong please try again!");
       }
     });
-  }
+  }*/
 
   Future pickImage1() async {
     try {
@@ -650,4 +734,104 @@ class _MyHomePageState extends State<GCRegisterComplaint> {
 class Cabin{
   String name;
   Cabin(this.name);
+}
+
+class CustomMultiselectDropDown extends StatefulWidget {
+  final Function(List<String>) selectedList;
+  final List<CabinModel> listOFStrings;
+
+  const CustomMultiselectDropDown(
+      {super.key, required this.selectedList, required this.listOFStrings});
+
+  @override
+  createState() {
+    return _CustomMultiselectDropDownState();
+  }
+}
+
+class _CustomMultiselectDropDownState extends State<CustomMultiselectDropDown> {
+  List<String> listOFSelectedItem = [];
+  String selectedText = "";
+
+  @override
+  Widget build(BuildContext context) {
+    var size = MediaQuery.of(context).size;
+    return Container(
+      margin: const EdgeInsets.only(top: 10.0),
+      decoration:
+      BoxDecoration(border: Border.all(color: Colors.grey)),
+      child: ExpansionTile(
+        iconColor: Colors.grey,
+        title: Text(
+          listOFSelectedItem.isEmpty ? "Select" : listOFSelectedItem[0],
+        ),
+        children: <Widget>[
+          ListView.builder(
+            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            itemCount: widget.listOFStrings.length,
+            itemBuilder: (BuildContext context, int index) {
+              return Container(
+                margin: const EdgeInsets.only(bottom: 8.0),
+                child: _ViewItem(
+                    item: widget.listOFStrings[index],
+                    selected: (val) {
+                      selectedText = val;
+                      if (listOFSelectedItem.contains(val)) {
+                        listOFSelectedItem.remove(val);
+                      } else {
+                        listOFSelectedItem.add(val);
+                      }
+                      widget.selectedList(listOFSelectedItem);
+                      setState(() {});
+                    },
+                    itemSelected: listOFSelectedItem
+                        .contains(widget.listOFStrings[index])),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ViewItem extends StatelessWidget {
+ final CabinModel item;
+ final bool itemSelected;
+  final Function(String) selected;
+
+  _ViewItem(
+      {required this.item, required this.itemSelected, required this.selected});
+
+  @override
+  Widget build(BuildContext context) {
+    var size = MediaQuery.of(context).size;
+    return Padding(
+      padding:
+      EdgeInsets.only(left: size.width * .032, right: size.width * .098),
+      child: Row(
+        children: [
+          SizedBox(
+            height: 24.0,
+            width: 24.0,
+            child: Checkbox(
+              value: itemSelected,
+              onChanged: (val) {
+                selected(item.houseId.toString());
+              },
+              activeColor: Colors.blue,
+            ),
+          ),
+          SizedBox(
+            width: size.width * .025,
+          ),
+          Text(
+            item.cabinNo.toString(),
+
+          ),
+        ],
+      ),
+    );
+  }
 }

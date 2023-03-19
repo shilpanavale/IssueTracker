@@ -1,11 +1,9 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:untitled/View/Admin%20Model/add_screteKey.dart';
 import 'package:untitled/View/Admin%20Model/change_password.dart';
 import 'package:untitled/View/Admin%20Model/house_number_list.dart';
 import 'package:untitled/View/Admin%20Model/vendor_list.dart';
-import 'package:untitled/View/User%20Model/my_complaints.dart';
 import 'package:untitled/View/select_user_type.dart';
 
 import '../../App Theme/app_theme.dart';
@@ -22,7 +20,7 @@ class AdminDrawerPage extends StatefulWidget {
 class AdminDrawerPageState extends State<AdminDrawerPage> {
 
 
-  var userType;
+  dynamic userType;
   @override
   void initState() {
     // TODO: implement initState
@@ -33,7 +31,7 @@ class AdminDrawerPageState extends State<AdminDrawerPage> {
   getData() async {
     final prefs = await SharedPreferences.getInstance();
     userType= prefs.getString(UT.appType);
-    print("userType-->$userType");
+    //print("userType-->$userType");
     setState(() {
 
     });
@@ -174,10 +172,10 @@ class AdminDrawerPageState extends State<AdminDrawerPage> {
 
                           final prefs = await SharedPreferences.getInstance();
                           prefs.clear();
-                          Navigator.push(context, MaterialPageRoute(builder: (context)=>SelectUserTypePage()));
+                          Navigator.push(context, MaterialPageRoute(builder: (context)=>const SelectUserTypePage()));
                         },
-                         leading: Icon(Icons.login,color: Colors.white,),
-                        title: Text('Logout',style: TextStyle(fontSize:16,color: Colors.white),)),
+                         leading: const Icon(Icons.login,color: Colors.white,),
+                        title: const Text('Logout',style: TextStyle(fontSize:16,color: Colors.white),)),
                   ),
                 )
             )),

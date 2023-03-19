@@ -316,7 +316,7 @@ class CommonTextField{
 
 
   static passwordTextField(var icon, var labelText,TextEditingController controller,TextInputType type
-      ,bool _passwordVisible,StateSetter stateSetter ) {
+      ,bool passwordVisible,StateSetter stateSetter ) {
     return StatefulBuilder(
       builder: (context,stateSetter){
         return  Padding(
@@ -335,7 +335,7 @@ class CommonTextField{
                   controller: controller,
                   textInputAction: TextInputAction.done,
                   autofocus: false,
-                  obscureText: !_passwordVisible,//This will obscure text dynamically
+                  obscureText: !passwordVisible,//This will obscure text dynamically
                   // maxLength: 10,
                   keyboardType: type,
                   style: TextStyle(fontSize: 14.0, color: ColorsForApp.blackColor),

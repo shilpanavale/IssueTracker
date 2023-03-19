@@ -2,17 +2,12 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:untitled/App%20Theme/app_theme.dart';
-import 'package:untitled/App%20Theme/asset_files.dart';
 import 'package:untitled/App%20Theme/text_fileds.dart';
 import 'package:untitled/CustomeWidget/common_button.dart';
 import 'package:untitled/View/Admin%20Model/setting_page.dart';
-import 'package:untitled/View/Admin%20Model/user_admin_dashboard.dart';
 import 'package:http/http.dart' as http;
 
-import '../GC Model/GC_admin_dashboard.dart';
-import '../JCO Model/JCO_admin_dashboard.dart';
 import '../User Model/api_constant.dart';
 
 class AddSecreteKeyPage extends StatefulWidget {
@@ -72,7 +67,7 @@ class _MyHomePageState extends State<AddSecreteKeyPage> {
     var url=Uri.parse("${APIConstant.APIURL}/secretcode/?secret=d146d69ec7f6635f3f05f2bf4a51b318");
     var response=await http.get(url);
     var decodeRes=json.decode(response.body);
-    print("SK-->$decodeRes");
+    //print("SK-->$decodeRes");
 
     secreteKey.text=decodeRes[0]['secret'];
     oldSecret=decodeRes[0]['secret'];
@@ -90,12 +85,12 @@ class _MyHomePageState extends State<AddSecreteKeyPage> {
     var url=Uri.parse("${APIConstant.APIURL}/secretcode/?secret=d146d69ec7f6635f3f05f2bf4a51b318");
     var response= await http.patch(url, body: jsonEncode(obj));
     var decodeRes=json.decode(response.body);
-    print("decodeRes-->$decodeRes");
+    //print("decodeRes-->$decodeRes");
     if(decodeRes['message']==false){
       Fluttertoast.showToast(msg: "Something went wrong please try again!");
     }else{
       Fluttertoast.showToast(msg: "Update Successfully");
-      Navigator.push(context, MaterialPageRoute(builder: (context)=>SettingPage()));
+      Navigator.push(context, MaterialPageRoute(builder: (context)=>const SettingPage()));
 
     }
 

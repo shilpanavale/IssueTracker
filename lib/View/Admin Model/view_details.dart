@@ -73,7 +73,7 @@ class _MyHomePageState extends State<DetailsScreen> {
             Navigator.push(context, MaterialPageRoute(builder: (context)=> GCAdminComplaintListPage(statusFlag: widget.statusFlag,)));
 
           }else{
-            Navigator.push(context, MaterialPageRoute(builder: (context)=> ComplaintListPage(statusFlag: widget.statusFlag,)));
+            Navigator.push(context, MaterialPageRoute(builder: (context)=> AdminComplaintList(statusFlag: widget.statusFlag,)));
           }
         },),
         title: Row(

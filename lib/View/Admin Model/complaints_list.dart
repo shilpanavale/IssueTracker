@@ -1,24 +1,18 @@
 import 'dart:convert';
-import 'dart:typed_data';
 import 'dart:io';
-import 'dart:ui' as ui;
-import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:gallery_saver/gallery_saver.dart';
 import 'package:intl/intl.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:pie_chart/pie_chart.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
 import 'package:untitled/App%20Theme/app_theme.dart';
 import 'package:untitled/App%20Theme/asset_files.dart';
-import 'package:untitled/App%20Theme/text_fileds.dart';
-import 'package:untitled/CustomeWidget/common_button.dart';
+
 import 'package:untitled/CustomeWidget/custome_dialog.dart';
 import 'package:untitled/CustomeWidget/custome_widget.dart';
 import 'package:untitled/View/Admin%20Model/Model/IssueModel.dart';
@@ -28,19 +22,18 @@ import 'package:untitled/View/Admin%20Model/view_details.dart';
 import '../User Model/api_constant.dart';
 import 'package:http/http.dart' as http;
 
-import '../User Model/enter_feedback.dart';
 
 
-class ComplaintListPage extends StatefulWidget {
-  final statusFlag;
-  const ComplaintListPage({Key? key, this.statusFlag}) : super(key: key);
+class AdminComplaintList extends StatefulWidget {
+  final String statusFlag;
+  const AdminComplaintList({Key? key, required this.statusFlag}) : super(key: key);
 
 
   @override
-  State<ComplaintListPage> createState() => _MyHomePageState();
+  State<AdminComplaintList> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<ComplaintListPage> {
+class _MyHomePageState extends State<AdminComplaintList> {
 
   final colorList = <Color>[
     Colors.greenAccent,
@@ -363,7 +356,7 @@ class _MyHomePageState extends State<ComplaintListPage> {
                   final directory = await getApplicationDocumentsDirectory();
                   final imagePath = await File('${directory.path}/image.png').create();
                   await imagePath.writeAsBytes(image);
-                  print("sharing");
+                  //print("sharing");
 
                   /// Share Plugin
                    await GallerySaver.saveImage(imagePath.path).then((value) {
@@ -417,8 +410,8 @@ class _MyHomePageState extends State<ComplaintListPage> {
     //var url=Uri.parse("${APIConstant.APIURL}/register-complaint/?secret=d146d69ec7f6635f3f05f2bf4a51b318");
     //2022-11-06 00:00:00' AND '2022-11-07 23:59:59'
 
-    var frmDt,toDt;
-    var url;
+    dynamic frmDt,toDt;
+    dynamic url;
     if(fromDate!=''&&toDate!=''){
       fromDate = DateFormat('yyyy-MM-dd').format(DateTime.parse(fromDate));
       toDate = DateFormat('yyyy-MM-dd').format(DateTime.parse(toDate));
@@ -433,9 +426,9 @@ class _MyHomePageState extends State<ComplaintListPage> {
 
       //https://api.creshsolutions.com/register-complaint/?from=&to=&secret=d146d69ec7f6635f3f05f2bf4a51b318
     }
-    print("url-->$url");
+    //print("url-->$url");
     var response= await http.get(url);
-    print(response.body);
+    //print(response.body);
     if (response.statusCode == 200) {
       var decodeRes=json.decode(response.body) as List;
      // vendors = decodeRes.map((tagJson) => IssueModelClass.fromJson(tagJson)).toList();
@@ -478,12 +471,11 @@ class _MyHomePageState extends State<ComplaintListPage> {
     //var url=Uri.parse("${APIConstant.APIURL}/register-complaint/?secret=d146d69ec7f6635f3f05f2bf4a51b318");
     //2022-11-06 00:00:00' AND '2022-11-07 23:59:59'
 
-    var frmDt,toDt;
-    var url;
+    dynamic frmDt,toDt;
+    dynamic url;
     final DateFormat formatter = DateFormat('yyyy-MM-dd');
     final String formattedFrm = formatter.format(fromDate);
 
-    final DateFormat formatter1 = DateFormat('yyyy-MM-dd');
     final String formattedTo = formatter.format(toDate);
 
     frmDt="$formattedFrm 000:00:00";
@@ -655,7 +647,7 @@ class _MyHomePageState extends State<ComplaintListPage> {
                       children: <Widget>[
                         ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                                primary: ColorsForApp.grayColor,
+                                backgroundColor: ColorsForApp.grayColor,
                                 textStyle: TextStyle(
                                     color: ColorsForApp.blackColor
                                 )
@@ -712,7 +704,7 @@ class _MyHomePageState extends State<ComplaintListPage> {
             ),
             textButtonTheme: TextButtonThemeData(
               style: TextButton.styleFrom(
-                primary: Colors.red, // button text color
+                foregroundColor: Colors.red, // button text color
               ),
             ),
           ),
@@ -747,7 +739,7 @@ class _MyHomePageState extends State<ComplaintListPage> {
             ),
             textButtonTheme: TextButtonThemeData(
               style: TextButton.styleFrom(
-                primary: Colors.red, // button text color
+                foregroundColor: Colors.red, // button text color
               ),
             ),
           ),

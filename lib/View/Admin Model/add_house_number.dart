@@ -1,21 +1,15 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:pie_chart/pie_chart.dart';
+
 import 'package:untitled/App%20Theme/app_theme.dart';
-import 'package:untitled/App%20Theme/asset_files.dart';
+
 import 'package:untitled/App%20Theme/text_fileds.dart';
 import 'package:untitled/CustomeWidget/common_button.dart';
 import 'package:untitled/CustomeWidget/custome_widget.dart';
-import 'package:untitled/View/Admin%20Model/user_admin_dashboard.dart';
 import 'package:untitled/View/Admin%20Model/house_number_list.dart';
-import 'package:untitled/View/Admin%20Model/vendor_list.dart';
 import 'package:untitled/View/User%20Model/api_constant.dart';
-import 'package:untitled/View/User%20Model/my_complaints.dart';
 import 'package:http/http.dart' as http;
 
 import '../../CustomeWidget/custome_dialog.dart';
@@ -174,10 +168,10 @@ class _MyHomePageState extends State<AddHouseNumber> {
       "house_no": houseNumberTxt.text
     };
 
-    print('add house number-->$obj');
+    //print('add house number-->$obj');
     var url=Uri.parse("${APIConstant.APIURL}/house/?secret=d146d69ec7f6635f3f05f2bf4a51b318");
     var response= await http.post(url, body: jsonEncode(obj));
-    print("RES-->${response.body}");
+   // print("RES-->${response.body}");
     var decodeRes=json.decode(response.body);
     var msg=decodeRes["message"];
     if(msg=="House Created") {

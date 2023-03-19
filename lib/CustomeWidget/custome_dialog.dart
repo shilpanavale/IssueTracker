@@ -1,7 +1,5 @@
 import 'dart:io';
-import 'dart:ui';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:untitled/App%20Theme/app_theme.dart';
 import 'package:untitled/App%20Theme/asset_files.dart';
@@ -34,7 +32,7 @@ dialogContent(BuildContext context) {
             left: Consts.padding,
             right: Consts.padding,
           ),
-          margin: EdgeInsets.only(top: Consts.avatarRadius),
+          margin: const EdgeInsets.only(top: Consts.avatarRadius),
           decoration: BoxDecoration(
             color: Colors.white,
             shape: BoxShape.rectangle,

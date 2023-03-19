@@ -91,19 +91,17 @@ class _MyHomePageState extends State<UserAdminDashboardPage> {
               color: Colors.black
           ),
 
-          leading: Builder(
-            builder: (context) => IconButton(
-              icon: Container(
-                height: 25,width: 25,
-                decoration:  const BoxDecoration(
-                  color: Colors.transparent,
-                ),
-                child: Image.asset(
-                  AssetFiles.menu,
-                ),
+          leading: IconButton(
+            icon: Container(
+              height: 25,width: 25,
+              decoration:  const BoxDecoration(
+                color: Colors.transparent,
               ),
-              onPressed: () => Scaffold.of(context).openDrawer(),
+              child: Icon(Icons.arrow_back_ios, color: ColorsForApp.blackColor, size: 16,),
             ),
+            onPressed: (){
+              Navigator.push(context, MaterialPageRoute(builder: (context)=>const NewAdminDashboard()));
+            },
           ),
           title: Column(
             children: [
@@ -578,7 +576,7 @@ class _MyHomePageState extends State<UserAdminDashboardPage> {
     return  InkWell(
       onTap: (){
         Navigator.push(context, MaterialPageRoute(builder: (context)=>
-        const ComplaintListPage(statusFlag: "not resolved",)));
+        const AdminComplaintList(statusFlag: "not resolved",)));
       },
       child: Padding(
         padding: const EdgeInsets.all(15.0),
@@ -618,7 +616,7 @@ class _MyHomePageState extends State<UserAdminDashboardPage> {
     return  InkWell(
       onTap: (){
         Navigator.push(context, MaterialPageRoute(builder: (context)=>
-        const ComplaintListPage(statusFlag: "Not Assigned",)));
+        const AdminComplaintList(statusFlag: "Not Assigned",)));
         },
       child: Padding(
         padding: const EdgeInsets.all(15.0),
@@ -658,7 +656,7 @@ class _MyHomePageState extends State<UserAdminDashboardPage> {
     return  InkWell(
       onTap: (){
         Navigator.push(context, MaterialPageRoute(builder: (context)=>
-        const ComplaintListPage(statusFlag: 'Assigned',)));
+        const AdminComplaintList(statusFlag: 'Assigned',)));
         },
       child: Padding(
         padding: const EdgeInsets.all(15.0),
@@ -697,7 +695,7 @@ class _MyHomePageState extends State<UserAdminDashboardPage> {
   Widget resolvedUI(BuildContext context){
     return  InkWell(
       onTap: (){
-        Navigator.push(context, MaterialPageRoute(builder: (context)=>const ComplaintListPage(statusFlag: "Resolved",)));
+        Navigator.push(context, MaterialPageRoute(builder: (context)=>const AdminComplaintList(statusFlag: "Resolved",)));
         },
       child: Padding(
         padding: const EdgeInsets.all(15.0),

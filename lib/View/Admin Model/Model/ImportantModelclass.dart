@@ -1,21 +1,21 @@
 class ImportantIssueModel {
-  String? userId;
-  String? houseComplaintId;
-  String? catIssueId;
-  String? subIssueId;
-  String? houseId;
-  String? issueCreatedOn;
-  String? imageUrl;
-  String? description;
-  String? userComplaintId;
-  String? status;
-  String? vendorId;
-  String? createdOn;
-  String? issue;
-  String? escalation1;
-  String? subIssue;
-  String? houseNo;
-  int? escalation;
+  dynamic userId;
+  dynamic houseComplaintId;
+  dynamic catIssueId;
+  dynamic subIssueId;
+  dynamic houseId;
+  dynamic issueCreatedOn;
+  dynamic imageUrl;
+  dynamic description;
+  dynamic userComplaintId;
+  dynamic status;
+  dynamic vendorId;
+  dynamic createdOn;
+  dynamic issue;
+  dynamic escalation1;
+  dynamic subIssue;
+  dynamic houseNo;
+  dynamic escalation;
 
   ImportantIssueModel(
       {this.userId,
@@ -57,24 +57,24 @@ class ImportantIssueModel {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['user_id'] = this.userId;
-    data['house_complaint_id'] = this.houseComplaintId;
-    data['cat_issue_id'] = this.catIssueId;
-    data['sub_issue_id'] = this.subIssueId;
-    data['house_id'] = this.houseId;
-    data['issue_created_on'] = this.issueCreatedOn;
-    data['image_url'] = this.imageUrl;
-    data['description'] = this.description;
-    data['user_complaint_id'] = this.userComplaintId;
-    data['status'] = this.status;
-    data['vendor_id'] = this.vendorId;
-    data['created_on'] = this.createdOn;
-    data['issue'] = this.issue;
-    data['escalation_1'] = this.escalation1;
-    data['sub_issue'] = this.subIssue;
-    data['house_no'] = this.houseNo;
-    data['Escalation'] = this.escalation;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['user_id'] = userId;
+    data['house_complaint_id'] = houseComplaintId;
+    data['cat_issue_id'] = catIssueId;
+    data['sub_issue_id'] = subIssueId;
+    data['house_id'] = houseId;
+    data['issue_created_on'] = issueCreatedOn;
+    data['image_url'] = imageUrl;
+    data['description'] = description;
+    data['user_complaint_id'] = userComplaintId;
+    data['status'] = status;
+    data['vendor_id'] = vendorId;
+    data['created_on'] = createdOn;
+    data['issue'] = issue;
+    data['escalation_1'] = escalation1;
+    data['sub_issue'] = subIssue;
+    data['house_no'] = houseNo;
+    data['Escalation'] = escalation;
     return data;
   }
 }

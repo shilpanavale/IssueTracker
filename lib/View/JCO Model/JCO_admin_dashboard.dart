@@ -92,20 +92,18 @@ class _MyHomePageState extends State<JCOAdminDashboardPage> {
           iconTheme: IconThemeData(
               color: Colors.black
           ),
-         /* leading: Builder(
-            builder: (context) => IconButton(
-              icon: Container(
-                height: 25,width: 25,
-                decoration:  const BoxDecoration(
-                  color: Colors.transparent,
-                ),
-                child: Image.asset(
-                  AssetFiles.menu,
-                ),
+          leading: IconButton(
+            icon: Container(
+              height: 25,width: 25,
+              decoration:  const BoxDecoration(
+                color: Colors.transparent,
               ),
-              onPressed: () => Scaffold.of(context).openDrawer(),
+              child: Icon(Icons.arrow_back_ios, color: ColorsForApp.blackColor, size: 16,),
             ),
-          ),*/
+            onPressed: (){
+              Navigator.push(context, MaterialPageRoute(builder: (context)=>const NewAdminDashboard()));
+            },
+          ),
 
           title: Column(
             children: [

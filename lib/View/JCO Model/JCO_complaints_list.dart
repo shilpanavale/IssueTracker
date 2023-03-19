@@ -264,7 +264,7 @@ class _MyHomePageState extends State<JCOComplaintList> {
                 children: [
                   Expanded(child: Text(issueModelClass.description!=null?issueModelClass.description!:"",textAlign:TextAlign.start,style: StyleForApp.textStyle16dpBold,)),
 
-                  issueModelClass.status=="Assigned"?
+                  issueModelClass.status=="Assigned"||issueModelClass.status=="Resolved"||issueModelClass.status=="Not Resolved"?
 
                   InkWell(
                   onTap: (){
