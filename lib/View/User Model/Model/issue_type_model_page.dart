@@ -10,9 +10,9 @@ class IssueTypeModel {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['issue_id'] = this.issueId;
-    data['issue'] = this.issue;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['issue_id'] = issueId;
+    data['issue'] = issue;
     return data;
   }
 }

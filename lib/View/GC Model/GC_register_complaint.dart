@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -45,7 +46,7 @@ class _MyHomePageState extends State<GCRegisterComplaint> {
   List<dynamic> sendCabinListToAPI=[];
   List<LocationModelClass> locationList=[];
   List<AccommodationModel> batallionList=[];
-  List<TextEditingController> _controllers = [];
+  final List<TextEditingController> _controllers = [];
   final List<FocusNode>  focusNode = [];
    Map<String, dynamic> cabinMap = {};
   File? image1;
@@ -142,7 +143,7 @@ class _MyHomePageState extends State<GCRegisterComplaint> {
                                       selectCompany=null;
                                       selectCabin=null;
                                       selectedArea=newValue;
-                                      print('selectedLocation--->$selectedArea');
+
                                       getAccommodationList(selectedArea);
                                     });
                                   },
@@ -230,7 +231,7 @@ class _MyHomePageState extends State<GCRegisterComplaint> {
                                     setState(() {
                                       selectCabin=null;
                                       selectCompany=newValue;
-                                      print('selectHouseNo-->$selectCompany');
+
                                     });
                                     getCabinList(selectedArea,selectedBatallion,selectCompany);
                                   },
@@ -280,7 +281,6 @@ class _MyHomePageState extends State<GCRegisterComplaint> {
                                   setState(() {
 
                                   });
-                                  print("confirm-->$selectedCabinList");
                                 }
                             ):
                             Container(
@@ -313,7 +313,7 @@ class _MyHomePageState extends State<GCRegisterComplaint> {
                               itemCount: selectedCabinList.length,
                                 shrinkWrap: true,
                                 itemBuilder: (context,index){
-                                  _controllers.add(new TextEditingController());
+                                  _controllers.add(TextEditingController());
                                   focusNode.add(FocusNode());
                                  return Padding(
                                    padding: const EdgeInsets.only(bottom: 8.0),
@@ -386,11 +386,7 @@ class _MyHomePageState extends State<GCRegisterComplaint> {
                                                  backgroundColor: ColorsForApp.appButtonColor,
                                                ),
                                                onPressed: (){
-                                                 print(selectedCabinList[index].houseId);
-                                                 print('Is the value "Maria" in the map:${cabinMap.containsValue(selectedCabinList[index].houseId)}');
                                                  if (cabinMap.containsValue(selectedCabinList[index].houseId)==true) {
-                                                   print('inside update');
-                                                   print(selectedCabinList[index].houseId);
                                                    // item exists: update it
                                                    //cabinMap.update('house_id', (value) => selectedCabinList[index].houseId);
                                                    //cabinMap.update('description', (value) => _controllers[index].text);
@@ -399,19 +395,15 @@ class _MyHomePageState extends State<GCRegisterComplaint> {
                                                    cabinMap.update('description', (value) => _controllers[index].text,
                                                        ifAbsent: () => _controllers[index].text);
                                                   // sendCabinListToAPI.add(cabinMap);
-                                                   print("update-->$sendCabinListToAPI");
                                                    Fluttertoast.showToast(msg: "Update successfully");
 
-                                                   print("sendCabinListToAPI-->$sendCabinListToAPI");
                                                  } else {
-                                                   print('inside add');
                                                    // item does not exist: set it
                                                    cabinMap={};
                                                    cabinMap['house_id'] = selectedCabinList[index].houseId;
                                                    cabinMap['description'] = _controllers[index].text;
                                                    sendCabinListToAPI.add(cabinMap);
                                                    Fluttertoast.showToast(msg: "Save successfully");
-                                                   print("sendCabinListToAPI-->$sendCabinListToAPI");
                                                  }
 
                                                  },
@@ -515,7 +507,6 @@ class _MyHomePageState extends State<GCRegisterComplaint> {
     var response= await http.get(Uri.parse("${APIConstant.locationList}/?secret=d146d69ec7f6635f3f05f2bf4a51b318&user_type=2"));
     var decodeRes=json.decode(response.body) as List;
     if (response.statusCode == 200) {
-      print("decodeRes-->$decodeRes");
       locationList = decodeRes.map((tagJson) => LocationModelClass.fromJson(tagJson)).toList();
 
       setState(() {});
@@ -531,10 +522,8 @@ class _MyHomePageState extends State<GCRegisterComplaint> {
 
     var url=Uri.parse("${APIConstant.accommodation}/?location=$selectedLocation&secret=d146d69ec7f6635f3f05f2bf4a51b318&user_type=2");
     var response= await http.get(url);
-    print("Accomadation-->$url");
     if (response.statusCode == 200) {
       var decodeRes=json.decode(response.body) as List;
-      print("accommodationList-->$decodeRes");
       batallionList = decodeRes.map((tagJson) => AccommodationModel.fromJson(tagJson)).toList();
       setState(() {});
       DialogBuilder(context).hideOpenDialog();
@@ -546,16 +535,13 @@ class _MyHomePageState extends State<GCRegisterComplaint> {
   getHouseList(String selectedAccom ) async {
     DialogBuilder(context).showLoadingIndicator();
     var url=Uri.parse("${APIConstant.houseNo}/?accomType=$selectedAccom&location=$selectedArea&secret=d146d69ec7f6635f3f05f2bf4a51b318&user_type=2");
-    print("House URL-->$url");
     var response= await http.get(url);
 
     if (response.statusCode == 200) {
       var decodeRes=json.decode(response.body) as List;
-      print("House No-->$decodeRes");
 
       companyList = decodeRes.map((tagJson) => HouseNumberModel.fromJson(tagJson)).toSet().toList();
 
-      print("House No-->$companyList");
       setState(() {
 
       });
@@ -573,21 +559,17 @@ class _MyHomePageState extends State<GCRegisterComplaint> {
     //https://samadhantest.creshsolutions.com/gc-cabin/?secret=d146d69ec7f6635f3f05f2bf4a51b318
     // &location=IMA%20Campus&user_type=2&battalion=Thimayaa%20Bn&company=Sangro
 
-    https://samadhantest.creshsolutions.com/gc-cabin/?secret=d146d69ec7f6635f3f05f2bf4a51b318&location=IMA%20Campus
     // &user_type=2&battalion=Thimayaa%20Bn&company=Sangro
-    var url=Uri.parse("${APIConstant.APIURL}/gc-cabin/?secret=d146d69ec7f6635f3f05f2bf4a51b318"
+    var url=Uri.parse("${APIConstant.apiUrl}/gc-cabin/?secret=d146d69ec7f6635f3f05f2bf4a51b318"
         "&location=$location&user_type=2&battalion=$battalion&company=$company");
-    print("cabin List $url");
     var response= await http.get(url);
 
     if (response.statusCode == 200) {
       var decodeRes=json.decode(response.body) as List;
-      print("House No-->$decodeRes");
       cabinList = decodeRes.map((tagJson) => CabinModel.fromJson(tagJson)).toList();
        _items = cabinList
           .map((cabinRes) => MultiSelectItem<CabinModel>(cabinRes, cabinRes.cabinNo.toString()))
           .toList();
-      print("_items-->$_items");
       setState(() {
 
       });
@@ -607,17 +589,15 @@ class _MyHomePageState extends State<GCRegisterComplaint> {
     Map<String,dynamic> obj={
       "user_id": userId,
       "user_type": '2',
+      "batallion":selectedBatallion,
       "cabinMap": sendCabinListToAPI
     };
 
-    var url=Uri.parse("${APIConstant.APIURL}/register-complaint-1/?secret=d146d69ec7f6635f3f05f2bf4a51b318");
+    var url=Uri.parse("${APIConstant.apiUrl}/register-complaint-1/?secret=d146d69ec7f6635f3f05f2bf4a51b318");
     var response= await http.post(url, body: jsonEncode(obj));
 
     var decodeRes=json.decode(response.body);
-    print("RES-->$decodeRes");
-    print(response.statusCode);
     if(response.statusCode==200||response.statusCode==201){
-      print("RES-->${decodeRes['message']}");
       if(decodeRes['message']=='Complaint Registered'){
         DialogBuilder(context).hideOpenDialog();
         Fluttertoast.showToast(msg: "Complaint Registered successfully");
@@ -702,7 +682,7 @@ postGCComplaint() async{
         addPhotosTxt.text=imageTemp.path.split('/').last;
       });
     } on PlatformException catch(e) {
-      print('Failed to pick image: $e');
+      log(e.toString());
     }
   }
   Future pickImage2() async {
@@ -715,7 +695,7 @@ postGCComplaint() async{
         addPhotosTxt.text=imageTemp.path.split('/').last;
       });
     } on PlatformException catch(e) {
-      print('Failed to pick image: $e');
+      log(e.toString());
     }
   } Future pickImage3() async {
     try {
@@ -727,7 +707,7 @@ postGCComplaint() async{
         addPhotosTxt.text=imageTemp.path.split('/').last;
       });
     } on PlatformException catch(e) {
-      print('Failed to pick image: $e');
+      log(e.toString());
     }
   }
 }
@@ -736,102 +716,3 @@ class Cabin{
   Cabin(this.name);
 }
 
-class CustomMultiselectDropDown extends StatefulWidget {
-  final Function(List<String>) selectedList;
-  final List<CabinModel> listOFStrings;
-
-  const CustomMultiselectDropDown(
-      {super.key, required this.selectedList, required this.listOFStrings});
-
-  @override
-  createState() {
-    return _CustomMultiselectDropDownState();
-  }
-}
-
-class _CustomMultiselectDropDownState extends State<CustomMultiselectDropDown> {
-  List<String> listOFSelectedItem = [];
-  String selectedText = "";
-
-  @override
-  Widget build(BuildContext context) {
-    var size = MediaQuery.of(context).size;
-    return Container(
-      margin: const EdgeInsets.only(top: 10.0),
-      decoration:
-      BoxDecoration(border: Border.all(color: Colors.grey)),
-      child: ExpansionTile(
-        iconColor: Colors.grey,
-        title: Text(
-          listOFSelectedItem.isEmpty ? "Select" : listOFSelectedItem[0],
-        ),
-        children: <Widget>[
-          ListView.builder(
-            physics: const NeverScrollableScrollPhysics(),
-            shrinkWrap: true,
-            itemCount: widget.listOFStrings.length,
-            itemBuilder: (BuildContext context, int index) {
-              return Container(
-                margin: const EdgeInsets.only(bottom: 8.0),
-                child: _ViewItem(
-                    item: widget.listOFStrings[index],
-                    selected: (val) {
-                      selectedText = val;
-                      if (listOFSelectedItem.contains(val)) {
-                        listOFSelectedItem.remove(val);
-                      } else {
-                        listOFSelectedItem.add(val);
-                      }
-                      widget.selectedList(listOFSelectedItem);
-                      setState(() {});
-                    },
-                    itemSelected: listOFSelectedItem
-                        .contains(widget.listOFStrings[index])),
-              );
-            },
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _ViewItem extends StatelessWidget {
- final CabinModel item;
- final bool itemSelected;
-  final Function(String) selected;
-
-  _ViewItem(
-      {required this.item, required this.itemSelected, required this.selected});
-
-  @override
-  Widget build(BuildContext context) {
-    var size = MediaQuery.of(context).size;
-    return Padding(
-      padding:
-      EdgeInsets.only(left: size.width * .032, right: size.width * .098),
-      child: Row(
-        children: [
-          SizedBox(
-            height: 24.0,
-            width: 24.0,
-            child: Checkbox(
-              value: itemSelected,
-              onChanged: (val) {
-                selected(item.houseId.toString());
-              },
-              activeColor: Colors.blue,
-            ),
-          ),
-          SizedBox(
-            width: size.width * .025,
-          ),
-          Text(
-            item.cabinNo.toString(),
-
-          ),
-        ],
-      ),
-    );
-  }
-}

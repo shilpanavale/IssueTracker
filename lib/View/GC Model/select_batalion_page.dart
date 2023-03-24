@@ -1,23 +1,16 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:pie_chart/pie_chart.dart';
-import 'package:share_plus/share_plus.dart';
+
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:untitled/App%20Theme/app_theme.dart';
-import 'package:untitled/App%20Theme/asset_files.dart';
-import 'package:untitled/App%20Theme/text_fileds.dart';
-import 'package:untitled/CustomeWidget/common_button.dart';
+
 import 'package:untitled/CustomeWidget/custome_widget.dart';
-import 'package:untitled/View/Admin%20Model/Model/VendorModel.dart';
-import 'package:untitled/View/Admin%20Model/add_vendor.dart';
+
 import 'package:untitled/View/Admin%20Model/new_admin_dashboard.dart';
-import 'package:untitled/View/Admin%20Model/setting_page.dart';
-import 'package:untitled/View/Admin%20Model/user_admin_dashboard.dart';
+
 import 'package:http/http.dart' as http;
 import 'package:untitled/View/GC%20Model/GC_admin_dashboard.dart';
-import 'package:untitled/View/JCO%20Model/JCO_admin_dashboard.dart';
 import 'package:untitled/View/User%20Model/api_constant.dart';
 
 import 'Model/BattalionListModel.dart';
@@ -134,10 +127,7 @@ class _MyHomePageState extends State<BatalionListPage> {
         final prefs = await SharedPreferences.getInstance();
        await prefs.setString(UT.appType,"2");
         prefs.setString(UT.battalion,vendor.houseType!);
-        var a=  prefs.getString(UT.battalion);
-        var v=  prefs.getString(UT.appType);
-        print(a);
-        print("appType-->$v");
+
         Navigator.push(context, MaterialPageRoute(builder: (context)=>const GCAdminDashboardPage()));
       },
       child: Padding(
@@ -151,7 +141,7 @@ class _MyHomePageState extends State<BatalionListPage> {
             child:ListTile(
               title:Text(vendor.houseType ?? "",style: StyleForApp.textStyle14dp) ,
               leading: Icon(Icons.circle_sharp,color: ColorsForApp.appButtonColor,) ,
-              trailing: Text(vendor.cCount.toString()??"",style: StyleForApp.textStyle15dpBold),
+              trailing: Text(vendor.cCount.toString(),style: StyleForApp.textStyle15dpBold),
             )
         ),
       ),
@@ -159,7 +149,7 @@ class _MyHomePageState extends State<BatalionListPage> {
   }
 
   Future<List<BattalionListModel>> getMessage() async {
-    var url=Uri.parse("${APIConstant.APIURL}/gc-option/?secret=d146d69ec7f6635f3f05f2bf4a51b318");
+    var url=Uri.parse("${APIConstant.apiUrl}/gc-option/?secret=d146d69ec7f6635f3f05f2bf4a51b318");
     var response= await http.get(url);
     List<BattalionListModel> message=[];
     var decodeRes=json.decode(response.body) as List;

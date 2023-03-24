@@ -1,41 +1,31 @@
 import 'dart:convert';
-import 'dart:typed_data';
 import 'dart:io';
-import 'dart:ui' as ui;
-import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:gallery_saver/gallery_saver.dart';
 import 'package:intl/intl.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:pie_chart/pie_chart.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
 import 'package:untitled/App%20Theme/app_theme.dart';
 import 'package:untitled/App%20Theme/asset_files.dart';
-import 'package:untitled/App%20Theme/text_fileds.dart';
-import 'package:untitled/CustomeWidget/common_button.dart';
+
 import 'package:untitled/CustomeWidget/custome_dialog.dart';
 import 'package:untitled/CustomeWidget/custome_widget.dart';
 import 'package:untitled/View/Admin%20Model/Model/IssueModel.dart';
-import 'package:untitled/View/Admin%20Model/user_admin_dashboard.dart';
 import 'package:untitled/View/Admin%20Model/enter_feedback.dart';
 import 'package:untitled/View/Admin%20Model/view_details.dart';
-import '../JCO Model/JCO_admin_dashboard.dart';
 import '../User Model/api_constant.dart';
 import 'package:http/http.dart' as http;
-
-import '../User Model/enter_feedback.dart';
 import 'GC_admin_dashboard.dart';
 
 
 
 class GCAdminComplaintListPage extends StatefulWidget {
-  final statusFlag;
+  final dynamic statusFlag;
   const GCAdminComplaintListPage({Key? key, this.statusFlag}) : super(key: key);
 
 
@@ -361,7 +351,7 @@ class _MyHomePageState extends State<GCAdminComplaintListPage> {
                   final directory = await getApplicationDocumentsDirectory();
                   final imagePath = await File('${directory.path}/image.png').create();
                   await imagePath.writeAsBytes(image);
-                  print("sharing");
+
 
                   /// Share Plugin
                    await GallerySaver.saveImage(imagePath.path).then((value) {
@@ -415,25 +405,23 @@ class _MyHomePageState extends State<GCAdminComplaintListPage> {
     //var url=Uri.parse("${APIConstant.APIURL}/register-complaint/?secret=d146d69ec7f6635f3f05f2bf4a51b318");
     //2022-11-06 00:00:00' AND '2022-11-07 23:59:59'
 
-    var frmDt,toDt;
-    var url;
+    dynamic frmDt,toDt;
+    dynamic url;
     if(fromDate!=''&&toDate!=''){
       fromDate = DateFormat('yyyy-MM-dd').format(DateTime.parse(fromDate));
       toDate = DateFormat('yyyy-MM-dd').format(DateTime.parse(toDate));
       frmDt="$fromDate 000:00:00";
       toDt="$toDate 23:59:59";
-      url=Uri.parse("${APIConstant.APIURL}/register-complaint/?from=$frmDt&to=$toDt&secret=d146d69ec7f6635f3f05f2bf4a51b318&user_type=2");
+      url=Uri.parse("${APIConstant.apiUrl}/register-complaint/?from=$frmDt&to=$toDt&secret=d146d69ec7f6635f3f05f2bf4a51b318&user_type=2");
 
     }else{
       fromDate='';
       toDate='';
-      url=Uri.parse("${APIConstant.APIURL}/register-complaint/?from=${fromDate.toString()}&to=${toDate.toString()}&secret=d146d69ec7f6635f3f05f2bf4a51b318&user_type=2");
+      url=Uri.parse("${APIConstant.apiUrl}/register-complaint/?from=${fromDate.toString()}&to=${toDate.toString()}&secret=d146d69ec7f6635f3f05f2bf4a51b318&user_type=2");
 
       //https://api.creshsolutions.com/register-complaint/?from=&to=&secret=d146d69ec7f6635f3f05f2bf4a51b318
     }
-    print("url-->$url");
     var response= await http.get(url);
-    print(response.body);
     if (response.statusCode == 200) {
       var decodeRes=json.decode(response.body) as List;
      // vendors = decodeRes.map((tagJson) => IssueModelClass.fromJson(tagJson)).toList();
@@ -476,20 +464,18 @@ class _MyHomePageState extends State<GCAdminComplaintListPage> {
     //var url=Uri.parse("${APIConstant.APIURL}/register-complaint/?secret=d146d69ec7f6635f3f05f2bf4a51b318");
     //2022-11-06 00:00:00' AND '2022-11-07 23:59:59'
 
-    var frmDt,toDt;
-    var url;
+    dynamic frmDt,toDt;
+    dynamic url;
     final DateFormat formatter = DateFormat('yyyy-MM-dd');
     final String formattedFrm = formatter.format(fromDate);
 
-    final DateFormat formatter1 = DateFormat('yyyy-MM-dd');
     final String formattedTo = formatter.format(toDate);
 
     frmDt="$formattedFrm 000:00:00";
     toDt="$formattedTo 23:59:59";
-    url=Uri.parse("${APIConstant.APIURL}/register-complaint/?from=$frmDt&to=$toDt&secret=d146d69ec7f6635f3f05f2bf4a51b318");
+    url=Uri.parse("${APIConstant.apiUrl}/register-complaint/?from=$frmDt&to=$toDt&secret=d146d69ec7f6635f3f05f2bf4a51b318");
    // print("url-->$url");
     var response= await http.get(url);
-    print(response.body);
     if (response.statusCode == 200) {
       DialogBuilder(context).hideOpenDialog();
       var decodeRes=json.decode(response.body) as List;
@@ -653,7 +639,7 @@ class _MyHomePageState extends State<GCAdminComplaintListPage> {
                       children: <Widget>[
                         ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                                primary: ColorsForApp.grayColor,
+                                backgroundColor: ColorsForApp.grayColor,
                                 textStyle: TextStyle(
                                     color: ColorsForApp.blackColor
                                 )
@@ -666,7 +652,7 @@ class _MyHomePageState extends State<GCAdminComplaintListPage> {
                             ))),
                         ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                              primary: ColorsForApp.appButtonColor,
+                              backgroundColor: ColorsForApp.appButtonColor,
                               textStyle: TextStyle(
                                 //fontSize: 30,
                                 color: ColorsForApp.whiteColor,
@@ -710,7 +696,7 @@ class _MyHomePageState extends State<GCAdminComplaintListPage> {
             ),
             textButtonTheme: TextButtonThemeData(
               style: TextButton.styleFrom(
-                primary: Colors.red, // button text color
+                foregroundColor: Colors.red, // button text color
               ),
             ),
           ),
@@ -718,12 +704,12 @@ class _MyHomePageState extends State<GCAdminComplaintListPage> {
         );
       },
     ))!;
-    if (picked != null && picked != currentDate) {
+    if (picked != currentDate) {
       setState2(() {
         fromDate = picked;
         displayFromDate=UT.displayDateConverter(fromDate);
-        displayToDate=UT.displayDateConverter(fromDate.add(Duration(days: 1)));
-        toDate=fromDate.add(Duration(days: 1));
+        displayToDate=UT.displayDateConverter(fromDate.add(const Duration(days: 1)));
+        toDate=fromDate.add(const Duration(days: 1));
        // print('displayToDate--->$displayToDate');
       });
     }
@@ -745,7 +731,7 @@ class _MyHomePageState extends State<GCAdminComplaintListPage> {
             ),
             textButtonTheme: TextButtonThemeData(
               style: TextButton.styleFrom(
-                primary: Colors.red, // button text color
+                foregroundColor: Colors.red, // button text color
               ),
             ),
           ),
@@ -753,7 +739,7 @@ class _MyHomePageState extends State<GCAdminComplaintListPage> {
         );
       },
     ))!;
-    if (picked != null && picked != currentDate) {
+    if (picked != currentDate) {
       setState2(() {
         toDate = picked;
         displayToDate=UT.displayDateConverter(toDate);

@@ -12,10 +12,10 @@ class SubIssueTypeModel {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['sub_issue_id'] = this.subIssueId;
-    data['sub_issue'] = this.subIssue;
-    data['category_issue_id'] = this.categoryIssueId;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['sub_issue_id'] = subIssueId;
+    data['sub_issue'] = subIssue;
+    data['category_issue_id'] = categoryIssueId;
     return data;
   }
 }

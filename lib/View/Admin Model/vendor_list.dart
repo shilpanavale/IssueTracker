@@ -2,21 +2,15 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:pie_chart/pie_chart.dart';
-import 'package:share_plus/share_plus.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+
 import 'package:untitled/App%20Theme/app_theme.dart';
-import 'package:untitled/App%20Theme/asset_files.dart';
-import 'package:untitled/App%20Theme/text_fileds.dart';
-import 'package:untitled/CustomeWidget/common_button.dart';
+
 import 'package:untitled/CustomeWidget/custome_widget.dart';
 import 'package:untitled/View/Admin%20Model/Model/VendorModel.dart';
 import 'package:untitled/View/Admin%20Model/add_vendor.dart';
 import 'package:untitled/View/Admin%20Model/setting_page.dart';
-import 'package:untitled/View/Admin%20Model/user_admin_dashboard.dart';
 import 'package:http/http.dart' as http;
-import 'package:untitled/View/GC%20Model/GC_admin_dashboard.dart';
-import 'package:untitled/View/JCO%20Model/JCO_admin_dashboard.dart';
+
 import 'package:untitled/View/User%20Model/api_constant.dart';
 
 class VendorListPage extends StatefulWidget {
@@ -29,10 +23,10 @@ class VendorListPage extends StatefulWidget {
 
 class _MyHomePageState extends State<VendorListPage> {
 
-  var vendorID;
+  dynamic vendorID;
   List<VendorModelClass> vendorList=[];
 
- var userType;
+ dynamic userType;
   Future<List<VendorModelClass>>? _vendorApi;
 
 
@@ -195,8 +189,8 @@ class _MyHomePageState extends State<VendorListPage> {
 
   Future<List<VendorModelClass>> getVendorList() async {
     //List<VendorModelClass> vendors=[];
-    var url=Uri.parse("${APIConstant.APIURL}/vendor/?secret=d146d69ec7f6635f3f05f2bf4a51b318");
-    print("vendor URL-->$url");
+    var url=Uri.parse("${APIConstant.apiUrl}/vendor/?secret=d146d69ec7f6635f3f05f2bf4a51b318");
+
     var response= await http.get(url);
 
     if (response.statusCode == 200) {
@@ -212,11 +206,9 @@ class _MyHomePageState extends State<VendorListPage> {
 
 
   deleteVendor() async{
-    var url=Uri.parse("${APIConstant.APIURL}/vendor/?id=${vendorID}&secret=d146d69ec7f6635f3f05f2bf4a51b318");
-    print("vendor URL-->$url");
-    var response= await http.delete(url);
+    var url=Uri.parse("${APIConstant.apiUrl}/vendor/?id=${vendorID}&secret=d146d69ec7f6635f3f05f2bf4a51b318");
 
-    print('delete response--->${response.body}');
+    var response= await http.delete(url);
     var decodeRes=json.decode(response.body);
     var msg=decodeRes["message"];
     if(msg.toString().contains("SQLSTATE[23000]")) {

@@ -10,9 +10,9 @@ class BattalionListModel {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['house_type'] = this.houseType;
-    data['c_count'] = this.cCount;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['house_type'] = houseType;
+    data['c_count'] = cCount;
     return data;
   }
 }

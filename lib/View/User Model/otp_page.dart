@@ -10,16 +10,15 @@ import 'package:untitled/View/User%20Model/api_constant.dart';
 import 'package:untitled/View/User%20Model/my_complaints.dart';
 import 'package:http/http.dart' as http;
 import '../../CustomeWidget/custome_widget.dart';
-import '../GC Model/GC_complaints_list.dart';
-import '../JCO Model/JCO_complaints_list.dart';
+
 
 class OtpPage extends StatefulWidget {
   const OtpPage({Key? key}) : super(key: key);
   @override
-  _OtpPageState createState() => _OtpPageState();
+  OtpPageState createState() => OtpPageState();
 }
 
-class _OtpPageState extends State<OtpPage> {
+class OtpPageState extends State<OtpPage> {
 
   String text = '';
   int numberOfFields = 6;
@@ -27,11 +26,7 @@ class _OtpPageState extends State<OtpPage> {
   String _verificationCode = '';
   late List<TextStyle?> otpTextStyles;
   late List<TextEditingController?> controls;
-  void _onKeyboardTap(String value) {
-    setState(() {
-      text = text + value;
-    });
-  }
+
    String mobileNo="";
   Widget otpNumberWidget(int position) {
     try {
@@ -42,7 +37,7 @@ class _OtpPageState extends State<OtpPage> {
             border: Border.all(color: Colors.black, width: 0),
             borderRadius: const BorderRadius.all(Radius.circular(8))
         ),
-        child: Center(child: Text(text[position], style: TextStyle(color: Colors.black),)),
+        child: Center(child: Text(text[position], style: const TextStyle(color: Colors.black),)),
       );
     } catch (e) {
       return Container(
@@ -64,7 +59,6 @@ class _OtpPageState extends State<OtpPage> {
    getMobileNumber() async {
      final prefs = await SharedPreferences.getInstance();
      mobileNo= prefs.getString(UT.mobileNo)!;
-     print("mobileNo-->$mobileNo");
    }
 
   @override
@@ -132,14 +126,14 @@ class _OtpPageState extends State<OtpPage> {
                     ),
                     child: ElevatedButton(
                       onPressed: () {
-                        if(_verificationCode==null||_verificationCode==""){
+                        if(_verificationCode==""){
                           Fluttertoast.showToast(msg: "Please enter OTP");
                         }else{
                           validateOTP(_verificationCode);
                         }
                       },
                       style: ElevatedButton.styleFrom(
-                          primary: ColorsForApp.appButtonColor,
+                          backgroundColor: ColorsForApp.appButtonColor,
                         shape: const RoundedRectangleBorder(
                           borderRadius: BorderRadius.all(Radius.circular(14))
                           ),
@@ -151,14 +145,14 @@ class _OtpPageState extends State<OtpPage> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
-                            Text('Confirm', style: TextStyle(color: Colors.white),),
+                            const Text('Confirm', style: TextStyle(color: Colors.white),),
                             Container(
                               padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
                                 borderRadius: const BorderRadius.all(Radius.circular(20)),
                                 color: ColorsForApp.whiteColor,
                               ),
-                              child: Icon(Icons.arrow_forward_ios, color: Colors.black, size: 16,),
+                              child: const Icon(Icons.arrow_forward_ios, color: Colors.black, size: 16,),
                             )
                           ],
                         ),
@@ -180,11 +174,9 @@ class _OtpPageState extends State<OtpPage> {
       "mobile_no":mobileNo,
       "otp": otp
     };
-    var url=Uri.parse("${APIConstant.APIURL}/otp/?secret=d146d69ec7f6635f3f05f2bf4a51b318");
-    print("url-->$url");
+    var url=Uri.parse("${APIConstant.apiUrl}/otp/?secret=d146d69ec7f6635f3f05f2bf4a51b318");
     var response= await http.patch(url,body: jsonEncode(obj));
     var decodeRes=json.decode(response.body);
-    print("decodeRes OTP-->$decodeRes");
     if(decodeRes['message']==false){
       Fluttertoast.showToast(msg: "Invalid OTP");
     }else{

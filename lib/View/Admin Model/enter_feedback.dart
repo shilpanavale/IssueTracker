@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -47,13 +48,10 @@ class _MyHomePageState extends State<AdminFeedBackPage> {
     // TODO: implement initState
     super.initState();
     getData();
-    print(widget.issueModel.imageUrl2);
-    print(widget.issueModel.imageUrl);
   }
   getData() async {
     final prefs = await SharedPreferences.getInstance();
     userType= prefs.getString(UT.appType);
-    print("userType-->$userType");
     setState(() {
 
     });
@@ -214,7 +212,6 @@ class _MyHomePageState extends State<AdminFeedBackPage> {
                                 setState(() {
                                   for (int i = 0; i < isSelected.length; i++) {
                                     isSelected[i] = i == index;
-                                    print("selected==>${isSelected[i]}");
                                     if(isSelected[i]==false){
                                       showAddPhotoUI=false;
                                       status="1";
@@ -267,17 +264,16 @@ class _MyHomePageState extends State<AdminFeedBackPage> {
                           onRatingUpdate: (rating1) {
 
                             rating=rating1;
-                            print(rating);
+
                           },
                         ),
                       ),
                         const SizedBox(height: 30,),
                         CommonButtonForAllApp(onPressed: (){
                           if(status=="1"){
-                            print("Resolved");
+
                             updateResolvedStatus(widget.issueModel.houseComplaintId.toString(),"1");
                           }else{
-                            print("NOt Resolved");
                             updateNotResolvedStatus(widget.issueModel.houseComplaintId.toString(), "2");
 
                           }
@@ -312,15 +308,15 @@ class _MyHomePageState extends State<AdminFeedBackPage> {
         addPhotosTxt.text=imageTemp.path.split('/').last;
       });
     } on PlatformException catch(e) {
-      print('Failed to pick image: $e');
+      log('Failed to pick image: $e');
     }
   }
 
 
   updateResolvedStatus(String userComalaintId ,String status) async {
     DialogBuilder(context).showLoadingIndicator();
-    var url=Uri.parse("${APIConstant.APIURL}/update-complaint-status/?secret=d146d69ec7f6635f3f05f2bf4a51b318");
-    print("Url-->$url");
+    var url=Uri.parse("${APIConstant.apiUrl}/update-complaint-status/?secret=d146d69ec7f6635f3f05f2bf4a51b318");
+
 
     var request= http.MultipartRequest("POST", url);
 
@@ -328,12 +324,10 @@ class _MyHomePageState extends State<AdminFeedBackPage> {
     request.fields['status'] = status;
     //request.fields['comment'] = describeComplaintTxt.text;
     request.fields['rating'] = rating.toInt().toString();
-    print(request.fields);
+
 
 
     request.send().then((response) {
-      print(response.statusCode);
-      print(response.reasonPhrase);
       if(response.statusCode==200){
         DialogBuilder(context).hideOpenDialog();
         Fluttertoast.showToast(msg: "Save successfully");
@@ -347,8 +341,7 @@ class _MyHomePageState extends State<AdminFeedBackPage> {
   }
   updateNotResolvedStatus(String userComalaintId ,String status) async {
     DialogBuilder(context).showLoadingIndicator();
-    var url=Uri.parse("${APIConstant.APIURL}/update-complaint-status/?secret=d146d69ec7f6635f3f05f2bf4a51b318");
-    print("Url-->$url");
+    var url=Uri.parse("${APIConstant.apiUrl}/update-complaint-status/?secret=d146d69ec7f6635f3f05f2bf4a51b318");
 
     var request= http.MultipartRequest("POST", url);
 
@@ -356,7 +349,6 @@ class _MyHomePageState extends State<AdminFeedBackPage> {
     request.fields['status'] = status;
     request.fields['comment'] = describeComplaintTxt.text;
     request.fields['rating'] = rating.toInt().toString();
-    print(request.fields);
     if(image?.path!=null){
       request.files.add(
           http.MultipartFile.fromBytes(
@@ -368,8 +360,6 @@ class _MyHomePageState extends State<AdminFeedBackPage> {
     }
 
     request.send().then((response) {
-      print(response.statusCode);
-      print(response.reasonPhrase);
       if(response.statusCode==200){
         DialogBuilder(context).hideOpenDialog();
         Fluttertoast.showToast(msg: "Save successfully");
@@ -379,13 +369,6 @@ class _MyHomePageState extends State<AdminFeedBackPage> {
         DialogBuilder(context).hideOpenDialog();
         Fluttertoast.showToast(msg: "Something went wrong please try again!");
       }
-     /* if(decode["message"].toString().contains("updated")){
-        DialogBuilder(context).hideOpenDialog();
-        Fluttertoast.showToast(msg: "Update mark successfully");
-      }else{
-        DialogBuilder(context).hideOpenDialog();
-        Fluttertoast.showToast(msg: "Something went wrong please try again!");
-      }*/
     });
 
   }

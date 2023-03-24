@@ -6,13 +6,10 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:untitled/App%20Theme/app_theme.dart';
 import 'package:untitled/App%20Theme/asset_files.dart';
-import 'package:untitled/App%20Theme/text_fileds.dart';
-import 'package:untitled/CustomeWidget/common_button.dart';
+
 import 'package:untitled/CustomeWidget/custome_widget.dart';
-import 'package:untitled/View/Admin%20Model/user_admin_dashboard.dart';
 import 'package:untitled/View/User%20Model/api_constant.dart';
-import 'package:untitled/View/User%20Model/otp_page.dart';
-import 'package:untitled/View/User%20Model/select_login.dart';
+
 import 'package:untitled/View/User%20Model/user_login_page.dart';
 import 'package:http/http.dart' as http;
 class ClientCodePage extends StatefulWidget {
@@ -117,7 +114,7 @@ class _MyHomePageState extends State<ClientCodePage> {
                     // Navigator.push(context, MaterialPageRoute(builder: (context)=>SelectLoginTypePage()));
                   },
                   style: ElevatedButton.styleFrom(
-                    primary: ColorsForApp.appButtonColor,
+                    backgroundColor: ColorsForApp.appButtonColor,
                     shape: const RoundedRectangleBorder(
                         borderRadius: BorderRadius.all(Radius.circular(14))
                     ),
@@ -161,10 +158,9 @@ class _MyHomePageState extends State<ClientCodePage> {
   validateUserCode(String key) async {
     //https://api.creshsolutions.com/secret/{secret}
     // https://api.creshsolutions.com/secretcode/
-    var url=Uri.parse("${APIConstant.APIURL}/secretcode/?code=$key&secret=d146d69ec7f6635f3f05f2bf4a51b318&");
+    var url=Uri.parse("${APIConstant.apiUrl}/secretcode/?code=$key&secret=d146d69ec7f6635f3f05f2bf4a51b318&");
     var response=await http.get(url);
     var decodeRes=json.decode(response.body);
-    print("SK-->$decodeRes");
     if(decodeRes['message']==false){
       Fluttertoast.showToast(msg: "Invalid Key");
     }else{

@@ -64,7 +64,7 @@ class _MyHomePageState extends State<AddSecreteKeyPage> {
   getSecreteKey() async {
     //https://api.creshsolutions.com/secret/{secret}
    // https://api.creshsolutions.com/secretcode/
-    var url=Uri.parse("${APIConstant.APIURL}/secretcode/?secret=d146d69ec7f6635f3f05f2bf4a51b318");
+    var url=Uri.parse("${APIConstant.apiUrl}/secretcode/?secret=d146d69ec7f6635f3f05f2bf4a51b318");
     var response=await http.get(url);
     var decodeRes=json.decode(response.body);
     //print("SK-->$decodeRes");
@@ -82,7 +82,7 @@ class _MyHomePageState extends State<AddSecreteKeyPage> {
       "new_secret": newSecret
     };
 
-    var url=Uri.parse("${APIConstant.APIURL}/secretcode/?secret=d146d69ec7f6635f3f05f2bf4a51b318");
+    var url=Uri.parse("${APIConstant.apiUrl}/secretcode/?secret=d146d69ec7f6635f3f05f2bf4a51b318");
     var response= await http.patch(url, body: jsonEncode(obj));
     var decodeRes=json.decode(response.body);
     //print("decodeRes-->$decodeRes");

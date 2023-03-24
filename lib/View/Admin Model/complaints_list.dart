@@ -417,12 +417,12 @@ class _MyHomePageState extends State<AdminComplaintList> {
       toDate = DateFormat('yyyy-MM-dd').format(DateTime.parse(toDate));
       frmDt="$fromDate 000:00:00";
       toDt="$toDate 23:59:59";
-      url=Uri.parse("${APIConstant.APIURL}/register-complaint/?from=$frmDt&to=$toDt&secret=d146d69ec7f6635f3f05f2bf4a51b318&user_type=0");
+      url=Uri.parse("${APIConstant.apiUrl}/register-complaint/?from=$frmDt&to=$toDt&secret=d146d69ec7f6635f3f05f2bf4a51b318&user_type=0");
 
     }else{
       fromDate='';
       toDate='';
-      url=Uri.parse("${APIConstant.APIURL}/register-complaint/?from=${fromDate.toString()}&to=${toDate.toString()}&secret=d146d69ec7f6635f3f05f2bf4a51b318&user_type=0");
+      url=Uri.parse("${APIConstant.apiUrl}/register-complaint/?from=${fromDate.toString()}&to=${toDate.toString()}&secret=d146d69ec7f6635f3f05f2bf4a51b318&user_type=0");
 
       //https://api.creshsolutions.com/register-complaint/?from=&to=&secret=d146d69ec7f6635f3f05f2bf4a51b318
     }
@@ -480,10 +480,10 @@ class _MyHomePageState extends State<AdminComplaintList> {
 
     frmDt="$formattedFrm 000:00:00";
     toDt="$formattedTo 23:59:59";
-    url=Uri.parse("${APIConstant.APIURL}/register-complaint/?from=$frmDt&to=$toDt&secret=d146d69ec7f6635f3f05f2bf4a51b318");
-   // print("url-->$url");
+    url=Uri.parse("${APIConstant.apiUrl}/register-complaint/?from=$frmDt&to=$toDt&secret=d146d69ec7f6635f3f05f2bf4a51b318");
+
     var response= await http.get(url);
-    print(response.body);
+
     if (response.statusCode == 200) {
       DialogBuilder(context).hideOpenDialog();
       var decodeRes=json.decode(response.body) as List;
@@ -716,8 +716,8 @@ class _MyHomePageState extends State<AdminComplaintList> {
       setState2(() {
         fromDate = picked;
         displayFromDate=UT.displayDateConverter(fromDate);
-        displayToDate=UT.displayDateConverter(fromDate.add(Duration(days: 1)));
-        toDate=fromDate.add(Duration(days: 1));
+        displayToDate=UT.displayDateConverter(fromDate.add(const Duration(days: 1)));
+        toDate=fromDate.add(const Duration(days: 1));
        // print('displayToDate--->$displayToDate');
       });
     }
@@ -747,7 +747,7 @@ class _MyHomePageState extends State<AdminComplaintList> {
         );
       },
     ))!;
-    if (picked != null && picked != currentDate) {
+    if (picked != currentDate) {
       setState2(() {
         toDate = picked;
         displayToDate=UT.displayDateConverter(toDate);

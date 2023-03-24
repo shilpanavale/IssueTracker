@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -6,13 +7,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:pie_chart/pie_chart.dart';
 import 'package:untitled/App%20Theme/app_theme.dart';
-import 'package:untitled/App%20Theme/asset_files.dart';
-import 'package:untitled/App%20Theme/text_fileds.dart';
+
 import 'package:untitled/CustomeWidget/common_button.dart';
 import 'package:untitled/CustomeWidget/custome_widget.dart';
-import 'package:untitled/View/Admin%20Model/user_admin_dashboard.dart';
 import 'package:untitled/View/User%20Model/my_complaints.dart';
 import 'package:http/http.dart' as http;
 import '../../CustomeWidget/custome_dialog.dart';
@@ -20,8 +18,8 @@ import '../Admin Model/Model/IssueModel.dart';
 import 'api_constant.dart';
 
 class GiveRating extends StatefulWidget {
-  IssueModelClass issueModel;
-   GiveRating({Key? key, required this.issueModel}) : super(key: key);
+  final IssueModelClass issueModel;
+   const GiveRating({Key? key, required this.issueModel}) : super(key: key);
 
 
   @override
@@ -222,7 +220,6 @@ class _MyHomePageState extends State<GiveRating> {
                         onRatingUpdate: (rating1) {
 
                           rating=rating1;
-                          print(rating);
                         },
                       ),
                         const SizedBox(height: 30,),
@@ -258,21 +255,19 @@ class _MyHomePageState extends State<GiveRating> {
         addPhotosTxt.text=imageTemp.path.split('/').last;
       });
     } on PlatformException catch(e) {
-      print('Failed to pick image: $e');
+      log(e.toString());
     }
   }
 
   updateComplaintStatus(String userCompaintId ,String status) async {
     DialogBuilder(context).showLoadingIndicator();
-    var url=Uri.parse("${APIConstant.APIURL}/update-complaint-status/?secret=d146d69ec7f6635f3f05f2bf4a51b318");
-    print("Url-->$url");
+    var url=Uri.parse("${APIConstant.apiUrl}/update-complaint-status/?secret=d146d69ec7f6635f3f05f2bf4a51b318");
     Map<String,dynamic> obj={
       "id": userCompaintId,
       "status": status,
       "rating": rating.toInt().toString(),
     };
     var response= await http.post(url,body: jsonEncode(obj));
-    print("complaint update status res-->${response.body}");
     var decode=json.decode(response.body);
     //{"message":"Issue status with id 18 updated"}
     if(decode["message"].toString().contains("updated")){

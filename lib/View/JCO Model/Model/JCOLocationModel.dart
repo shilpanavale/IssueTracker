@@ -7,13 +7,13 @@ class JCOLocationModel {
     if (json['data'] != null) {
       data = <JCOLocationData>[];
       json['data'].forEach((v) {
-        data!.add(new JCOLocationData.fromJson(v));
+        data!.add( JCOLocationData.fromJson(v));
       });
     }
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+    final Map<String, dynamic> data = <String, dynamic>{};
     if (this.data != null) {
       data['data'] = this.data!.map((v) => v.toJson()).toList();
     }
@@ -31,8 +31,8 @@ class JCOLocationData {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['house_location'] = this.houseLocation;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['house_location'] = houseLocation;
     return data;
   }
 }

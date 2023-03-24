@@ -1,27 +1,17 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:pie_chart/pie_chart.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:untitled/App%20Theme/app_theme.dart';
 import 'package:untitled/App%20Theme/asset_files.dart';
-import 'package:untitled/App%20Theme/text_fileds.dart';
-import 'package:untitled/CustomeWidget/common_button.dart';
+
 import 'package:untitled/CustomeWidget/custome_widget.dart';
-import 'package:untitled/View/Admin%20Model/user_admin_dashboard.dart';
-import 'package:untitled/View/Admin%20Model/complaints_list.dart';
-import 'package:untitled/View/User%20Model/my_complaints.dart';
-import 'package:http/http.dart' as http;
-import '../../CustomeWidget/custome_dialog.dart';
+
 import '../Admin Model/Model/IssueModel.dart';
-import '../User Model/api_constant.dart';
 import 'gc_admin_complaints_list.dart';
 
 
@@ -42,8 +32,7 @@ class _MyHomePageState extends State<GCViewDetailsScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    print(widget.issueModel.imageUrl2);
-    print(widget.issueModel.imageUrl);
+
   }
 
   @override
@@ -133,9 +122,7 @@ class _MyHomePageState extends State<GCViewDetailsScreen> {
                           const SizedBox(height: 10,),
 
                               widget.issueModel.imageUrl2==null||widget.issueModel.imageUrl2==""?
-                          Container(
-                            child: const Text("No image available after feedback!"),
-                          ) :Container(
+                          const Text("No image available after feedback!") :Container(
                             //  height: 100,
                               width: MediaQuery.of(context).size.width,
                               decoration: BoxDecoration(
@@ -147,7 +134,7 @@ class _MyHomePageState extends State<GCViewDetailsScreen> {
                                   ,
                                // height: 300,
                                 frameBuilder: (_, image, loadingBuilder, __) {
-                                print(loadingBuilder);
+
                                   if (loadingBuilder == null) {
 
                                     return const SizedBox(
@@ -159,7 +146,6 @@ class _MyHomePageState extends State<GCViewDetailsScreen> {
                                 },
                                 loadingBuilder: (BuildContext context, Widget child,
                                   ImageChunkEvent? loadingProgress) {
-                                print('loading bu00$loadingProgress');
                               if (loadingProgress == null) return child;
                               return Center(
                               child: CircularProgressIndicator(
@@ -173,9 +159,7 @@ class _MyHomePageState extends State<GCViewDetailsScreen> {
                           ),
                           widget.issueModel.status.toString().toLowerCase()=="Assigned".toLowerCase()
                               ?widget.issueModel.imageUrl==null||widget.issueModel.imageUrl==""?
-                          Container(
-                            child: const Text("No image available during registration!"),
-                          ) :Container(
+                          const Text("No image available during registration!") :Container(
                              // height: 300,
                               width: MediaQuery.of(context).size.width,
                               decoration: BoxDecoration(
@@ -227,14 +211,12 @@ class _MyHomePageState extends State<GCViewDetailsScreen> {
                                     InkWell(
                                       onTap: () async {
                                         // Share.share('check out my website https://example.com');
-                                        print("ON TAP");
                                         //screenshotController=ScreenshotController();
                                         await fullPageScreenshot.capture(delay: const Duration(milliseconds: 10)).then((Uint8List? imageFile) async {
                                           if (imageFile != null) {
                                             final directory = await getApplicationDocumentsDirectory();
                                             final imagePath = await File('${directory.path}/image.png').create();
                                             await imagePath.writeAsBytes(imageFile);
-                                            print("sharing");
 
                                             /// Share Plugin
                                             await Share.shareXFiles([XFile(imagePath.path)], text: '');

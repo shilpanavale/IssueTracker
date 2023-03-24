@@ -1,19 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:untitled/App%20Theme/app_theme.dart';
-import 'package:untitled/App%20Theme/asset_files.dart';
-import 'package:untitled/App%20Theme/text_fileds.dart';
-import 'package:untitled/CustomeWidget/common_button.dart';
 import 'package:untitled/View/Admin%20Model/setting_page.dart';
 import 'package:untitled/View/Admin%20Model/user_admin_dashboard.dart';
-import 'package:untitled/View/Admin%20Model/admin_drawer.dart';
-import 'package:untitled/View/Admin%20Model/admin_login_page.dart';
 import 'package:untitled/View/User%20Model/api_constant.dart';
-import 'package:untitled/View/User%20Model/enter_client_code.dart';
-import 'package:untitled/View/User%20Model/select_login.dart';
 
 import '../../CustomeWidget/custome_dialog.dart';
-import '../GC Model/GC_admin_dashboard.dart';
 import '../GC Model/select_batalion_page.dart';
 import '../JCO Model/JCO_admin_dashboard.dart';
 import '../select_user_type.dart';
@@ -112,7 +104,7 @@ class _MyHomePageState extends State<NewAdminDashboard> {
 
                       final prefs = await SharedPreferences.getInstance();
                       prefs.clear();
-                      Navigator.push(context, MaterialPageRoute(builder: (context)=>SelectUserTypePage()));
+                      Navigator.push(context, MaterialPageRoute(builder: (context)=>const SelectUserTypePage()));
                     },
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -146,7 +138,7 @@ class _MyHomePageState extends State<NewAdminDashboard> {
   Card makeDashboardItem(String title, IconData icon) {
     return Card(
         elevation: 1.0,
-        margin: EdgeInsets.all(8.0),
+        margin: const EdgeInsets.all(8.0),
         child: Container(
           decoration: BoxDecoration(
              // color: Color.fromRGBO(220, 220, 220, 1.0)
@@ -157,18 +149,18 @@ class _MyHomePageState extends State<NewAdminDashboard> {
             mainAxisSize: MainAxisSize.min,
             verticalDirection: VerticalDirection.down,
             children: <Widget>[
-              SizedBox(height: 50.0),
+              const SizedBox(height: 50.0),
               Center(
                   child: Icon(
                     icon,
                     size: 40.0,
                     color: ColorsForApp.appButtonColor,
                   )),
-              SizedBox(height: 20.0),
+              const SizedBox(height: 20.0),
               Center(
                 child:  Text(title,
                     style:
-                    TextStyle(fontSize: 18.0, color: Colors.black)),
+                    const TextStyle(fontSize: 18.0, color: Colors.black)),
               )
             ],
           ),
@@ -177,7 +169,7 @@ class _MyHomePageState extends State<NewAdminDashboard> {
   Future<bool?> exitAppDialog() {
     return showDialog(
       context: context,
-      builder: (BuildContext context) => CustomDialog(
+      builder: (BuildContext context) => const CustomDialog(
       ),
     );
   }

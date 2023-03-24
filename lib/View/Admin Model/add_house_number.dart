@@ -169,7 +169,7 @@ class _MyHomePageState extends State<AddHouseNumber> {
     };
 
     //print('add house number-->$obj');
-    var url=Uri.parse("${APIConstant.APIURL}/house/?secret=d146d69ec7f6635f3f05f2bf4a51b318");
+    var url=Uri.parse("${APIConstant.apiUrl}/house/?secret=d146d69ec7f6635f3f05f2bf4a51b318");
     var response= await http.post(url, body: jsonEncode(obj));
    // print("RES-->${response.body}");
     var decodeRes=json.decode(response.body);

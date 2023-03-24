@@ -14,11 +14,11 @@ class HouseModel {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['house_id'] = this.houseId;
-    data['house_type'] = this.houseType;
-    data['house_no'] = this.houseNo;
-    data['house_location'] = this.houseLocation;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['house_id'] = houseId;
+    data['house_type'] = houseType;
+    data['house_no'] = houseNo;
+    data['house_location'] = houseLocation;
     return data;
   }
 }

@@ -13,19 +13,14 @@ import 'package:share_plus/share_plus.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
 import 'package:untitled/App%20Theme/app_theme.dart';
 import 'package:untitled/App%20Theme/asset_files.dart';
-import 'package:untitled/View/Admin%20Model/admin_drawer.dart';
-import 'package:untitled/View/Admin%20Model/complaints_list.dart';
+
 import 'package:untitled/View/User%20Model/api_constant.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
 import '../../CustomeWidget/custome_dialog.dart';
-import 'dart:typed_data';
 import 'dart:ui' as ui;
-import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
-import 'package:path_provider/path_provider.dart';
-import 'dart:io';
+
 
 import '../Admin Model/important_issue_list.dart';
 import '../Admin Model/new_admin_dashboard.dart';
@@ -89,7 +84,7 @@ class _MyHomePageState extends State<JCOAdminDashboardPage> {
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0.0,
-          iconTheme: IconThemeData(
+          iconTheme: const IconThemeData(
               color: Colors.black
           ),
           leading: IconButton(
@@ -741,8 +736,7 @@ class _MyHomePageState extends State<JCOAdminDashboardPage> {
   }
 
   Future<void> _captureSocialPng(String flag) {
-    String imagePaths ;
-    final RenderBox box = context.findRenderObject() as RenderBox;
+
     return Future.delayed(const Duration(milliseconds: 20), () async {
       RenderRepaintBoundary? boundary = previewContainer.currentContext!
           .findRenderObject() as RenderRepaintBoundary?;
@@ -751,7 +745,7 @@ class _MyHomePageState extends State<JCOAdminDashboardPage> {
       ByteData? byteData =
       await image.toByteData(format: ui.ImageByteFormat.png);
       Uint8List pngBytes = byteData!.buffer.asUint8List();
-      File imgFile = new File('$directory/pieChart.png');
+      File imgFile = File('$directory/pieChart.png');
      // imagePaths.add(imgFile.path);
       imgFile.writeAsBytes(pngBytes).then((value) async {
 
@@ -760,25 +754,23 @@ class _MyHomePageState extends State<JCOAdminDashboardPage> {
             // screenshotButtonText = 'screenshot saved!';
             Fluttertoast.showToast(msg: "Image saved into gallery!");
             if(flag=="Share"){
-              Share.shareXFiles([XFile('${imgFile.path}')], text: '');
+              Share.shareXFiles([XFile(imgFile.path)], text: '');
             }else{
-              OpenFilex.open('${imgFile.path}');
+              OpenFilex.open(imgFile.path);
             }
           });
         });
 
 
       }).catchError((onError) {
-        print(onError);
+
       });
     });
   }
 
   getData() async {
-    var url =Uri.parse("${APIConstant.APIURL}/admin-home/?secret=d146d69ec7f6635f3f05f2bf4a51b318&user_type=1");
-    print("url-->$url");
+    var url =Uri.parse("${APIConstant.apiUrl}/admin-home/?secret=d146d69ec7f6635f3f05f2bf4a51b318&user_type=1");
     var response= await http.get(url);
-    print(response.body);
     var decodeRes=json.decode(response.body);
     totalIssueRegisteredToday=decodeRes["totalIssueRegisteredToday"]["count"];
     var statusCount=decodeRes["statusWiseCount"];
@@ -788,7 +780,6 @@ class _MyHomePageState extends State<JCOAdminDashboardPage> {
     escaltionCount2=decodeRes["escalationTwoCount"];
     escaltionCount3=decodeRes["escalationThreeCount"];
     if(resolvedCount==null||statusCount==null||totalCount==null){
-      print("h");
       resolvedCount=0;
       totalCount=0;
       resolvedCount=0;
@@ -814,21 +805,20 @@ class _MyHomePageState extends State<JCOAdminDashboardPage> {
     getFilterData(DateTime fromDate,DateTime toDate) async {
 
 
-     var frmDt, toDt;
-     var url;
+     dynamic frmDt, toDt;
+     dynamic url;
      final DateFormat formatter = DateFormat('yyyy-MM-dd');
      final String formattedFrm = formatter.format(fromDate);
 
-     final DateFormat formatter1 = DateFormat('yyyy-MM-dd');
+
      final String formattedTo = formatter.format(toDate);
 
      frmDt = "$formattedFrm 000:00:00";
      toDt = "$formattedTo 23:59:59";
     // url = Uri.parse("${APIConstant.APIURL}/register-complaint/?from=$frmDt&to=$toDt&secret=d146d69ec7f6635f3f05f2bf4a51b318");
-      url =Uri.parse("${APIConstant.APIURL}/admin-home/?from=$frmDt&to=$toDt&secret=d146d69ec7f6635f3f05f2bf4a51b318");
+      url =Uri.parse("${APIConstant.apiUrl}/admin-home/?from=$frmDt&to=$toDt&secret=d146d69ec7f6635f3f05f2bf4a51b318");
      // print("url-->$url");
      var response = await http.get(url);
-     print(response.body);
      var decodeRes=json.decode(response.body);
      totalIssueRegisteredToday=decodeRes["totalIssueRegisteredToday"];
      var statusCount=decodeRes["statusWiseCount"];
@@ -1092,7 +1082,7 @@ class _MyHomePageState extends State<JCOAdminDashboardPage> {
                       children: <Widget>[
                         ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                                primary: ColorsForApp.grayColor,
+                                backgroundColor: ColorsForApp.grayColor,
                                 textStyle: TextStyle(
                                     color: ColorsForApp.blackColor
                                 )
@@ -1105,7 +1095,7 @@ class _MyHomePageState extends State<JCOAdminDashboardPage> {
                             ))),
                         ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                              primary: ColorsForApp.appButtonColor,
+                              backgroundColor: ColorsForApp.appButtonColor,
                               textStyle: TextStyle(
                                 //fontSize: 30,
                                 color: ColorsForApp.whiteColor,
@@ -1147,7 +1137,7 @@ class _MyHomePageState extends State<JCOAdminDashboardPage> {
             ),
             textButtonTheme: TextButtonThemeData(
               style: TextButton.styleFrom(
-                primary: Colors.red, // button text color
+                foregroundColor: Colors.red, // button text color
               ),
             ),
           ),
@@ -1155,12 +1145,11 @@ class _MyHomePageState extends State<JCOAdminDashboardPage> {
         );
       },
     ))!;
-    if (picked != null && picked != currentDate) {
+    if (picked != currentDate) {
       setState2(() {
         fromDate = picked;
         displayFromDate=UT.displayDateConverter(fromDate);
         displayToDate=UT.displayDateConverter(fromDate.add(const Duration(days: 1)));
-        print('displayToDate--->$displayToDate');
       });
     }
   }
@@ -1181,7 +1170,7 @@ class _MyHomePageState extends State<JCOAdminDashboardPage> {
             ),
             textButtonTheme: TextButtonThemeData(
               style: TextButton.styleFrom(
-                primary: Colors.red, // button text color
+                foregroundColor: Colors.red, // button text color
               ),
             ),
           ),
@@ -1189,7 +1178,7 @@ class _MyHomePageState extends State<JCOAdminDashboardPage> {
         );
       },
     ))!;
-    if (picked != null && picked != currentDate) {
+    if (picked != currentDate) {
       setState2(() {
         toDate = picked;
         displayToDate=UT.displayDateConverter(toDate);
@@ -1200,7 +1189,7 @@ class _MyHomePageState extends State<JCOAdminDashboardPage> {
   Future<bool?> exitAppDialog() {
     return showDialog(
       context: context,
-      builder: (BuildContext context) => CustomDialog(
+      builder: (BuildContext context) => const CustomDialog(
       ),
     );
   }

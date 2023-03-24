@@ -1,18 +1,14 @@
 import 'dart:convert';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:pie_chart/pie_chart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:untitled/App%20Theme/app_theme.dart';
 import 'package:untitled/App%20Theme/asset_files.dart';
-import 'package:untitled/App%20Theme/text_fileds.dart';
-import 'package:untitled/CustomeWidget/common_button.dart';
+
 import 'package:untitled/View/User%20Model/api_constant.dart';
 import 'package:untitled/View/User%20Model/enter_feedback.dart';
-import 'package:untitled/View/User%20Model/enter_rating.dart';
-import 'package:untitled/View/User%20Model/register_complaint.dart';
+
 import 'package:http/http.dart' as http;
 import 'package:untitled/View/User%20Model/user_drawer.dart';
 import '../../CustomeWidget/custome_dialog.dart';
@@ -192,7 +188,6 @@ class _MyHomePageState extends State<JCOComplaintList> {
           } else if (snapshot.hasData) {
             // Extracting data from snapshot object
             List<IssueModelClass>? vendor = snapshot.data;
-            print("in future-->$vendor");
             if(vendor!.isNotEmpty){
               return  _buildListView(vendor);
             }else{
@@ -321,8 +316,7 @@ class _MyHomePageState extends State<JCOComplaintList> {
 
   updateComplaintStatus(String userComalaintId ,String status) async {
     DialogBuilder(context).showLoadingIndicator();
-    var url=Uri.parse("${APIConstant.APIURL}/update-complaint-status/?secret=d146d69ec7f6635f3f05f2bf4a51b318");
-    print("Url-->$url");
+    var url=Uri.parse("${APIConstant.apiUrl}/update-complaint-status/?secret=d146d69ec7f6635f3f05f2bf4a51b318");
     Map<String,dynamic> obj={
         "id": userComalaintId,
         "status": status,
@@ -331,7 +325,6 @@ class _MyHomePageState extends State<JCOComplaintList> {
         "image": file*/
     };
     var response= await http.post(url,body: jsonEncode(obj));
-    print("complaint update status res-->${response.body}");
     var decode=json.decode(response.body);
     //{"message":"Issue status with id 18 updated"}
     if(decode["message"].toString().contains("updated")){
@@ -348,11 +341,8 @@ class _MyHomePageState extends State<JCOComplaintList> {
     List<IssueModelClass> vendors=[];
     SharedPreferences preferences = await SharedPreferences.getInstance();
     String? mobileNo=preferences.getString(UT.mobileNo);
-    var url=Uri.parse("${APIConstant.APIURL}/register-complaint/?number=$mobileNo&secret=d146d69ec7f6635f3f05f2bf4a51b318");
-    print("url-->$url");
+    var url=Uri.parse("${APIConstant.apiUrl}/register-complaint/?number=$mobileNo&secret=d146d69ec7f6635f3f05f2bf4a51b318");
     var response= await http.get(url);
-    print(response.body);
-    print(response.statusCode);
     if (response.statusCode == 200) {
       var decodeRes=json.decode(response.body) as List;
        vendors = decodeRes.map((tagJson) => IssueModelClass.fromJson(tagJson)).toList();
@@ -363,7 +353,7 @@ class _MyHomePageState extends State<JCOComplaintList> {
     }
     else{
       return vendors;
-      throw Exception('Failed to load house list');
+
     }
   }
 
@@ -481,7 +471,7 @@ class _MyHomePageState extends State<JCOComplaintList> {
                       children: <Widget>[
                         ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                                primary: ColorsForApp.grayColor,
+                                backgroundColor: ColorsForApp.grayColor,
                                 textStyle: TextStyle(
                                     color: ColorsForApp.blackColor
                                 )
@@ -494,7 +484,7 @@ class _MyHomePageState extends State<JCOComplaintList> {
                             ))),
                         ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                              primary: ColorsForApp.appButtonColor,
+                              backgroundColor: ColorsForApp.appButtonColor,
                               textStyle: TextStyle(
                                 //fontSize: 30,
                                 color: ColorsForApp.whiteColor,
@@ -533,7 +523,7 @@ class _MyHomePageState extends State<JCOComplaintList> {
             ),
             textButtonTheme: TextButtonThemeData(
               style: TextButton.styleFrom(
-                primary: Colors.red, // button text color
+                foregroundColor: Colors.red, // button text color
               ),
             ),
           ),
@@ -541,12 +531,11 @@ class _MyHomePageState extends State<JCOComplaintList> {
         );
       },
     ))!;
-    if (picked != null && picked != currentDate) {
+    if (picked != currentDate) {
       setState2(() {
         fromDate = picked;
         displayFromDate=UT.displayDateConverter(fromDate);
-        displayToDate=UT.displayDateConverter(fromDate.add(Duration(days: 1)));
-        print('displayToDate--->$displayToDate');
+        displayToDate=UT.displayDateConverter(fromDate.add(const Duration(days: 1)));
       });
     }
   }
@@ -567,7 +556,7 @@ class _MyHomePageState extends State<JCOComplaintList> {
             ),
             textButtonTheme: TextButtonThemeData(
               style: TextButton.styleFrom(
-                primary: Colors.red, // button text color
+                foregroundColor: Colors.red, // button text color
               ),
             ),
           ),
@@ -575,7 +564,7 @@ class _MyHomePageState extends State<JCOComplaintList> {
         );
       },
     ))!;
-    if (picked != null && picked != currentDate) {
+    if (picked != currentDate) {
       setState2(() {
         toDate = picked;
         displayToDate=UT.displayDateConverter(toDate);
@@ -586,7 +575,7 @@ class _MyHomePageState extends State<JCOComplaintList> {
   Future<bool?> exitAppDialog() {
     return showDialog(
       context: context,
-      builder: (BuildContext context) => CustomDialog(
+      builder: (BuildContext context) => const CustomDialog(
       ),
     );
   }

@@ -1,4 +1,3 @@
-import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -7,13 +6,10 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:untitled/App%20Theme/app_theme.dart';
 import 'package:untitled/App%20Theme/asset_files.dart';
-import 'package:untitled/App%20Theme/text_fileds.dart';
-import 'package:untitled/CustomeWidget/common_button.dart';
+
 import 'package:untitled/CustomeWidget/custome_widget.dart';
-import 'package:untitled/View/Admin%20Model/user_admin_dashboard.dart';
 import 'package:untitled/View/User%20Model/api_constant.dart';
-import 'package:untitled/View/User%20Model/otp_page.dart';
-import 'package:http/http.dart' as http;
+
 
 import '../GC Model/GC_complaints_list.dart';
 import '../JCO Model/JCO_complaints_list.dart';
@@ -123,7 +119,7 @@ class _MyHomePageState extends State<UserLoginPage> {
 
                         },
                         style: ElevatedButton.styleFrom(
-                          primary: ColorsForApp.appButtonColor,
+                          backgroundColor: ColorsForApp.appButtonColor,
                           shape: const RoundedRectangleBorder(
                               borderRadius: BorderRadius.all(Radius.circular(14))
                           ),
@@ -166,7 +162,7 @@ class _MyHomePageState extends State<UserLoginPage> {
   }
   getOTP(String mobile) async {
     //https://api.creshsolutions.com/otp/
-    var url=Uri.parse("${APIConstant.APIURL}/otp/?secret=d146d69ec7f6635f3f05f2bf4a51b318");
+    var url=Uri.parse("${APIConstant.apiUrl}/otp/?secret=d146d69ec7f6635f3f05f2bf4a51b318");
 
     var obj={
       "mobile_no":mobile,

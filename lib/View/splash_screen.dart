@@ -4,13 +4,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:untitled/App%20Theme/app_theme.dart';
 import 'package:untitled/App%20Theme/asset_files.dart';
 import 'package:untitled/View/Admin%20Model/new_admin_dashboard.dart';
-import 'package:untitled/View/Admin%20Model/user_admin_dashboard.dart';
+
 import 'package:untitled/View/GC%20Model/GC_complaints_list.dart';
 import 'package:untitled/View/JCO%20Model/JCO_complaints_list.dart';
 import 'package:untitled/View/User%20Model/api_constant.dart';
 import 'package:untitled/View/User%20Model/my_complaints.dart';
 import 'package:untitled/View/select_user_type.dart';
-import 'Admin Model/admin_login_page.dart';
 
 
 class SplashPage extends StatefulWidget {
@@ -35,17 +34,15 @@ class SplashPageState extends State<SplashPage> {
     loginStatus = preferences.getString(UT.loginStatus);
     String? appType=preferences.getString(UT.appType);
 
-    print("loginStatus-->$loginStatus");
-    print("loginStatus-->$appType");
    if(loginStatus=="True"&&appType=="User"){
-     Navigator.push(context, MaterialPageRoute(builder: (BuildContext context)=>MyComplaintListPage()));
+     Navigator.push(context, MaterialPageRoute(builder: (BuildContext context)=>const MyComplaintListPage()));
    }else if(loginStatus=="True"&&appType=="User-GC"){
-     Navigator.push(context, MaterialPageRoute(builder: (BuildContext context)=>GCComplaintList()));
+     Navigator.push(context, MaterialPageRoute(builder: (BuildContext context)=>const GCComplaintList()));
    }else if(loginStatus=="True"&&appType=="User-JCO"){
-     Navigator.push(context, MaterialPageRoute(builder: (BuildContext context)=>JCOComplaintList()));
+     Navigator.push(context, MaterialPageRoute(builder: (BuildContext context)=>const JCOComplaintList()));
    }
    else if(loginStatus=="True"&&appType=="0"||appType=="1"||appType=="2"){
-     Navigator.push(context, MaterialPageRoute(builder: (BuildContext context)=>NewAdminDashboard()));
+     Navigator.push(context, MaterialPageRoute(builder: (BuildContext context)=>const NewAdminDashboard()));
    }
    else{
      Navigator.pushAndRemoveUntil(

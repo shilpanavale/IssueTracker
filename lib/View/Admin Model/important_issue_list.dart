@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:typed_data';
 import 'dart:io';
 import 'dart:ui' as ui;
 import 'package:flutter/rendering.dart';
@@ -7,21 +6,14 @@ import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:gallery_saver/gallery_saver.dart';
-import 'package:intl/intl.dart';
-import 'package:open_filex/open_filex.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:pie_chart/pie_chart.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:syncfusion_flutter_pdf/pdf.dart';
 import 'package:untitled/App%20Theme/app_theme.dart';
 import 'package:untitled/App%20Theme/asset_files.dart';
-import 'package:untitled/App%20Theme/text_fileds.dart';
-import 'package:untitled/CustomeWidget/common_button.dart';
-import 'package:untitled/CustomeWidget/custome_dialog.dart';
+
 import 'package:untitled/CustomeWidget/custome_widget.dart';
 import 'package:untitled/View/Admin%20Model/Model/ImportantModelclass.dart';
-import 'package:untitled/View/Admin%20Model/Model/IssueModel.dart';
 import 'package:untitled/View/Admin%20Model/user_admin_dashboard.dart';
 import 'package:untitled/View/GC%20Model/GC_admin_dashboard.dart';
 import 'package:untitled/View/JCO%20Model/JCO_admin_dashboard.dart';
@@ -30,7 +22,7 @@ import 'package:http/http.dart' as http;
 
 
 class ImportantIssuePage extends StatefulWidget {
-  final escalationNo;
+  final dynamic escalationNo;
   const ImportantIssuePage({Key? key, this.escalationNo}) : super(key: key);
 
 
@@ -49,7 +41,7 @@ class _MyHomePageState extends State<ImportantIssuePage> {
   String displayFromDate="";
   String displayToDate="";
   Future<List<ImportantIssueModel>>? importantComplaints;
-  var userType;
+  dynamic userType;
   @override
   void initState() {
     // TODO: implement initState
@@ -62,9 +54,7 @@ class _MyHomePageState extends State<ImportantIssuePage> {
   getData() async {
     final prefs = await SharedPreferences.getInstance();
     userType= prefs.getString(UT.appType);
-    print("Important issue userType-->$userType");
-   var battalionType= prefs.getString(UT.battalion);
-    print("Important issue battalionType-->$battalionType");
+  // var battalionType= prefs.getString(UT.battalion);
     importantComplaints=getRegisterComplaints();
     setState(() {
 
@@ -363,8 +353,8 @@ class _MyHomePageState extends State<ImportantIssuePage> {
 
 
   Future<void> _captureScreenShot(String flag) {
-    String imagePaths ;
-    final RenderBox box = context.findRenderObject() as RenderBox;
+   // String imagePaths ;
+    //final RenderBox box = context.findRenderObject() as RenderBox;
     return Future.delayed(const Duration(milliseconds: 20), () async {
       RenderRepaintBoundary? boundary = previewContainerKey.currentContext!
           .findRenderObject() as RenderRepaintBoundary?;
@@ -373,7 +363,7 @@ class _MyHomePageState extends State<ImportantIssuePage> {
       ByteData? byteData =
       await image.toByteData(format: ui.ImageByteFormat.png);
       Uint8List pngBytes = byteData!.buffer.asUint8List();
-      File imgFile = new File('$directory/complaints.png');
+      File imgFile = File('$directory/complaints.png');
       // imagePaths.add(imgFile.path);
       imgFile.writeAsBytes(pngBytes).then((value) async {
 
@@ -382,12 +372,12 @@ class _MyHomePageState extends State<ImportantIssuePage> {
            // screenshotButtonText = 'screenshot saved!';
             Fluttertoast.showToast(msg: "Image saved into gallery!");
             if(flag=="Share"){
-              Share.shareXFiles([XFile('${imgFile.path}')], text: '');
+              Share.shareXFiles([XFile(imgFile.path)], text: '');
             }
           });
         });
       }).catchError((onError) {
-        print(onError);
+
       });
     });
   }
@@ -396,11 +386,9 @@ class _MyHomePageState extends State<ImportantIssuePage> {
   Future<List<ImportantIssueModel>> getRegisterComplaints() async {
     List<ImportantIssueModel> impComplaintsList=[];
     //https://api.creshsolutions.com/important-issue/?escalation=1,2%20or%203&secret=d146d69ec7f6635f3f05f2bf4a51b318
-    var url=Uri.parse("${APIConstant.APIURL}/important-issue/?escalation=${widget.escalationNo}&secret=d146d69ec7f6635f3f05f2bf4a51b318&usert_type=$userType");
+    var url=Uri.parse("${APIConstant.apiUrl}/important-issue/?escalation=${widget.escalationNo}&secret=d146d69ec7f6635f3f05f2bf4a51b318&usert_type=$userType");
 
-    print("url-->$url");
     var response= await http.get(url);
-    print(response.body);
     if (response.statusCode == 200) {
       var decodeRes=json.decode(response.body) as List;
       impComplaintsList = decodeRes.map((tagJson) => ImportantIssueModel.fromJson(tagJson)).toList();

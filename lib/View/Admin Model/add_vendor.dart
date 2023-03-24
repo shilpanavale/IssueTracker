@@ -183,7 +183,7 @@ class _MyHomePageState extends State<AddVendor> {
    };
 
    //print('add vendor-->$obj');
-    var url=Uri.parse("${APIConstant.APIURL}/vendor/?secret=d146d69ec7f6635f3f05f2bf4a51b318");
+    var url=Uri.parse("${APIConstant.apiUrl}/vendor/?secret=d146d69ec7f6635f3f05f2bf4a51b318");
     var response= await http.post(url, body: jsonEncode(obj));
     //print("RES-->${response.body}");
      var decodeRes=json.decode(response.body);

@@ -2,18 +2,13 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:untitled/App%20Theme/app_theme.dart';
-import 'package:untitled/App%20Theme/asset_files.dart';
-import 'package:untitled/App%20Theme/text_fileds.dart';
-import 'package:untitled/CustomeWidget/common_button.dart';
+
 import 'package:untitled/View/Admin%20Model/new_admin_dashboard.dart';
-import 'package:untitled/View/Admin%20Model/user_admin_dashboard.dart';
 import 'package:http/http.dart' as http;
 
 import '../../CustomeWidget/custome_dialog.dart';
-import '../GC Model/GC_admin_dashboard.dart';
-import '../JCO Model/JCO_admin_dashboard.dart';
+
 import '../User Model/api_constant.dart';
 
 class UpdateEmailPage extends StatefulWidget {
@@ -29,7 +24,7 @@ class _MyHomePageState extends State<UpdateEmailPage> {
   final List<TextEditingController>? userNamelController = [];
   final TextEditingController userNameTxt=TextEditingController();
   final TextEditingController email=TextEditingController();
-  var selectEmailType;
+  dynamic selectEmailType;
 
   List<EmailTypeMode> emailTypeList=[
     EmailTypeMode("EscalationData 1BR",1),
@@ -188,10 +183,10 @@ class _MyHomePageState extends State<UpdateEmailPage> {
       "email": email,
       "name": userName
     };
-    var url=Uri.parse("${APIConstant.APIURL}/escalation-email/?secret=d146d69ec7f6635f3f05f2bf4a51b318");
+    var url=Uri.parse("${APIConstant.apiUrl}/escalation-email/?secret=d146d69ec7f6635f3f05f2bf4a51b318");
     var response= await http.patch(url, body: jsonEncode(obj));
     var decodeRes=json.decode(response.body);
-    print("decodeRes-->$decodeRes");
+
     if(decodeRes['message']==false){
       DialogBuilder(context).hideOpenDialog();
       Fluttertoast.showToast(msg: "Invalid details");
@@ -204,11 +199,9 @@ class _MyHomePageState extends State<UpdateEmailPage> {
     }
   }
   getEmails() async {
-    var url=Uri.parse("${APIConstant.APIURL}/escalation-email/?secret=d146d69ec7f6635f3f05f2bf4a51b318&get_all=1");
-    print("ail URL-->$url");
+    var url=Uri.parse("${APIConstant.apiUrl}/escalation-email/?secret=d146d69ec7f6635f3f05f2bf4a51b318&get_all=1");
     var response= await http.get(url);
     var decodeRes=json.decode(response.body) as List;
-    print(decodeRes);
     emails=decodeRes;
     setState(() {
 

@@ -1,4 +1,3 @@
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -8,10 +7,9 @@ import 'package:untitled/App%20Theme/asset_files.dart';
 import 'package:untitled/App%20Theme/text_fileds.dart';
 import 'package:untitled/CustomeWidget/common_button.dart';
 import 'package:untitled/CustomeWidget/custome_widget.dart';
-import 'package:untitled/View/User%20Model/Model/HouseModelPage.dart';
-import 'package:untitled/View/User%20Model/api_constant.dart';
+
 import 'package:untitled/View/User%20Model/my_complaints.dart';
-import 'package:http/http.dart' as http;
+
 
 import 'Model/LocationModelPage.dart';
 

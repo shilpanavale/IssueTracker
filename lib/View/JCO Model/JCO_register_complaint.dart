@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -9,16 +10,13 @@ import 'package:untitled/App%20Theme/app_theme.dart';
 import 'package:untitled/CustomeWidget/common_button.dart';
 import 'package:untitled/CustomeWidget/custome_dialog.dart';
 import 'package:untitled/CustomeWidget/custome_widget.dart';
-import 'package:untitled/View/User%20Model/Model/HouseModelPage.dart';
-import 'package:untitled/View/User%20Model/Model/IssueTypeModelPage.dart';
+
 import 'package:untitled/View/User%20Model/Model/LocationModelPage.dart';
-import 'package:untitled/View/User%20Model/Model/SubIssueTypeModelPage.dart';
-import 'package:untitled/View/User%20Model/my_complaints.dart';
+
 import 'package:http/http.dart' as http;
 
 import '../User Model/api_constant.dart';
 import 'JCO_complaints_list.dart';
-import 'Model/JCOLocationModel.dart';
 
 
 class JCORegisterComplaint extends StatefulWidget {
@@ -129,7 +127,6 @@ class _MyHomePageState extends State<JCORegisterComplaint> {
                                       selectedAccom=null;
                                       selectHouseNo=null;
                                       selectedLocation=newValue;
-                                      print('selectedLocation--->$selectedLocation');
                                       getAccommodationList(selectedLocation);
                                     });
                                   },
@@ -221,7 +218,6 @@ class _MyHomePageState extends State<JCORegisterComplaint> {
 
                                     setState(() {
                                       selectHouseNo=newValue;
-                                      print('selectHouseNo-->$selectHouseNo');
                                     });
                                   },
                                   items: houseList.map((value) {
@@ -416,7 +412,6 @@ class _MyHomePageState extends State<JCORegisterComplaint> {
     var response= await http.get(Uri.parse("${APIConstant.locationList}/?secret=d146d69ec7f6635f3f05f2bf4a51b318&user_type=1"));
     var decodeRes=json.decode(response.body) as List;
     if (response.statusCode == 200) {
-      print("decodeRes-->$decodeRes");
       locationList = decodeRes.map((tagJson) => LocationModelClass.fromJson(tagJson)).toList();
 
       setState(() {});
@@ -432,10 +427,8 @@ class _MyHomePageState extends State<JCORegisterComplaint> {
 
     var url=Uri.parse("${APIConstant.accommodation}/?location=$selectedLocation&secret=d146d69ec7f6635f3f05f2bf4a51b318&user_type=1");
     var response= await http.get(url);
-    print("Accomadation-->$url");
     if (response.statusCode == 200) {
       var decodeRes=json.decode(response.body) as List;
-      print("accommodationList-->$decodeRes");
       accommodationList = decodeRes.map((tagJson) => AccommodationModel.fromJson(tagJson)).toList();
       setState(() {});
       DialogBuilder(context).hideOpenDialog();
@@ -447,14 +440,11 @@ class _MyHomePageState extends State<JCORegisterComplaint> {
   getHouseList(String selectedAccom ) async {
     DialogBuilder(context).showLoadingIndicator();
     var url=Uri.parse("${APIConstant.houseNo}/?accomType=$selectedAccom&location=$selectedLocation&secret=d146d69ec7f6635f3f05f2bf4a51b318&user_type=1");
-    print("House URL-->$url");
     var response= await http.get(url);
 
     if (response.statusCode == 200) {
       var decodeRes=json.decode(response.body) as List;
-      print("House No-->$decodeRes");
       houseList = decodeRes.map((tagJson) => HouseNumberModel.fromJson(tagJson)).toList();
-      print("House No-->$houseList");
       setState(() {
 
       });
@@ -472,13 +462,12 @@ class _MyHomePageState extends State<JCORegisterComplaint> {
     int? userId=preferences.getInt(UT.userId);
 
 
-    var url=Uri.parse("${APIConstant.APIURL}/register-complaint/?secret=d146d69ec7f6635f3f05f2bf4a51b318");
+    var url=Uri.parse("${APIConstant.apiUrl}/register-complaint/?secret=d146d69ec7f6635f3f05f2bf4a51b318");
     var request = http.MultipartRequest("POST", url);
     request.fields['user_id'] = userId.toString();
     request.fields['user_type'] = "1";
     request.fields['house_id'] = selectHouseNo;
     request.fields['description'] =describeComplaintTxt.text.isNotEmpty? describeComplaintTxt.text:"";
-    print(request.fields);
     if(image1?.path!=null){
       request.files.add(
           http.MultipartFile.fromBytes(
@@ -504,12 +493,8 @@ class _MyHomePageState extends State<JCORegisterComplaint> {
           )
       );
     }
-    print(request.files);
 
-    print("url of register complaint-->${url}");
     request.send().then((response) {
-      print(response.statusCode);
-      print(response.reasonPhrase);
       if (response.statusCode == 201){
         DialogBuilder(context).hideOpenDialog();
         Fluttertoast.showToast(msg: "Complaint Registered successfully");
@@ -532,7 +517,7 @@ class _MyHomePageState extends State<JCORegisterComplaint> {
         addPhotosTxt.text=imageTemp.path.split('/').last;
       });
     } on PlatformException catch(e) {
-      print('Failed to pick image: $e');
+      log(e.toString());
     }
   }
   Future pickImage2() async {
@@ -545,7 +530,7 @@ class _MyHomePageState extends State<JCORegisterComplaint> {
         addPhotosTxt.text=imageTemp.path.split('/').last;
       });
     } on PlatformException catch(e) {
-      print('Failed to pick image: $e');
+      log(e.toString());
     }
   } Future pickImage3() async {
     try {
@@ -557,7 +542,7 @@ class _MyHomePageState extends State<JCORegisterComplaint> {
         addPhotosTxt.text=imageTemp.path.split('/').last;
       });
     } on PlatformException catch(e) {
-      print('Failed to pick image: $e');
+      log(e.toString());
     }
   }
 }

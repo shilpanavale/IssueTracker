@@ -1,25 +1,14 @@
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:pie_chart/pie_chart.dart';
-import 'package:share_plus/share_plus.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+
 import 'package:untitled/App%20Theme/app_theme.dart';
-import 'package:untitled/App%20Theme/asset_files.dart';
-import 'package:untitled/App%20Theme/text_fileds.dart';
-import 'package:untitled/CustomeWidget/common_button.dart';
+
 import 'package:untitled/CustomeWidget/custome_widget.dart';
 import 'package:untitled/View/Admin%20Model/Model/VendorModel.dart';
-import 'package:untitled/View/Admin%20Model/add_vendor.dart';
 import 'package:untitled/View/Admin%20Model/new_admin_dashboard.dart';
 import 'package:untitled/View/Admin%20Model/update_email.dart';
-import 'package:untitled/View/Admin%20Model/user_admin_dashboard.dart';
-import 'package:http/http.dart' as http;
 import 'package:untitled/View/Admin%20Model/vendor_list.dart';
-import 'package:untitled/View/GC%20Model/GC_admin_dashboard.dart';
-import 'package:untitled/View/JCO%20Model/JCO_admin_dashboard.dart';
-import 'package:untitled/View/User%20Model/api_constant.dart';
+
 
 import 'add_screteKey.dart';
 import 'change_password.dart';
@@ -35,9 +24,9 @@ class SettingPage extends StatefulWidget {
 
 class _MyHomePageState extends State<SettingPage> {
 
-  var vendorID;
+  dynamic vendorID;
   List<VendorModelClass> vendorList=[];
-  Future<List<VendorModelClass>>? _vendorApi;
+  Future<List<VendorModelClass>>? vendorApi;
   @override
   void initState() {
     // TODO: implement initState

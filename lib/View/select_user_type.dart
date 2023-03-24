@@ -2,16 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:untitled/App%20Theme/app_theme.dart';
 import 'package:untitled/App%20Theme/asset_files.dart';
-import 'package:untitled/App%20Theme/text_fileds.dart';
-import 'package:untitled/CustomeWidget/common_button.dart';
-import 'package:untitled/View/Admin%20Model/user_admin_dashboard.dart';
+
 import 'package:untitled/View/Admin%20Model/admin_login_page.dart';
 import 'package:untitled/View/User%20Model/api_constant.dart';
 import 'package:untitled/View/User%20Model/enter_client_code.dart';
-import 'package:untitled/View/User%20Model/select_login.dart';
 
-import '../App Theme/app_theme.dart';
-import 'User Model/user_login_page.dart';
 
 class SelectUserTypePage extends StatefulWidget {
   const SelectUserTypePage({Key? key}) : super(key: key);

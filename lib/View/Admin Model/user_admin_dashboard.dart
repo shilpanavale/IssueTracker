@@ -13,19 +13,13 @@ import 'package:share_plus/share_plus.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
 import 'package:untitled/App%20Theme/app_theme.dart';
 import 'package:untitled/App%20Theme/asset_files.dart';
-import 'package:untitled/View/Admin%20Model/admin_drawer.dart';
 import 'package:untitled/View/Admin%20Model/complaints_list.dart';
 import 'package:untitled/View/User%20Model/api_constant.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
 import '../../CustomeWidget/custome_dialog.dart';
-import 'dart:typed_data';
 import 'dart:ui' as ui;
-import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
-import 'package:path_provider/path_provider.dart';
-import 'dart:io';
 
 import 'important_issue_list.dart';
 import 'new_admin_dashboard.dart';
@@ -87,7 +81,7 @@ class _MyHomePageState extends State<UserAdminDashboardPage> {
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0.0,
-          iconTheme: IconThemeData(
+          iconTheme: const IconThemeData(
               color: Colors.black
           ),
 
@@ -341,7 +335,7 @@ class _MyHomePageState extends State<UserAdminDashboardPage> {
                return ListTile(
                  title:Text(subIssue[index]["subIssue"] ?? "",style: StyleForApp.textStyle14dp) ,
                  leading: Icon(Icons.circle_sharp,color: ColorsForApp.appButtonColor,) ,
-                 trailing: Text(subIssue[index]["count"].toString()??"",style: StyleForApp.textStyle15dpBold),
+                 trailing: Text(subIssue[index]["count"].toString(),style: StyleForApp.textStyle15dpBold),
 
                );
 
@@ -477,7 +471,7 @@ class _MyHomePageState extends State<UserAdminDashboardPage> {
                   letterSpacing: 0.27,
                   color: ColorsForApp.whiteColor,
                 ),),
-                Text(escaltionCount1.toString()??"",style:  TextStyle(
+                Text(escaltionCount1.toString(),style:  TextStyle(
                   // fontFamily: fontName,
                   fontWeight: FontWeight.w700,
                   fontSize: 28,
@@ -517,7 +511,7 @@ class _MyHomePageState extends State<UserAdminDashboardPage> {
                   letterSpacing: 0.27,
                   color: ColorsForApp.whiteColor,
                 ),),
-                Text(escaltionCount2.toString()??"",style:  TextStyle(
+                Text(escaltionCount2.toString(),style:  TextStyle(
                   // fontFamily: fontName,
                   fontWeight: FontWeight.w700,
                   fontSize: 28,
@@ -557,7 +551,7 @@ class _MyHomePageState extends State<UserAdminDashboardPage> {
                   letterSpacing: 0.27,
                   color: ColorsForApp.whiteColor,
                 ),),
-                Text(escaltionCount3.toString()??"",style:  TextStyle(
+                Text(escaltionCount3.toString(),style:  TextStyle(
                   // fontFamily: fontName,
                   fontWeight: FontWeight.w700,
                   fontSize: 28,
@@ -733,8 +727,7 @@ class _MyHomePageState extends State<UserAdminDashboardPage> {
   }
 
   Future<void> _captureSocialPng(String flag) {
-    String imagePaths ;
-    final RenderBox box = context.findRenderObject() as RenderBox;
+
     return Future.delayed(const Duration(milliseconds: 20), () async {
       RenderRepaintBoundary? boundary = previewContainer.currentContext!
           .findRenderObject() as RenderRepaintBoundary?;
@@ -743,7 +736,7 @@ class _MyHomePageState extends State<UserAdminDashboardPage> {
       ByteData? byteData =
       await image.toByteData(format: ui.ImageByteFormat.png);
       Uint8List pngBytes = byteData!.buffer.asUint8List();
-      File imgFile = new File('$directory/pieChart.png');
+      File imgFile = File('$directory/pieChart.png');
      // imagePaths.add(imgFile.path);
       imgFile.writeAsBytes(pngBytes).then((value) async {
 
@@ -752,26 +745,25 @@ class _MyHomePageState extends State<UserAdminDashboardPage> {
             // screenshotButtonText = 'screenshot saved!';
             Fluttertoast.showToast(msg: "Image saved into gallery!");
             if(flag=="Share"){
-              Share.shareXFiles([XFile('${imgFile.path}')], text: '');
+              Share.shareXFiles([XFile(imgFile.path)], text: '');
             }else{
-              OpenFilex.open('${imgFile.path}');
+              OpenFilex.open(imgFile.path);
             }
           });
         });
 
 
       }).catchError((onError) {
-        print(onError);
+
       });
     });
   }
 
   getData() async {
     //https://api.creshsolutions.com/admin-home/?secret=d146d69ec7f6635f3f05f2bf4a51b318
-    var url =Uri.parse("${APIConstant.APIURL}/admin-home/?secret=d146d69ec7f6635f3f05f2bf4a51b318&user_type=0");
-    print("url-->$url");
+    var url =Uri.parse("${APIConstant.apiUrl}/admin-home/?secret=d146d69ec7f6635f3f05f2bf4a51b318&user_type=0");
+
     var response= await http.get(url);
-    print(response.body);
     var decodeRes=json.decode(response.body);
     totalIssueRegisteredToday=decodeRes["totalIssueRegisteredToday"]["count"];
     var statusCount=decodeRes["statusWiseCount"];
@@ -809,8 +801,8 @@ class _MyHomePageState extends State<UserAdminDashboardPage> {
     getFilterData(DateTime fromDate,DateTime toDate) async {
 
 
-     var frmDt, toDt;
-     var url;
+     dynamic frmDt, toDt;
+     dynamic url;
      final DateFormat formatter = DateFormat('yyyy-MM-dd');
      final String formattedFrm = formatter.format(fromDate);
 
@@ -820,10 +812,10 @@ class _MyHomePageState extends State<UserAdminDashboardPage> {
      frmDt = "$formattedFrm 000:00:00";
      toDt = "$formattedTo 23:59:59";
     // url = Uri.parse("${APIConstant.APIURL}/register-complaint/?from=$frmDt&to=$toDt&secret=d146d69ec7f6635f3f05f2bf4a51b318");
-      url =Uri.parse("${APIConstant.APIURL}/admin-home/?from=$frmDt&to=$toDt&secret=d146d69ec7f6635f3f05f2bf4a51b318");
+      url =Uri.parse("${APIConstant.apiUrl}/admin-home/?from=$frmDt&to=$toDt&secret=d146d69ec7f6635f3f05f2bf4a51b318");
      // print("url-->$url");
      var response = await http.get(url);
-     print(response.body);
+
      var decodeRes=json.decode(response.body);
      totalIssueRegisteredToday=decodeRes["totalIssueRegisteredToday"];
      var statusCount=decodeRes["statusWiseCount"];
@@ -1087,7 +1079,7 @@ class _MyHomePageState extends State<UserAdminDashboardPage> {
                       children: <Widget>[
                         ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                                primary: ColorsForApp.grayColor,
+                                backgroundColor: ColorsForApp.grayColor,
                                 textStyle: TextStyle(
                                     color: ColorsForApp.blackColor
                                 )
@@ -1100,7 +1092,7 @@ class _MyHomePageState extends State<UserAdminDashboardPage> {
                             ))),
                         ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                              primary: ColorsForApp.appButtonColor,
+                              backgroundColor: ColorsForApp.appButtonColor,
                               textStyle: TextStyle(
                                 //fontSize: 30,
                                 color: ColorsForApp.whiteColor,
@@ -1142,7 +1134,7 @@ class _MyHomePageState extends State<UserAdminDashboardPage> {
             ),
             textButtonTheme: TextButtonThemeData(
               style: TextButton.styleFrom(
-                primary: Colors.red, // button text color
+                foregroundColor: Colors.red, // button text color
               ),
             ),
           ),
@@ -1176,7 +1168,7 @@ class _MyHomePageState extends State<UserAdminDashboardPage> {
             ),
             textButtonTheme: TextButtonThemeData(
               style: TextButton.styleFrom(
-                primary: Colors.red, // button text color
+                foregroundColor: Colors.red, // button text color
               ),
             ),
           ),
@@ -1195,7 +1187,7 @@ class _MyHomePageState extends State<UserAdminDashboardPage> {
   Future<bool?> exitAppDialog() {
     return showDialog(
       context: context,
-      builder: (BuildContext context) => CustomDialog(
+      builder: (BuildContext context) => const CustomDialog(
       ),
     );
   }
